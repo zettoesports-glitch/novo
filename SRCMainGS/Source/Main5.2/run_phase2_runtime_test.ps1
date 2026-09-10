@@ -19,7 +19,7 @@ function Assert-Exists([string]$Path, [string]$Label) {
     if (-not (Test-Path $Path)) {
         throw "Phase 2 runtime prerequisite missing: $Label ($Path)"
     }
-    Write-Host "[Phase2 Runtime] Found $Label: $Path"
+    Write-Host "[Phase2 Runtime] Found ${Label}: $Path"
 }
 
 function Assert-LogContains([string]$Text, [string]$Pattern, [string]$Label) {
