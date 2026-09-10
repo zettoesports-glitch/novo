@@ -2,10 +2,34 @@
 
 #include <Windows.h>
 
+// Phase 2 dependency activation.
+//
+// The Main keeps the legacy build path working even when DiligentCore has not
+// been prepared yet. Once setup_diligent_opengl46.ps1 places the pinned
+// DiligentCore checkout under ../dependencies/DiligentCore, this translation
+// unit automatically enables the Diligent coexistence bridge.
+#ifndef MU_ENABLE_DILIGENT
+#if defined(_MSC_VER) && defined(_WIN32) && defined(__has_include)
+#if __has_include("../dependencies/DiligentCore/Graphics/GraphicsEngineOpenGL/interface/EngineFactoryOpenGL.h")
+#define MU_ENABLE_DILIGENT 1
+#endif
+#endif
+#endif
+
 #ifdef MU_ENABLE_DILIGENT
-#include "Common/interface/RefCntAutoPtr.hpp"
-#include "Graphics/GraphicsEngine/interface/RenderDevice.h"
-#include "Graphics/GraphicsEngine/interface/DeviceContext.h"
+// Diligent headers normally receive these definitions from its CMake targets.
+// Main consumes only the public interfaces and loads the backend DLL explicitly,
+// so define the minimum public-build contract locally for this translation unit.
+#ifndef PLATFORM_WIN32
+#define PLATFORM_WIN32 1
+#endif
+#ifndef ENGINE_DLL
+#define ENGINE_DLL 1
+#endif
+
+#include "../dependencies/DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+#include "../dependencies/DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+#include "../dependencies/DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
 #endif
 
 // Phase 2 graphics bootstrap.
