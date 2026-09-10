@@ -100,7 +100,7 @@ GLuint CShaderGL::run_shader(const char* shader_text, GLenum type)
 	glShaderSource(shader, 1, &shader_text, NULL);
 	glCompileShader(shader);
 
-	// Verificar errores de compilación
+	// Verificar errores de compilação
 	int success;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 
@@ -212,6 +212,9 @@ CShaderGL* CShaderGL::Instance()
 namespace
 {
 HHOOK g_ModernGraphicsWindowHook = NULL;
+HWND g_ModernGraphicsLastWindow = NULL;
+HGLRC g_ModernGraphicsLastContext = NULL;
+bool g_ModernGraphicsTeardownStarted = false;
 
 void TryAttachModernGraphics(HWND hWnd)
 {
@@ -223,6 +226,20 @@ void TryAttachModernGraphics(HWND hWnd)
 
 	if (WindowFromDC(currentDC) != hWnd)
 		return;
+
+	// Once a teardown message has shut the modern device down, do not let a
+	// later Win32 message reattach Diligent to the same legacy WGL context while
+	// that context is still being destroyed. A genuinely recreated window/context
+	// pair clears the barrier and may start a fresh attach attempt.
+	if (g_ModernGraphicsTeardownStarted)
+	{
+		if (g_ModernGraphicsLastWindow == hWnd && g_ModernGraphicsLastContext == currentContext)
+			return;
+
+		g_ModernGraphicsTeardownStarted = false;
+		g_ModernGraphicsLastWindow = NULL;
+		g_ModernGraphicsLastContext = NULL;
+	}
 
 	CModernGraphicsBootstrap& graphics = GetModernGraphics();
 	if (graphics.HasAttemptedInitializationFor(hWnd, currentContext))
@@ -239,6 +256,8 @@ void TryAttachModernGraphics(HWND hWnd)
 		? static_cast<unsigned int>(clientRect.bottom - clientRect.top)
 		: 0u;
 
+	g_ModernGraphicsLastWindow = hWnd;
+	g_ModernGraphicsLastContext = currentContext;
 	graphics.InitializeOpenGL46(hWnd, currentDC, currentContext, width, height);
 }
 
@@ -255,7 +274,11 @@ LRESULT CALLBACK ModernGraphicsCallWndProc(int code, WPARAM wParam, LPARAM lPara
 		case WM_NCDESTROY:
 		case WM_USER_MEMORYHACK:
 			if (GetModernGraphics().IsAttachedToWindow(message->hwnd))
+			{
+				g_ModernGraphicsTeardownStarted = true;
+				ModernGraphicsLog("[ModernGraphics] Teardown barrier armed for the attached WGL context.\n");
 				GetModernGraphics().Shutdown();
+			}
 			break;
 
 		default:
