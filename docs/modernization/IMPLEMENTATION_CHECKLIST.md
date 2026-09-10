@@ -17,7 +17,7 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [ ] Implement and verify concrete CPU/GPU layouts and pose conversion
 
 ## Renderer core
-- [ ] Backend enum/factory (backend enum exists; factory waits for runtime dependency wiring)
+- [ ] Backend enum/factory (backend enum exists; generic backend factory remains a later renderer-core task)
 - [ ] Renderer device interface
 - [ ] Buffer abstraction
 - [ ] Texture abstraction
@@ -25,12 +25,17 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [ ] Render state cache
 - [ ] Frame/Object/Material data contracts
 
-## OpenGL 4.6
+## OpenGL 4.6 — Phase 2 bootstrap
 - [x] Define context/profile ownership and single-presentation rules (static design)
 - [x] Locate and wire real Main window/context/resize/present integration points (source bridge implemented; Windows runtime pending)
 - [x] Pin Diligent and reference shader revisions (`DILIGENT_PIN.md`)
 - [x] Context/capability validation implemented (effective >= 4.6, diagnostics; Windows runtime pending)
-- [ ] Wire pinned Diligent headers/libs into `Main.vcxproj` Win32 and enable `MU_ENABLE_DILIGENT` in a test configuration
+- [x] Add reproducible pinned DiligentCore Win32/OpenGL/HLSL setup script
+- [x] Add official Diligent explicit backend-DLL loading (`GraphicsEngineOpenGL_32r/32d.dll`)
+- [x] Preserve dependency-absent and DLL-load-failure legacy fallback
+- [x] Align Main Debug configuration with the Diligent debug backend selection
+- [ ] Execute pinned Diligent setup successfully on Windows
+- [ ] Compile `Main.sln` Win32/x86 with the pinned Diligent headers enabled
 - [ ] Diligent buffer/texture lifecycle and transitions
 - [ ] Diligent HLSL shader compilation diagnostics
 - [ ] Diligent constant-buffer path
@@ -38,7 +43,8 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [ ] Depth/blend/cull state handling
 - [ ] Draw submission
 - [ ] OpenGL debug callback/logging (basic vendor/renderer/version/profile diagnostics already implemented)
-- [ ] Pass Phase 2 Windows runtime gate: attach, resize, single present, clean shutdown, legacy regression check
+- [ ] Pass Phase 2 Windows runtime gate: DLL load/factory, attach, GL >= 4.6, resize, single present, clean shutdown, legacy regression check
+- [ ] After runtime gate, replace the temporary `WH_CALLWNDPROC` coexistence bridge with direct lifecycle calls if validation shows no need to retain the bridge
 
 ## BMD migration
 - [x] Map legacy mesh fields and initial conversion rules (static)
