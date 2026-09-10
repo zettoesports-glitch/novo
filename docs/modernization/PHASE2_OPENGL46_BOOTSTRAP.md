@@ -112,14 +112,16 @@ Na tentativa de attach são registrados:
 - major/minor interpretados;
 - `core` / `compatibility` profile quando disponível;
 - falha ao carregar DLL/factory Diligent;
+- mensagens da camada de validação Diligent;
+- mensagens OpenGL/KHR_debug produzidas pelo callback que o próprio backend Diligent instala quando validation está habilitada;
 - sucesso/falha do attach Diligent;
 - resize observado;
 - shutdown antes do teardown WGL;
 - confirmação de que o `SwapBuffers` legado permanece autoritativo.
 
-Os registros são enviados ao debugger e persistidos em `Client_2/ModernGraphics.log` quando o cliente é executado com `Client_2` como working directory. O arquivo é ignorado pelo Git.
+Os registros da Main são enviados ao debugger e persistidos em `Client_2/ModernGraphics.log` quando o cliente é executado com `Client_2` como working directory.
 
-Um callback OpenGL adicional é opt-in por `MU_MODERN_GL_DEBUG=1`. Quando GL 4.3/KHR_debug estiver disponível, mensagens do driver também são persistidas no mesmo log.
+`MU_MODERN_GL_DEBUG=1` define `EngineGLCreateInfo.EnableValidation=true` e instala `ModernDiligentMessageCallback` através de `IEngineFactory::SetMessageCallback()`. A Main **não instala um segundo `glDebugMessageCallback`**: o backend OpenGL do Diligent v2.5.6 continua dono do KHR_debug e encaminha suas mensagens pela callback oficial da factory. Isso evita conflito de ownership entre Main e Diligent.
 
 O `CErrorReport::WriteOpenGLInfo()` existente continua sendo mantido; o log moderno não substitui o logger legado.
 
@@ -151,7 +153,7 @@ A falha Debug anterior era causada pelo C++14 do projeto legado em conflito com 
 
 ### Gate combinado permanente
 
-O workflow atual compila Release e Debug sequencialmente no mesmo job. O gate mais recente é `34535389139`, disparado pelas alterações de logging/runtime evidence. Ele deve terminar com sucesso antes de o item combinado ser marcado como concluído.
+O workflow atual compila Release e Debug sequencialmente no mesmo job, verifica os outputs e valida o parser/procedimento do script de runtime com um log sintético. O gate final da source atual é o run `34536286797`. Ele deve terminar com sucesso antes de o item combinado ser marcado como concluído.
 
 ## Gate GPU reproduzível
 
@@ -170,11 +172,11 @@ O script:
 - verifica `Main.exe`, `_32r.dll` e `_32d.dll`;
 - remove evidência antiga;
 - inicia `Main.exe` com `Client_2` como working directory;
-- opcionalmente ativa `MU_MODERN_GL_DEBUG=1`;
+- opcionalmente ativa `MU_MODERN_GL_DEBUG=1`, que liga validation/KHR_debug pelo próprio Diligent;
 - espera o fechamento normal do cliente;
-- valida attach, diagnóstico OpenGL, resize opcional, shutdown e ausência de fallback moderno no `ModernGraphics.log`.
+- valida attach, diagnóstico OpenGL, roteamento de validation/debug, resize opcional, shutdown e ausência de fallback moderno no `ModernGraphics.log`.
 
-Também aceita `-ValidateOnly` para validar um log já capturado sem relançar o cliente.
+Também aceita `-ValidateOnly` para validar um log já capturado sem relançar o cliente. O workflow Windows executa esse modo contra evidência sintética depois dos builds para testar o script sem fingir que isso equivale a uma execução GPU real.
 
 ## Estado de conclusão
 
@@ -189,8 +191,10 @@ Também aceita `-ValidateOnly` para validar um log já capturado sem relançar o
 - setup reproduzível Win32/OpenGL/HLSL;
 - fallback legado quando dependência/DLL/capability não estiver disponível;
 - builds independentes Release/x86 e Debug/x86 aprovados;
-- diagnósticos persistentes e callback OpenGL opt-in implementados;
-- gate GPU local transformado em procedimento/script reproduzível.
+- diagnósticos persistentes implementados;
+- validation e OpenGL/KHR_debug roteados pelo callback oficial do Diligent, sem callback GL concorrente na Main;
+- gate GPU local transformado em procedimento/script reproduzível;
+- validação sintática/funcional do modo `-ValidateOnly` integrada ao workflow permanente.
 
 ### Ainda não validado em runtime GPU
 
@@ -202,12 +206,13 @@ A Fase 2 só será considerada **runtime-concluída** após execução real da M
 - exatamente uma apresentação por frame;
 - shutdown sem erro de lifetime/contexto;
 - logs reais de vendor, renderer, version, profile e backend;
+- validation/KHR_debug sem conflito de callback;
 - nenhuma regressão no caminho legado mantido durante o protótipo.
 
 O build CI não substitui esses testes porque não executa o cliente no ambiente gráfico interativo alvo.
 
 ## Próxima ação
 
-1. Confirmar o gate combinado `34535389139` contra a source atual.
+1. Confirmar o gate combinado `34536286797` contra a source final da Fase 2.
 2. Executar `run_phase2_runtime_test.ps1 -EnableGLDebug -RequireResize` no Windows/GPU alvo.
 3. Somente após esse gate runtime entram como trabalho ativo os layouts CPU/GPU concretos, constant buffers, pose conversion, Skeleton Texture e o primeiro BMD moderno de duas instâncias.
