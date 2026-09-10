@@ -34,11 +34,13 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [x] Add official Diligent explicit backend-DLL loading (`GraphicsEngineOpenGL_32r/32d.dll`)
 - [x] Preserve dependency-absent and DLL-load-failure legacy fallback
 - [x] Align Main Debug definitions with the Diligent debug backend selection
+- [x] Normalize Main Debug/x86 to C++17 without modifying DiligentCore project settings
 - [x] Add GitHub Actions Windows/x86 compile gate (`.github/workflows/phase2-win32-build.yml`)
-- [x] Execute pinned Diligent setup successfully on Windows (GitHub Actions run `34533022717`; both `_32r` and `_32d` produced)
-- [x] Compile `Main.sln` Win32/x86 with the pinned Diligent headers enabled (Release/C++17, run `34533022717`)
-- [x] Observe a successful Phase 2 Windows/x86 CI run (Release x86, run `34533022717`)
-- [ ] Pass the same Main compile gate in Debug/x86 after normalizing the legacy Debug C++ standard to C++17
+- [x] Execute pinned Diligent setup successfully on Windows (runs `34533022717` and `34533868904`; both `_32r` and `_32d` produced)
+- [x] Compile `Main.sln` Release/x86 with the pinned Diligent headers enabled (run `34533022717`, 0 errors)
+- [x] Compile `Main.sln` Debug/x86 with C++17 and the pinned Diligent headers enabled (run `34533868904`, 0 errors)
+- [x] Observe successful Phase 2 Windows/x86 CI runs for both Main configurations independently
+- [ ] Observe the permanent combined Release+Debug x86 workflow gate succeed after consolidating both configurations into one CI job
 - [ ] Diligent buffer/texture lifecycle and transitions
 - [ ] Diligent HLSL shader compilation diagnostics
 - [ ] Diligent constant-buffer path
