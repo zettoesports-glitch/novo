@@ -39,6 +39,32 @@ jobs:
           cmake --version
           msbuild -version
 
+      - name: Preflight PowerShell scripts
+        shell: powershell
+        working-directory: SRCMainGS/Source/Main5.2
+        run: |
+          $scripts = @(
+            '.\setup_diligent_opengl46.ps1',
+            '.\run_phase2_runtime_test.ps1'
+          )
+
+          foreach ($script in $scripts) {
+            $tokens = $null
+            $parseErrors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile(
+              (Resolve-Path $script),
+              [ref]$tokens,
+              [ref]$parseErrors
+            ) | Out-Null
+
+            if ($parseErrors.Count -gt 0) {
+              $parseErrors | ForEach-Object { Write-Error $_.Message }
+              throw ("PowerShell syntax preflight failed for {0}" -f $script)
+            }
+
+            Write-Host ("[Phase2 CI] PowerShell syntax OK: {0}" -f $script)
+          }
+
       - name: Prepare pinned Diligent OpenGL backends
         shell: powershell
         working-directory: SRCMainGS/Source/Main5.2
