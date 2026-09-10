@@ -11,20 +11,22 @@ Diligent integration for Main 5.2, using shared HLSL shaders and OpenGL 4.6 firs
 - Geometry, pose, instance, view, material and texture producer/consumer contracts.
 - Snapshot/lifetime requirements and legacy render-state mapping.
 - Roadmap aligned with the Diligent + HLSL decision.
+- Phase 2 bootstrap contract documented: native-window/context ownership, resize, capability validation and single presentation.
 
 Evidence and scope: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERER_MAPPING.md).
+Phase 2 contract: [PHASE2_OPENGL46_BOOTSTRAP.md](PHASE2_OPENGL46_BOOTSTRAP.md).
 
 ## Phase 2 in progress
 
+- Locate the real Main Windows creation/OpenGL context/resize/present integration points.
 - Pin/verify Diligent dependency and shader-source revisions.
-- Define Windows OpenGL 4.6 context/profile ownership and single-presentation model.
 - Add the first renderer bootstrap and capability diagnostics without replacing legacy BMD drawing yet.
 - Implement concrete CPU/GPU contracts only after the runtime/bootstrap boundary is stable.
 
 ## Not yet validated
 
-No Diligent runtime integrated or enabled by this documentation change. No Windows build, GPU execution, shader compilation or visual-parity test performed. All item/map/script/cloth variants are not claimed complete.
+No Diligent runtime has been validated by a Windows build/GPU run yet. No visual-parity test has been performed. All item/map/script/cloth variants are not claimed complete.
 
 ## Next action
 
-Implement Phase 2 runtime bootstrap on `modernization`: dependency pinning, OpenGL 4.6 capability validation, device/context/swapchain ownership, resize path and single presentation. Then implement the documented CPU/GPU contracts before the two-instance BMD proof.
+Wire the Phase 2 runtime bootstrap to the actual Main window/context/present code, then validate OpenGL 4.6 capability, resize and exactly-one-present behavior. After that, implement the documented CPU/GPU contracts before the two-instance BMD proof.
