@@ -14,10 +14,17 @@ Diligent integration for Main 5.2, using shared HLSL shaders and OpenGL 4.6 firs
 
 Evidence and scope: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERER_MAPPING.md).
 
+## Phase 2 in progress
+
+- Pin/verify Diligent dependency and shader-source revisions.
+- Define Windows OpenGL 4.6 context/profile ownership and single-presentation model.
+- Add the first renderer bootstrap and capability diagnostics without replacing legacy BMD drawing yet.
+- Implement concrete CPU/GPU contracts only after the runtime/bootstrap boundary is stable.
+
 ## Not yet validated
 
 No Diligent runtime integrated or enabled by this documentation change. No Windows build, GPU execution, shader compilation or visual-parity test performed. All item/map/script/cloth variants are not claimed complete.
 
 ## Next action
 
-Pin dependency/shader revisions, then phase 2: validate a Windows OpenGL 4.6 context, profile, Diligent attachment or ownership, resize and single presentation. Implement the documented CPU/GPU contracts before the two-instance BMD proof.
+Implement Phase 2 runtime bootstrap on `modernization`: dependency pinning, OpenGL 4.6 capability validation, device/context/swapchain ownership, resize path and single presentation. Then implement the documented CPU/GPU contracts before the two-instance BMD proof.
