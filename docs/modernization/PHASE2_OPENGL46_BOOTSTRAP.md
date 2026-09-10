@@ -5,7 +5,7 @@ Branch: `modernization`.
 
 ## Objetivo
 
-Criar a primeira fronteira de runtime para o renderer moderno sem substituir ainda o desenho BMD legado. A fase deve provar ownership de janela/contexto/present, exigir OpenGL 4.6 e preparar os contratos usados por Vulkan e Direct3D 11 futuramente.
+Criar a primeira fronteira de runtime para o renderer moderno sem substituir ainda o desenho BMD legado. A fase prova ownership de janela/contexto/present, exige OpenGL 4.6 e prepara os contratos usados por Vulkan e Direct3D 11 futuramente.
 
 ## Entregas desta fase
 
@@ -14,8 +14,8 @@ Criar a primeira fronteira de runtime para o renderer moderno sem substituir ain
 3. Exigir OpenGL 4.6 no backend OpenGL; falhar com diagnóstico se a versão não estiver disponível.
 4. Tratar resize por uma única fronteira do renderer.
 5. Garantir apenas uma apresentação por frame.
-6. Adicionar diagnósticos de vendor/renderer/version/profile/backend.
-7. Disponibilizar um caminho reproduzível para preparar/compilar o backend Diligent Win32.
+6. Adicionar diagnósticos de vendor/renderer/version/profile/backend e evidência persistente.
+7. Disponibilizar caminhos reproduzíveis para preparar/compilar o backend Diligent Win32 e validar o runtime GPU.
 8. Manter BMD, terrain, effects e UI no legado até o bootstrap ser validado em Windows/GPU.
 
 ## Estado implementado no branch
@@ -28,7 +28,7 @@ A fronteira de bootstrap existe em:
 
 O código define os backends `Legacy`, `OpenGL46`, `Vulkan` e `Direct3D11`, porém somente OpenGL 4.6 possui caminho de inicialização nesta fase.
 
-O caminho OpenGL usa `IEngineFactoryOpenGL::AttachToActiveGLContext`. Isto é intencional: a Main continua dona de `HWND`, `HDC`, `HGLRC` e `SwapBuffers`; Diligent é anexado ao contexto existente e não cria swap chain durante a coexistência.
+O caminho OpenGL usa `IEngineFactoryOpenGL::AttachToActiveGLContext`. A Main continua dona de `HWND`, `HDC`, `HGLRC` e `SwapBuffers`; Diligent é anexado ao contexto existente e não cria swap chain durante a coexistência.
 
 ## Carregamento do backend
 
@@ -43,26 +43,14 @@ Com `ENGINE_DLL=1`, o bootstrap usa o loader Win32 oficial exposto por Diligent:
 
 Se o módulo não puder ser carregado ou a factory retornar nula, a inicialização moderna falha de forma controlada e o renderer legado permanece ativo.
 
-Isto aproxima a fronteira da arquitetura modular observada no pacote de referência sem acoplar o código de gameplay a uma API gráfica específica.
-
 ## Preparação reproduzível da dependência
 
-Foi adicionado:
-
-`SRCMainGS/Source/Main5.2/setup_diligent_opengl46.ps1`
-
-O script fixa e verifica:
+`SRCMainGS/Source/Main5.2/setup_diligent_opengl46.ps1` fixa e verifica:
 
 - tag DiligentCore: `v2.5.6`;
 - commit: `b036337d68be2353c9950a85929acf796b9a6d50`.
 
-Ele prepara os submodules, configura um build Win32 OpenGL-only com HLSL habilitado, compila os backends Release/Debug e copia as DLLs para `Client_2`.
-
-Também pode compilar a Main:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\setup_diligent_opengl46.ps1 -BuildMain
-```
+O script prepara os submodules, configura um build Win32 OpenGL-only com HLSL habilitado, compila os backends Release/Debug e copia as DLLs para `Client_2`. Também pode compilar a Main com `-BuildMain`.
 
 O checkout e os outputs gerados ficam em `dependencies/DiligentCore/` e `dependencies/_diligent_build/`, ambos ignorados pelo `.gitignore` da `Main5.2`.
 
@@ -78,7 +66,7 @@ O lifecycle real foi mapeado e conectado por uma ponte temporária `WH_CALLWNDPR
 - chama `Shutdown()` antes de `WM_CLOSE/WM_DESTROY/WM_NCDESTROY` chegar ao caminho que executa `KillGLWindow()`;
 - não substitui `WndProc`, não cria outro contexto e não apresenta frames.
 
-Esta ponte continua deliberadamente temporária para a Fase 2. Depois que o gate Win32/GPU provar a integração, as chamadas podem ser movidas diretamente para os owners reais (`CreateOpenglWindow`, `CWINHANDLE::WndProc` e shutdown) sem alterar o contrato público de `CModernGraphicsBootstrap`.
+A ponte continua deliberadamente temporária para a Fase 2. Depois que o gate Win32/GPU provar a integração, as chamadas podem ser movidas diretamente para os owners reais (`CreateOpenglWindow`, `CWINHANDLE::WndProc` e shutdown) sem alterar o contrato público de `CModernGraphicsBootstrap`.
 
 A descoberta detalhada está em `PHASE2_RUNTIME_DISCOVERY.md`.
 
@@ -109,13 +97,13 @@ Detalhes e ressalvas em `DILIGENT_PIN.md`.
 
 ## Contexto atual da Main
 
-`CreateOpenglWindow()` ainda usa `wglCreateContext()` e não solicita explicitamente uma versão 4.6. Por isso o bootstrap valida a versão **efetivamente fornecida pelo driver**. Se ela for menor que 4.6, a modernização permanece inativa e o legado continua ativo.
+`CreateOpenglWindow()` ainda usa `wglCreateContext()` e não solicita explicitamente uma versão 4.6. O bootstrap valida a versão **efetivamente fornecida pelo driver**. Se ela for menor que 4.6, a modernização permanece inativa e o legado continua ativo.
 
-Uma futura troca para criação explícita de contexto 4.6 compatibility deve acontecer antes da criação dos assets OpenGL e só depois de provar que não quebra os caminhos legados. Não é necessário substituir o contexto apenas para concluir o wiring desta etapa.
+Uma futura troca para criação explícita de contexto 4.6 compatibility deve acontecer antes da criação dos assets OpenGL e somente depois de provar que não quebra os caminhos legados.
 
 ## Diagnósticos implementados
 
-Na tentativa de attach são registrados via debugger:
+Na tentativa de attach são registrados:
 
 - `GL_VENDOR`;
 - `GL_RENDERER`;
@@ -123,28 +111,70 @@ Na tentativa de attach são registrados via debugger:
 - `GL_SHADING_LANGUAGE_VERSION`;
 - major/minor interpretados;
 - `core` / `compatibility` profile quando disponível;
-- falha ao carregar a DLL/factory Diligent;
+- falha ao carregar DLL/factory Diligent;
 - sucesso/falha do attach Diligent;
+- resize observado;
+- shutdown antes do teardown WGL;
 - confirmação de que o `SwapBuffers` legado permanece autoritativo.
 
-O `CErrorReport::WriteOpenGLInfo()` existente continua registrando a informação persistente do OpenGL da Main.
+Os registros são enviados ao debugger e persistidos em `Client_2/ModernGraphics.log` quando o cliente é executado com `Client_2` como working directory. O arquivo é ignorado pelo Git.
 
-## Validação de build já comprovada
+Um callback OpenGL adicional é opt-in por `MU_MODERN_GL_DEBUG=1`. Quando GL 4.3/KHR_debug estiver disponível, mensagens do driver também são persistidas no mesmo log.
+
+O `CErrorReport::WriteOpenGLInfo()` existente continua sendo mantido; o log moderno não substitui o logger legado.
+
+## Validação de build comprovada
 
 O workflow `.github/workflows/phase2-win32-build.yml` executa o setup em Windows/Visual Studio e valida os outputs reais.
+
+### Release/x86
 
 Run `34533022717`, commit `b641263293ca1eebf5ed28e96cbfbd2643f1269b`:
 
 - checkout exato do Diligent e submodules: aprovado;
 - configuração OpenGL-only Win32/HLSL: aprovada;
-- `GraphicsEngineOpenGL_32r.dll`: compilada;
-- `GraphicsEngineOpenGL_32d.dll`: compilada;
-- `Main.sln` `Release|x86`: compilada com C++17;
+- `_32r.dll` e `_32d.dll`: compiladas;
+- `Main.sln` Release/x86: compilada com C++17;
 - `Client_2/Main.exe`: linkado;
-- resultado da Main: 13 warnings, **0 erros**;
-- outputs `_32r.dll`, `_32d.dll` e `Main.exe`: verificados pelo workflow.
+- resultado: **0 erros**.
 
-Um gate Debug anterior (`34529126049`) falhou antes da integração Diligent por uma inconsistência preexistente da Main: `Debug|Win32` usava C++14 e os headers `sol2` presentes no projeto exigem C++17. `source/Directory.Build.targets` agora normaliza somente `Debug|Win32` para C++17; o gate Debug substituto deve passar antes de essa configuração ser marcada como validada.
+### Debug/x86
+
+Run `34533868904`, commit `51a21347b0f55a98957f85e53a6a5fde6bf7b2a4`:
+
+- setup Diligent aprovado;
+- Main Debug/x86 compilada com a normalização C++17 limitada ao projeto Main;
+- `Client_2/Main.exe`: linkado;
+- resultado: **0 erros**.
+
+A falha Debug anterior era causada pelo C++14 do projeto legado em conflito com os headers sol2 já dependentes de C++17, e não pela integração Diligent.
+
+### Gate combinado permanente
+
+O workflow atual compila Release e Debug sequencialmente no mesmo job. O gate mais recente é `34535389139`, disparado pelas alterações de logging/runtime evidence. Ele deve terminar com sucesso antes de o item combinado ser marcado como concluído.
+
+## Gate GPU reproduzível
+
+Foi adicionado:
+
+`SRCMainGS/Source/Main5.2/run_phase2_runtime_test.ps1`
+
+Execução recomendada a partir de `SRCMainGS/Source/Main5.2`:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\run_phase2_runtime_test.ps1 -EnableGLDebug -RequireResize
+```
+
+O script:
+
+- verifica `Main.exe`, `_32r.dll` e `_32d.dll`;
+- remove evidência antiga;
+- inicia `Main.exe` com `Client_2` como working directory;
+- opcionalmente ativa `MU_MODERN_GL_DEBUG=1`;
+- espera o fechamento normal do cliente;
+- valida attach, diagnóstico OpenGL, resize opcional, shutdown e ausência de fallback moderno no `ModernGraphics.log`.
+
+Também aceita `-ValidateOnly` para validar um log já capturado sem relançar o cliente.
 
 ## Estado de conclusão
 
@@ -154,12 +184,13 @@ Um gate Debug anterior (`34529126049`) falhou antes da integração Diligent por
 - ownership e single-present definidos;
 - mapeamento real do lifecycle da Main;
 - bridge de attach/resize/shutdown;
-- validação de versão OpenGL 4.6 e diagnósticos;
+- validação de versão OpenGL 4.6;
 - loader modular do backend OpenGL;
 - setup reproduzível Win32/OpenGL/HLSL;
 - fallback legado quando dependência/DLL/capability não estiver disponível;
-- build real Windows Release/x86 da Main com os headers pinados;
-- geração real dos dois módulos OpenGL Diligent x86.
+- builds independentes Release/x86 e Debug/x86 aprovados;
+- diagnósticos persistentes e callback OpenGL opt-in implementados;
+- gate GPU local transformado em procedimento/script reproduzível.
 
 ### Ainda não validado em runtime GPU
 
@@ -177,4 +208,6 @@ O build CI não substitui esses testes porque não executa o cliente no ambiente
 
 ## Próxima ação
 
-Fechar o gate Debug/x86 e, depois, executar `Client_2/Main.exe` em Windows com GPU OpenGL 4.6 para fechar o gate runtime. Somente após esse gate entram como trabalho ativo os layouts CPU/GPU concretos, constant buffers, pose conversion, Skeleton Texture e o primeiro BMD moderno de duas instâncias.
+1. Confirmar o gate combinado `34535389139` contra a source atual.
+2. Executar `run_phase2_runtime_test.ps1 -EnableGLDebug -RequireResize` no Windows/GPU alvo.
+3. Somente após esse gate runtime entram como trabalho ativo os layouts CPU/GPU concretos, constant buffers, pose conversion, Skeleton Texture e o primeiro BMD moderno de duas instâncias.
