@@ -3,7 +3,7 @@
 Date: 2026-09-10
 Branch: `modernization`
 
-This document records the real Main 5.2 lifecycle points used by the Phase 2 OpenGL 4.6/Diligent bootstrap. Phase 2 is still not runtime-complete until the Windows validation gate in `PHASE2_OPENGL46_BOOTSTRAP.md` passes.
+This document records the real Main 5.2 lifecycle points used by the Phase 2 OpenGL 4.6/Diligent bootstrap. Phase 2 is still not runtime-complete until the Windows GPU validation gate in `PHASE2_OPENGL46_BOOTSTRAP.md` passes.
 
 ## Confirmed Main lifecycle
 
@@ -72,7 +72,7 @@ This is a bootstrap bridge, not a replacement window system. It deliberately doe
 - create a Diligent swap chain;
 - move BMD/terrain/effects/UI to the modern renderer yet.
 
-The hook is still a **temporary Phase 2 bridge**. It has not been presented as the final window-system architecture. After the Windows gate is proven, initialization/resize/shutdown may be moved directly into `CreateOpenglWindow()`, `CWINHANDLE::WndProc` and the pre-`KillGLWindow()` path without changing `CModernGraphicsBootstrap`'s public contract.
+The hook is still a **temporary Phase 2 bridge**. It has not been presented as the final window-system architecture. After the Windows GPU gate is proven, initialization/resize/shutdown may be moved directly into `CreateOpenglWindow()`, `CWINHANDLE::WndProc` and the pre-`KillGLWindow()` path without changing `CModernGraphicsBootstrap`'s public contract.
 
 ## Capability and diagnostics
 
@@ -92,42 +92,64 @@ The existing `CErrorReport::WriteOpenGLInfo()` remains the application's persist
 
 ## Dependency/build state
 
-DiligentCore is pinned in `DILIGENT_PIN.md` and the repository now contains a reproducible setup path:
+DiligentCore is pinned in `DILIGENT_PIN.md` and the repository contains a reproducible setup path:
 
 `SRCMainGS/Source/Main5.2/setup_diligent_opengl46.ps1`
 
-The script is designed to:
+The script:
 
-- clone/verify DiligentCore `v2.5.6` at commit `b036337d68be2353c9950a85929acf796b9a6d50`;
-- initialize the required recursive submodules;
-- configure a Win32 OpenGL-only build with HLSL support;
-- build `GraphicsEngineOpenGL_32r.dll` and `GraphicsEngineOpenGL_32d.dll`;
-- copy both modules into `Client_2`;
-- optionally build `Main.sln` through `-BuildMain`.
+- clones/verifies DiligentCore `v2.5.6` at commit `b036337d68be2353c9950a85929acf796b9a6d50`;
+- initializes the required recursive submodules;
+- configures a Win32 OpenGL-only build with HLSL support;
+- builds `GraphicsEngineOpenGL_32r.dll` and `GraphicsEngineOpenGL_32d.dll`;
+- copies both modules into `Client_2`;
+- optionally builds `Main.sln` through `-BuildMain`.
 
 The generated Diligent checkout/build directories are ignored by `Main5.2/.gitignore`.
 
-`ModernGraphicsBootstrap.h` now auto-enables `MU_ENABLE_DILIGENT` for MSVC/Win32 when the expected local Diligent OpenGL header exists. Main's `DEBUG` configuration is mapped to Diligent's public debug definitions so the official loader selects the debug backend; Release selects the release backend.
+`ModernGraphicsBootstrap.h` auto-enables `MU_ENABLE_DILIGENT` for MSVC/Win32 when the expected local Diligent OpenGL header exists. Main's `DEBUG` configuration is mapped to Diligent's public debug definitions so the official loader selects the debug backend; Release selects the release backend.
 
 No Diligent engine import library is required by the Main for this Phase 2 path: the backend is loaded dynamically.
 
-### Important validation boundary
+## Windows/x86 compile evidence
 
-The setup script and loader integration are **committed source/build infrastructure**, but this environment has not executed a Visual Studio Win32 build or a GPU run. Therefore none of the following may be marked runtime-proven yet.
+GitHub Actions now provides real Windows/MSBuild evidence rather than only static source inspection.
+
+### Successful Release gate
+
+Workflow run `34533022717`, commit `b641263293ca1eebf5ed28e96cbfbd2643f1269b`:
+
+- Windows Server 2022 / Visual Studio 2022 runner;
+- pinned DiligentCore checkout/submodules completed successfully;
+- OpenGL-only Win32 configuration completed successfully;
+- `GraphicsEngineOpenGL_32r.dll` built successfully;
+- `GraphicsEngineOpenGL_32d.dll` built successfully;
+- `Main.sln` built as `Release|x86` using `/std:c++17`;
+- `CShaderGL.cpp` (and therefore the Phase 2 bootstrap/bridge implementation included by that translation unit) compiled successfully;
+- `Client_2/Main.exe` linked successfully;
+- final Main result: 13 warnings, **0 errors**;
+- workflow verified `Main.exe`, `_32r.dll` and `_32d.dll` existed in `Client_2`.
+
+This closes the repository-side Release/x86 compile/setup gate. It does **not** prove a GPU/runtime attach because the hosted CI job does not launch the game client in its intended interactive WGL environment.
+
+### Debug configuration issue and correction
+
+Earlier workflow run `34529126049` built both Diligent OpenGL DLL configurations but failed when Main Debug started compiling. The failure occurred in legacy/vendored `sol2` headers because `Debug|Win32` in `Main.vcxproj` used `/std:c++14`, while the same Main source already requires C++17 (`std::string_view`, `std::variant`, `std::byte`, inline variables).
+
+The failure was therefore not caused by Diligent or `AttachToActiveGLContext`.
+
+`SRCMainGS/Source/Main5.2/source/Directory.Build.targets` now scopes a `stdcpp17` override to `Debug|Win32` for the Main project directory only. This avoids changing DiligentCore's upstream project settings. The replacement Debug/x86 workflow must pass before Debug is recorded as build-proven.
 
 ## Remaining runtime gate
 
-A real Windows Win32 build/run must still prove:
+The Windows compile path is proven for Release/x86. A real GPU-backed Main run must still prove:
 
-- the pinned setup completes successfully on the target development machine;
-- both backend DLLs can be produced (or at minimum the configuration actually being tested);
-- `Main.sln` compiles with the pinned Diligent headers;
-- the expected backend DLL is found and its factory export loads;
+- the expected backend DLL is found and its factory export loads at runtime;
 - effective OpenGL version is >= 4.6 on the test system;
-- `AttachToActiveGLContext` succeeds;
+- `AttachToActiveGLContext` succeeds against the real Main WGL context;
 - resize remains stable;
 - only the legacy `SwapBuffers` presents;
 - shutdown has no lifetime/context errors;
 - legacy scenes render without regression.
 
-Until those checks pass, Phase 2 is source/build-path complete but **not runtime-certified**.
+Until those runtime checks pass, Phase 2 is source/build-path complete for Release but **not runtime-certified**.
