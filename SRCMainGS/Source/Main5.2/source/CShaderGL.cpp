@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CShaderGL.h"
+#include "ModernGraphicsBootstrap.h"
 
 #ifdef SHADER_VERSION_TEST
 #include "Utilities/Log/muConsoleDebug.h"
@@ -99,7 +100,7 @@ GLuint CShaderGL::run_shader(const char* shader_text, GLenum type)
 	glShaderSource(shader, 1, &shader_text, NULL);
 	glCompileShader(shader);
 
-	// Verificar errores de compilación
+	// Verificar errores de compilaciÃ³n
 	int success;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 
@@ -195,5 +196,8 @@ CShaderGL* CShaderGL::Instance()
 }
 #endif // SHADER_VERSION_TEST
 
-
-
+// Phase 2 bootstrap implementation is compiled through this translation unit
+// because CShaderGL.cpp is already part of Main.vcxproj. Once Diligent is
+// vendored in dependencies and the project file is updated, this implementation
+// can move to its own .cpp without changing the public contract.
+#include "ModernGraphicsBootstrap.inl"
