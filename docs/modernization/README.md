@@ -3,6 +3,7 @@
 Working documentation for the `modernization` branch.
 
 - [Phase 1: Main → renderer mapping](PHASE1_MAIN_RENDERER_MAPPING.md): source call paths, instance ownership, CPU/GPU contracts and material/state mapping.
+- [Phase 2: OpenGL 4.6 bootstrap](PHASE2_OPENGL46_BOOTSTRAP.md): Diligent runtime boundary, context/profile ownership, resize and single-presentation rules.
 - [Renderer roadmap](renderer-roadmap.md): Diligent integration and migration sequence.
 - [NextMU integration notes](nextmu-integration-notes.md): reference material.
 - [Implementation checklist](IMPLEMENTATION_CHECKLIST.md): discovery versus implementation gates.
