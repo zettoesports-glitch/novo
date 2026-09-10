@@ -1,0 +1,15 @@
+<Project>
+  <!--
+    Main's vendored sol2 headers require C++17. Release already compiles as
+    C++17 in Main.vcxproj; Debug was still configured as C++14 and therefore
+    failed before reaching the Phase 2 Diligent/OpenGL integration.
+
+    Keep this override scoped to the Main project directory so DiligentCore
+    projects under ../dependencies keep their own upstream language settings.
+  -->
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+  </ItemDefinitionGroup>
+</Project>
