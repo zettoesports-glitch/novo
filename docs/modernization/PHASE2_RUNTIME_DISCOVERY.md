@@ -94,7 +94,7 @@ A hook-installation failure is also persisted to `ModernGraphics.log`, so the ru
 
 This avoids registering a competing raw `glDebugMessageCallback` in Main. Diligent v2.5.6 already registers its own OpenGL debug callback when validation is enabled, so factory-level message routing is the correct ownership boundary.
 
-Diagnostics are sent both to `OutputDebugStringA` and to `Client_2/ModernGraphics.log` when the client is launched with `Client_2` as its working directory. This creates persistent evidence without requiring a debugger.
+Diagnostics are sent both to `OutputDebugStringA` and to `ModernGraphics.log` beside `Main.exe`. The path is resolved from the executable location, so launcher/working-directory differences do not move the Phase 2 evidence file away from `Client_2`. This creates persistent evidence without requiring a debugger.
 
 The existing `CErrorReport::WriteOpenGLInfo()` remains the application's original OpenGL information path; the Phase 2 log supplements rather than replaces it.
 
@@ -148,7 +148,9 @@ The earlier Debug failure was caused by the legacy project using C++14 while its
 
 ### Permanent combined gate
 
-`.github/workflows/phase2-win32-build.yml` builds Release/x86 and Debug/x86 sequentially in one Windows job, verifies `Main.exe`, `_32r.dll` and `_32d.dll`, and finally validates `run_phase2_runtime_test.ps1 -ValidateOnly` against synthetic Phase 2 evidence. The final current-source gate is workflow run `34536286797`.
+`.github/workflows/phase2-win32-build.yml` builds Release/x86 and Debug/x86 sequentially in one Windows job, verifies `Main.exe`, `_32r.dll` and `_32d.dll`, and finally validates `run_phase2_runtime_test.ps1 -ValidateOnly` against synthetic Phase 2 evidence.
+
+The final combined gate is workflow run `34538658227` at source/workflow commit `35cffa30b904071dcdf8a086a6ed5e03daca0342`. It completed successfully, including the PowerShell syntax preflight, pinned Diligent preparation, Release/x86 build/output verification, Debug/x86 build/output verification and synthetic runtime-evidence validation.
 
 ## Reproducible GPU runtime evidence
 
@@ -160,7 +162,7 @@ From `SRCMainGS/Source/Main5.2`:
 powershell -ExecutionPolicy Bypass -File .\run_phase2_runtime_test.ps1 -EnableGLDebug -RequireResize
 ```
 
-The script verifies the executable and both backend DLLs, clears stale evidence, launches `Main.exe` from the correct `Client_2` working directory, waits for normal client shutdown and then checks `ModernGraphics.log` for:
+The script verifies the executable and both backend DLLs, clears stale evidence, launches `Main.exe` from the `Client_2` working directory, waits for normal client shutdown and then checks the executable-relative `ModernGraphics.log` for:
 
 - bootstrap attach attempt;
 - OpenGL vendor/version/profile diagnostics;
@@ -170,7 +172,7 @@ The script verifies the executable and both backend DLLs, clears stale evidence,
 - modern shutdown before legacy WGL teardown;
 - absence of a `Legacy renderer remains active` fallback marker.
 
-The script also supports `-ValidateOnly`. The Windows CI uses this mode with synthetic evidence after compiling both configurations. This validates the PowerShell parser/path/assertion logic without falsely treating hosted CI as a real GPU runtime test.
+The script also supports `-ValidateOnly`. The Windows CI uses this mode with synthetic evidence after compiling both configurations. This validates the PowerShell parser/path/assertion logic without falsely treating hosted CI as a real GPU runtime test. The final combined run `34538658227` passed this validation.
 
 The log is intentionally ignored by Git so local runtime evidence is not accidentally committed as a generated client file.
 
@@ -187,4 +189,4 @@ A real GPU-backed Main run must still prove:
 - shutdown has no lifetime/context errors;
 - legacy scenes render without regression.
 
-Until those runtime checks pass, Phase 2 is repository/build-path implemented and independently compile-proven for both x86 configurations, but **not GPU runtime-certified**.
+Until those runtime checks pass, Phase 2 is repository/build-path implemented and combined-gate build/evidence proven for both x86 configurations, but **not GPU runtime-certified**.
