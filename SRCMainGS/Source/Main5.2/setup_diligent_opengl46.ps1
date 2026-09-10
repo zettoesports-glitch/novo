@@ -2,7 +2,7 @@ param(
     [switch]$BuildMain,
     [ValidateSet('Debug', 'Release')]
     [string]$MainConfiguration = 'Debug',
-    [string]$CMakeGenerator = 'Visual Studio 17 2022'
+    [string]$CMakeGenerator = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -31,6 +31,34 @@ function Invoke-Checked {
     }
 }
 
+function Resolve-CMakeVisualStudioGenerator {
+    param([string]$RequestedGenerator)
+
+    if (-not [string]::IsNullOrWhiteSpace($RequestedGenerator)) {
+        return $RequestedGenerator
+    }
+
+    $cmakeHelp = (& cmake --help 2>&1) -join "`n"
+    if ($LASTEXITCODE -ne 0) {
+        throw 'Unable to query CMake generators.'
+    }
+
+    # Prefer the newest generator supported by the installed CMake/Visual Studio,
+    # but keep VS2022 compatibility for existing Main 5.2 development machines.
+    $candidates = @(
+        'Visual Studio 18 2026',
+        'Visual Studio 17 2022'
+    )
+
+    foreach ($candidate in $candidates) {
+        if ($cmakeHelp -match [regex]::Escape($candidate)) {
+            return $candidate
+        }
+    }
+
+    throw 'No supported Visual Studio CMake generator found. Install Visual Studio 2022/2026 C++ tools or pass -CMakeGenerator explicitly.'
+}
+
 function Copy-BackendDll {
     param([Parameter(Mandatory = $true)][string]$FileName)
 
@@ -51,6 +79,9 @@ if (-not (Get-Command cmake -ErrorAction SilentlyContinue)) {
     throw 'cmake.exe was not found in PATH.'
 }
 
+$ResolvedCMakeGenerator = Resolve-CMakeVisualStudioGenerator -RequestedGenerator $CMakeGenerator
+Write-Host "[Phase2] Using CMake generator: $ResolvedCMakeGenerator"
+
 New-Item -ItemType Directory -Path $DependenciesRoot -Force | Out-Null
 
 if (-not (Test-Path (Join-Path $DiligentRoot '.git'))) {
@@ -60,18 +91,19 @@ if (-not (Test-Path (Join-Path $DiligentRoot '.git'))) {
 
     Write-Host "[Phase2] Cloning DiligentCore $DiligentTag..."
     Invoke-Checked -Program 'git' -Arguments @(
+        '-c', 'core.longpaths=true',
         'clone', '--branch', $DiligentTag, '--depth', '1', '--recursive',
         '--shallow-submodules', $DiligentRepository, $DiligentRoot
     )
 }
 
 Write-Host '[Phase2] Verifying pinned DiligentCore revision...'
-Invoke-Checked -Program 'git' -Arguments @('-C', $DiligentRoot, 'fetch', '--depth', '1', 'origin', $DiligentCommit)
-Invoke-Checked -Program 'git' -Arguments @('-C', $DiligentRoot, 'checkout', '--detach', $DiligentCommit)
-Invoke-Checked -Program 'git' -Arguments @('-C', $DiligentRoot, 'submodule', 'sync', '--recursive')
-Invoke-Checked -Program 'git' -Arguments @('-C', $DiligentRoot, 'submodule', 'update', '--init', '--recursive', '--depth', '1')
+Invoke-Checked -Program 'git' -Arguments @('-c', 'core.longpaths=true', '-C', $DiligentRoot, 'fetch', '--depth', '1', 'origin', $DiligentCommit)
+Invoke-Checked -Program 'git' -Arguments @('-c', 'core.longpaths=true', '-C', $DiligentRoot, 'checkout', '--detach', $DiligentCommit)
+Invoke-Checked -Program 'git' -Arguments @('-c', 'core.longpaths=true', '-C', $DiligentRoot, 'submodule', 'sync', '--recursive')
+Invoke-Checked -Program 'git' -Arguments @('-c', 'core.longpaths=true', '-C', $DiligentRoot, 'submodule', 'update', '--init', '--recursive', '--depth', '1')
 
-$currentCommit = (& git -C $DiligentRoot rev-parse HEAD).Trim()
+$currentCommit = (& git -c core.longpaths=true -C $DiligentRoot rev-parse HEAD).Trim()
 if ($LASTEXITCODE -ne 0 -or $currentCommit -ne $DiligentCommit) {
     throw "DiligentCore revision mismatch. Expected $DiligentCommit, got $currentCommit"
 }
@@ -80,7 +112,7 @@ Write-Host '[Phase2] Configuring DiligentCore OpenGL-only Win32 build...'
 Invoke-Checked -Program 'cmake' -Arguments @(
     '-S', $DiligentRoot,
     '-B', $BuildRoot,
-    '-G', $CMakeGenerator,
+    '-G', $ResolvedCMakeGenerator,
     '-A', 'Win32',
     '-DDILIGENT_BUILD_TESTS=OFF',
     '-DDILIGENT_NO_DIRECT3D11=ON',
