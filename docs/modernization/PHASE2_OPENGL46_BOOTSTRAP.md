@@ -16,7 +16,7 @@ Criar a primeira fronteira de runtime para o renderer moderno sem substituir ain
 5. Garantir apenas uma apresentação por frame.
 6. Adicionar diagnósticos de vendor/renderer/version/profile/backend.
 7. Disponibilizar um caminho reproduzível para preparar/compilar o backend Diligent Win32.
-8. Manter BMD, terrain, effects e UI no legado até o bootstrap ser validado em Windows.
+8. Manter BMD, terrain, effects e UI no legado até o bootstrap ser validado em Windows/GPU.
 
 ## Estado implementado no branch
 
@@ -78,7 +78,7 @@ O lifecycle real foi mapeado e conectado por uma ponte temporária `WH_CALLWNDPR
 - chama `Shutdown()` antes de `WM_CLOSE/WM_DESTROY/WM_NCDESTROY` chegar ao caminho que executa `KillGLWindow()`;
 - não substitui `WndProc`, não cria outro contexto e não apresenta frames.
 
-Esta ponte continua deliberadamente temporária para a Fase 2. Depois que o gate Win32 provar a integração, as chamadas podem ser movidas diretamente para os owners reais (`CreateOpenglWindow`, `CWINHANDLE::WndProc` e shutdown) sem alterar o contrato público de `CModernGraphicsBootstrap`.
+Esta ponte continua deliberadamente temporária para a Fase 2. Depois que o gate Win32/GPU provar a integração, as chamadas podem ser movidas diretamente para os owners reais (`CreateOpenglWindow`, `CWINHANDLE::WndProc` e shutdown) sem alterar o contrato público de `CModernGraphicsBootstrap`.
 
 A descoberta detalhada está em `PHASE2_RUNTIME_DISCOVERY.md`.
 
@@ -129,9 +129,26 @@ Na tentativa de attach são registrados via debugger:
 
 O `CErrorReport::WriteOpenGLInfo()` existente continua registrando a informação persistente do OpenGL da Main.
 
+## Validação de build já comprovada
+
+O workflow `.github/workflows/phase2-win32-build.yml` executa o setup em Windows/Visual Studio e valida os outputs reais.
+
+Run `34533022717`, commit `b641263293ca1eebf5ed28e96cbfbd2643f1269b`:
+
+- checkout exato do Diligent e submodules: aprovado;
+- configuração OpenGL-only Win32/HLSL: aprovada;
+- `GraphicsEngineOpenGL_32r.dll`: compilada;
+- `GraphicsEngineOpenGL_32d.dll`: compilada;
+- `Main.sln` `Release|x86`: compilada com C++17;
+- `Client_2/Main.exe`: linkado;
+- resultado da Main: 13 warnings, **0 erros**;
+- outputs `_32r.dll`, `_32d.dll` e `Main.exe`: verificados pelo workflow.
+
+Um gate Debug anterior (`34529126049`) falhou antes da integração Diligent por uma inconsistência preexistente da Main: `Debug|Win32` usava C++14 e os headers `sol2` presentes no projeto exigem C++17. `source/Directory.Build.targets` agora normaliza somente `Debug|Win32` para C++17; o gate Debug substituto deve passar antes de essa configuração ser marcada como validada.
+
 ## Estado de conclusão
 
-### Concluído no repositório
+### Concluído no repositório/build
 
 - pin do Diligent e shaders/resources;
 - ownership e single-present definidos;
@@ -140,22 +157,24 @@ O `CErrorReport::WriteOpenGLInfo()` existente continua registrando a informaçã
 - validação de versão OpenGL 4.6 e diagnósticos;
 - loader modular do backend OpenGL;
 - setup reproduzível Win32/OpenGL/HLSL;
-- fallback legado quando dependência/DLL/capability não estiver disponível.
+- fallback legado quando dependência/DLL/capability não estiver disponível;
+- build real Windows Release/x86 da Main com os headers pinados;
+- geração real dos dois módulos OpenGL Diligent x86.
 
-### Ainda não validado
+### Ainda não validado em runtime GPU
 
-A Fase 2 só será considerada **runtime-concluída** após build/execução Windows comprovando:
+A Fase 2 só será considerada **runtime-concluída** após execução real da Main comprovando:
 
-- o script prepara DiligentCore e compila `GraphicsEngineOpenGL_32r/32d.dll`;
-- `Main.sln` compila com os headers pinados;
 - criação/anexação do backend OpenGL;
 - versão efetiva >= 4.6;
 - resize sem crash;
 - exatamente uma apresentação por frame;
 - shutdown sem erro de lifetime/contexto;
-- logs de vendor, renderer, version, profile e backend;
+- logs reais de vendor, renderer, version, profile e backend;
 - nenhuma regressão no caminho legado mantido durante o protótipo.
+
+O build CI não substitui esses testes porque não executa o cliente no ambiente gráfico interativo alvo.
 
 ## Próxima ação
 
-Executar `setup_diligent_opengl46.ps1 -BuildMain` em Windows/Visual Studio e rodar a Main para fechar o gate runtime. Depois disso entram os layouts CPU/GPU concretos, constant buffers, pose conversion, Skeleton Texture e o primeiro BMD moderno de duas instâncias.
+Fechar o gate Debug/x86 e, depois, executar `Client_2/Main.exe` em Windows com GPU OpenGL 4.6 para fechar o gate runtime. Somente após esse gate entram como trabalho ativo os layouts CPU/GPU concretos, constant buffers, pose conversion, Skeleton Texture e o primeiro BMD moderno de duas instâncias.
