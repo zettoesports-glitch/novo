@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Processes>
+  <Process Run="True" Delay="1000" Path="E:\Game\5.2\SRC 5.2 BASE\MuServer\1.- ConnectServer\ConnectServer.exe" Parameters="" />
+  <Process Run="True" Delay="1000" Path="E:\Game\5.2\SRC 5.2 BASE\MuServer\2.- DataServer\DataServer.exe" Parameters="" />
+  <Process Run="True" Delay="1000" Path="E:\Game\5.2\SRC 5.2 BASE\MuServer\3.- JoinServer\JoinServer.exe" Parameters="" />
+  <Process Run="True" Delay="1000" Path="E:\Game\5.2\SRC 5.2 BASE\MuServer\4.- GameServer\GameServer.exe" Parameters="" />
+</Processes>
