@@ -25,7 +25,8 @@ The repository-side bootstrap is implemented:
 - resize and pre-WGL-teardown shutdown are wired through a temporary `WH_CALLWNDPROC` coexistence bridge;
 - the OpenGL backend is loaded through the official Diligent DLL loader;
 - Release/x86 and Debug/x86 have both compiled successfully against the pinned Diligent setup;
-- runtime decisions are persisted to `Client_2/ModernGraphics.log`;
+- the permanent combined Release+Debug x86 build/evidence gate passed in workflow run `34538658227`;
+- runtime decisions are persisted to `ModernGraphics.log` beside `Client_2/Main.exe`;
 - optional KHR_debug diagnostics are available through `MU_MODERN_GL_DEBUG=1`;
 - `run_phase2_runtime_test.ps1` provides a reproducible local GPU validation gate.
 
@@ -74,7 +75,7 @@ Do not mix Vulkan/DX11 implementation into the first migration phase.
 2. Identify BMD/model mesh upload and draw paths. **Completed statically in Phase 1.**
 3. Identify texture/material/light/fog contracts used by legacy rendering. **Completed initially in Phase 1.**
 4. Document shader inputs and outputs from the NextMU/reference material available in the repository. **Completed initially in Phase 1.**
-5. Establish Diligent/OpenGL 4.6 bootstrap, ownership, reproducible Win32 build and runtime evidence path. **Repository/build implementation complete; target-GPU validation pending.**
+5. Establish Diligent/OpenGL 4.6 bootstrap, ownership, reproducible Win32 build and runtime evidence path. **Repository/build implementation and combined CI gate complete; target-GPU validation pending.**
 6. Implement concrete CPU/GPU contracts and pose conversion.
 7. Bridge BMD mesh data into persistent GPU resources.
 8. Introduce modern object/material/frame parameter blocks.
@@ -144,9 +145,9 @@ A render path is considered migrated only when:
 - No new crash appears during map change or resource destruction.
 
 ## Next implementation slice
-Use the completed Phase 1 map and repository-side Phase 2 bootstrap as input:
-1. Finish the permanent combined Release+Debug x86 CI gate against the latest bootstrap source.
-2. Run `run_phase2_runtime_test.ps1 -EnableGLDebug -RequireResize` on the target Windows/OpenGL 4.6 GPU and validate `ModernGraphics.log`.
+Use the completed Phase 1 map and repository/build-complete Phase 2 bootstrap as input:
+1. Run `run_phase2_runtime_test.ps1 -EnableGLDebug -RequireResize` on the target Windows/OpenGL 4.6 GPU and validate the executable-relative `ModernGraphics.log`.
+2. If that gate passes, re-evaluate the temporary `WH_CALLWNDPROC` bridge and move lifecycle calls directly to the already-mapped owners when safe.
 3. After the GPU gate, implement concrete CPU/GPU contracts and pose conversion.
 4. Add persistent BMD geometry buffers, Frame/Object/Material constant buffers and the shared-HLSL model pipeline.
 5. Render one BMD with two independent instances.
