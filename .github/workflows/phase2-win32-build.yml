@@ -8,10 +8,13 @@ on:
     paths:
       - '.github/workflows/phase2-win32-build.yml'
       - 'SRCMainGS/Source/Main5.2/**'
-      - 'docs/modernization/**'
 
 permissions:
   contents: read
+
+concurrency:
+  group: phase2-win32-build-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-main-x86:
