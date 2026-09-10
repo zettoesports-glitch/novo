@@ -128,6 +128,7 @@ jobs:
             '[ModernGraphics] Diligent validation/OpenGL debug routing enabled by MU_MODERN_GL_DEBUG.'
             '[ModernGraphics] Diligent attached to the existing OpenGL 4.6 context; legacy SwapBuffers remains authoritative.'
             '[ModernGraphics] Resize observed: 1280x720. Presentation remains legacy-owned.'
+            '[ModernGraphics] Teardown barrier armed for the attached WGL context.'
             '[ModernGraphics] Shutdown completed before legacy WGL teardown.'
           ) | Set-Content -Path $logPath -Encoding ASCII
 
