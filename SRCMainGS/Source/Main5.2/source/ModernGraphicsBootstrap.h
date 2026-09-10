@@ -21,6 +21,13 @@ enum class ModernGraphicsBackend : unsigned char
     Direct3D11,
 };
 
+enum class ModernGraphicsOwnership : unsigned char
+{
+    None = 0,
+    Attached,
+    Owned,
+};
+
 class CModernGraphicsBootstrap
 {
 public:
@@ -47,9 +54,14 @@ public:
 
     bool IsActive() const;
     bool IsOpenGL46Capable() const;
+    bool HasAttemptedInitializationFor(HWND hWnd, HGLRC hGLRC) const;
+    bool IsAttachedToWindow(HWND hWnd) const;
     ModernGraphicsBackend GetBackend() const;
+    ModernGraphicsOwnership GetOwnership() const;
     unsigned int GetWidth() const;
     unsigned int GetHeight() const;
+    int GetOpenGLMajor() const;
+    int GetOpenGLMinor() const;
 
 #ifdef MU_ENABLE_DILIGENT
     Diligent::IRenderDevice* GetDevice() const;
@@ -58,6 +70,7 @@ public:
 
 private:
     void ResetState();
+    void LogOpenGLDiagnostics() const;
 
     HWND m_hWnd;
     HDC m_hDC;
@@ -68,7 +81,9 @@ private:
     int m_glMinor;
     bool m_gl46Capable;
     bool m_active;
+    bool m_initializationAttempted;
     ModernGraphicsBackend m_backend;
+    ModernGraphicsOwnership m_ownership;
 
 #ifdef MU_ENABLE_DILIGENT
     Diligent::RefCntAutoPtr<Diligent::IRenderDevice> m_device;

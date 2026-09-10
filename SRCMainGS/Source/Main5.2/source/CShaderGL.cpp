@@ -131,7 +131,6 @@ void CShaderGL::run_projection()
 
 		view = glm::translate(view, glm::vec3(-CameraPosition[0], -CameraPosition[1], -CameraPosition[2]));
 
-
 		this->setMat4("view", view);
 		this->setMat4("model", model);
 
@@ -201,3 +200,109 @@ CShaderGL* CShaderGL::Instance()
 // vendored in dependencies and the project file is updated, this implementation
 // can move to its own .cpp without changing the public contract.
 #include "ModernGraphicsBootstrap.inl"
+
+#ifdef MU_ENABLE_DILIGENT
+// Temporary Phase 2 coexistence bridge.
+//
+// The legacy lifecycle lives in large Winmain.cpp/WINHANDLE.cpp units. During
+// the bootstrap phase we observe messages on the main UI thread instead of
+// duplicating or replacing the legacy window/context/presentation code. This
+// keeps the original SwapBuffers path authoritative and guarantees that
+// Diligent is released before WM_DESTROY reaches KillGLWindow().
+namespace
+{
+HHOOK g_ModernGraphicsWindowHook = NULL;
+
+void TryAttachModernGraphics(HWND hWnd)
+{
+	HGLRC currentContext = wglGetCurrentContext();
+	HDC currentDC = wglGetCurrentDC();
+
+	if (currentContext == NULL || currentDC == NULL)
+		return;
+
+	if (WindowFromDC(currentDC) != hWnd)
+		return;
+
+	CModernGraphicsBootstrap& graphics = GetModernGraphics();
+	if (graphics.HasAttemptedInitializationFor(hWnd, currentContext))
+		return;
+
+	RECT clientRect = { 0, 0, 0, 0 };
+	if (!GetClientRect(hWnd, &clientRect))
+		return;
+
+	const unsigned int width = clientRect.right > clientRect.left
+		? static_cast<unsigned int>(clientRect.right - clientRect.left)
+		: 0u;
+	const unsigned int height = clientRect.bottom > clientRect.top
+		? static_cast<unsigned int>(clientRect.bottom - clientRect.top)
+		: 0u;
+
+	graphics.InitializeOpenGL46(hWnd, currentDC, currentContext, width, height);
+}
+
+LRESULT CALLBACK ModernGraphicsCallWndProc(int code, WPARAM wParam, LPARAM lParam)
+{
+	if (code >= 0 && lParam != 0)
+	{
+		const CWPSTRUCT* message = reinterpret_cast<const CWPSTRUCT*>(lParam);
+
+		switch (message->message)
+		{
+		case WM_CLOSE:
+		case WM_DESTROY:
+		case WM_NCDESTROY:
+			if (GetModernGraphics().IsAttachedToWindow(message->hwnd))
+				GetModernGraphics().Shutdown();
+			break;
+
+		default:
+			TryAttachModernGraphics(message->hwnd);
+
+			if (message->message == WM_SIZE && message->wParam != SIZE_MINIMIZED)
+			{
+				CModernGraphicsBootstrap& graphics = GetModernGraphics();
+				if (graphics.IsAttachedToWindow(message->hwnd))
+				{
+					const unsigned int width = static_cast<unsigned int>(LOWORD(message->lParam));
+					const unsigned int height = static_cast<unsigned int>(HIWORD(message->lParam));
+					if (width != 0u && height != 0u)
+						graphics.OnResize(width, height);
+				}
+			}
+			break;
+		}
+	}
+
+	return CallNextHookEx(g_ModernGraphicsWindowHook, code, wParam, lParam);
+}
+
+class CModernGraphicsLifecycleBridge
+{
+public:
+	CModernGraphicsLifecycleBridge()
+	{
+		g_ModernGraphicsWindowHook = SetWindowsHookEx(
+			WH_CALLWNDPROC,
+			ModernGraphicsCallWndProc,
+			NULL,
+			GetCurrentThreadId());
+
+		if (g_ModernGraphicsWindowHook == NULL)
+			OutputDebugStringA("[ModernGraphics] Failed to install the Phase 2 Win32 lifecycle bridge.\n");
+	}
+
+	~CModernGraphicsLifecycleBridge()
+	{
+		if (g_ModernGraphicsWindowHook != NULL)
+		{
+			UnhookWindowsHookEx(g_ModernGraphicsWindowHook);
+			g_ModernGraphicsWindowHook = NULL;
+		}
+	}
+};
+
+CModernGraphicsLifecycleBridge g_ModernGraphicsLifecycleBridge;
+}
+#endif // MU_ENABLE_DILIGENT
