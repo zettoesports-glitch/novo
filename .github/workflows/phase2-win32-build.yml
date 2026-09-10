@@ -18,9 +18,10 @@ concurrency:
 
 jobs:
   build-main-x86:
-    name: Main Release x86 + Diligent OpenGL
-    # Release is already configured as C++17 in Main.vcxproj, which is required
-    # by the vendored sol2 headers. Keep CI on VS2022 while Phase 2 is validated.
+    name: Main Debug x86 + Diligent OpenGL
+    # Debug is normalized to C++17 by source/Directory.Build.targets because
+    # the vendored sol2 headers require C++17. Keep CI on VS2022 while the
+    # Phase 2 coexistence/bootstrap path is validated.
     runs-on: windows-2022
     timeout-minutes: 60
 
@@ -42,7 +43,7 @@ jobs:
         shell: powershell
         working-directory: SRCMainGS/Source/Main5.2
         run: |
-          .\setup_diligent_opengl46.ps1 -BuildMain -MainConfiguration Release
+          .\setup_diligent_opengl46.ps1 -BuildMain -MainConfiguration Debug
 
       - name: Verify expected outputs
         shell: powershell
