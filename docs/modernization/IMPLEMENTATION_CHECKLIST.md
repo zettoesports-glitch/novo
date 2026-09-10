@@ -26,6 +26,9 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [ ] Frame/Object/Material data contracts
 
 ## OpenGL 4.6
+- [x] Define context/profile ownership and single-presentation rules (static design)
+- [ ] Locate and wire real Main window/context/resize/present integration points
+- [ ] Pin Diligent and shared shader revisions
 - [ ] Context/capability validation
 - [ ] Diligent buffer/texture lifecycle and transitions
 - [ ] Diligent HLSL shader compilation diagnostics
