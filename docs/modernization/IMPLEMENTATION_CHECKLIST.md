@@ -40,14 +40,16 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [x] Compile `Main.sln` Release/x86 with the pinned Diligent headers enabled (run `34533022717`, 0 errors)
 - [x] Compile `Main.sln` Debug/x86 with C++17 and the pinned Diligent headers enabled (run `34533868904`, 0 errors)
 - [x] Observe successful Phase 2 Windows/x86 CI runs for both Main configurations independently
-- [ ] Observe the permanent combined Release+Debug x86 workflow gate succeed after consolidating both configurations into one CI job
+- [ ] Observe the permanent combined Release+Debug x86 workflow gate succeed against the latest Phase 2 source (run `34535389139` currently validating runtime-diagnostics changes)
+- [x] Add persistent `Client_2/ModernGraphics.log` evidence for attach/capability/resize/shutdown decisions (source implemented; latest combined compile gate pending)
+- [x] Add opt-in OpenGL/KHR_debug callback through `MU_MODERN_GL_DEBUG=1` (source implemented; GPU runtime pending)
+- [x] Add reproducible local GPU validation script (`run_phase2_runtime_test.ps1`)
 - [ ] Diligent buffer/texture lifecycle and transitions
 - [ ] Diligent HLSL shader compilation diagnostics
 - [ ] Diligent constant-buffer path
 - [ ] Texture/sampler binding
 - [ ] Depth/blend/cull state handling
 - [ ] Draw submission
-- [ ] OpenGL debug callback/logging (basic vendor/renderer/version/profile diagnostics already implemented)
 - [ ] Pass Phase 2 Windows runtime gate: DLL load/factory, attach, GL >= 4.6, resize, single present, clean shutdown, legacy regression check
 - [ ] After runtime gate, replace the temporary `WH_CALLWNDPROC` coexistence bridge with direct lifecycle calls if validation shows no need to retain the bridge
 
