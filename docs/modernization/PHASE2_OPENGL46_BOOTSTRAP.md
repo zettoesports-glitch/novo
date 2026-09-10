@@ -15,11 +15,12 @@ Criar a primeira fronteira de runtime para o renderer moderno sem substituir ain
 4. Tratar resize por uma única fronteira do renderer.
 5. Garantir apenas uma apresentação por frame.
 6. Adicionar diagnósticos de vendor/renderer/version/profile/backend.
-7. Manter BMD, terrain, effects e UI no legado até o bootstrap ser validado em Windows.
+7. Disponibilizar um caminho reproduzível para preparar/compilar o backend Diligent Win32.
+8. Manter BMD, terrain, effects e UI no legado até o bootstrap ser validado em Windows.
 
 ## Estado implementado no branch
 
-A fronteira de bootstrap já existe em:
+A fronteira de bootstrap existe em:
 
 - `SRCMainGS/Source/Main5.2/source/ModernGraphicsBootstrap.h`
 - `SRCMainGS/Source/Main5.2/source/ModernGraphicsBootstrap.inl`
@@ -29,6 +30,46 @@ O código define os backends `Legacy`, `OpenGL46`, `Vulkan` e `Direct3D11`, por�
 
 O caminho OpenGL usa `IEngineFactoryOpenGL::AttachToActiveGLContext`. Isto é intencional: a Main continua dona de `HWND`, `HDC`, `HGLRC` e `SwapBuffers`; Diligent é anexado ao contexto existente e não cria swap chain durante a coexistência.
 
+## Carregamento do backend
+
+A Main não faz link estático do engine OpenGL do Diligent.
+
+Com `ENGINE_DLL=1`, o bootstrap usa o loader Win32 oficial exposto por Diligent:
+
+- `LoadGraphicsEngineOpenGL()` carrega o módulo do backend;
+- o módulo exporta `GetEngineFactoryOpenGL`;
+- Release usa `GraphicsEngineOpenGL_32r.dll`;
+- Debug da Main é alinhado com `DILIGENT_DEBUG` e usa `GraphicsEngineOpenGL_32d.dll`.
+
+Se o módulo não puder ser carregado ou a factory retornar nula, a inicialização moderna falha de forma controlada e o renderer legado permanece ativo.
+
+Isto aproxima a fronteira da arquitetura modular observada no pacote de referência sem acoplar o código de gameplay a uma API gráfica específica.
+
+## Preparação reproduzível da dependência
+
+Foi adicionado:
+
+`SRCMainGS/Source/Main5.2/setup_diligent_opengl46.ps1`
+
+O script fixa e verifica:
+
+- tag DiligentCore: `v2.5.6`;
+- commit: `b036337d68be2353c9950a85929acf796b9a6d50`.
+
+Ele prepara os submodules, configura um build Win32 OpenGL-only com HLSL habilitado, compila os backends Release/Debug e copia as DLLs para `Client_2`.
+
+Também pode compilar a Main:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\setup_diligent_opengl46.ps1 -BuildMain
+```
+
+O checkout e os outputs gerados ficam em `dependencies/DiligentCore/` e `dependencies/_diligent_build/`, ambos ignorados pelo `.gitignore` da `Main5.2`.
+
+`ModernGraphicsBootstrap.h` ativa `MU_ENABLE_DILIGENT` automaticamente no MSVC/Win32 quando detecta o header OpenGL no layout preparado pelo script. Sem a dependência, o código legado continua sendo o caminho padrão.
+
+## Lifecycle de coexistência
+
 O lifecycle real foi mapeado e conectado por uma ponte temporária `WH_CALLWNDPROC` no mesmo thread da UI quando `MU_ENABLE_DILIGENT` está habilitado. A ponte:
 
 - detecta o contexto WGL real depois que ele está current;
@@ -36,6 +77,8 @@ O lifecycle real foi mapeado e conectado por uma ponte temporária `WH_CALLWNDPR
 - encaminha `WM_SIZE` para `OnResize(...)`;
 - chama `Shutdown()` antes de `WM_CLOSE/WM_DESTROY/WM_NCDESTROY` chegar ao caminho que executa `KillGLWindow()`;
 - não substitui `WndProc`, não cria outro contexto e não apresenta frames.
+
+Esta ponte continua deliberadamente temporária para a Fase 2. Depois que o gate Win32 provar a integração, as chamadas podem ser movidas diretamente para os owners reais (`CreateOpenglWindow`, `CWINHANDLE::WndProc` e shutdown) sem alterar o contrato público de `CModernGraphicsBootstrap`.
 
 A descoberta detalhada está em `PHASE2_RUNTIME_DISCOVERY.md`.
 
@@ -80,16 +123,31 @@ Na tentativa de attach são registrados via debugger:
 - `GL_SHADING_LANGUAGE_VERSION`;
 - major/minor interpretados;
 - `core` / `compatibility` profile quando disponível;
+- falha ao carregar a DLL/factory Diligent;
 - sucesso/falha do attach Diligent;
 - confirmação de que o `SwapBuffers` legado permanece autoritativo.
 
 O `CErrorReport::WriteOpenGLInfo()` existente continua registrando a informação persistente do OpenGL da Main.
 
-## Gate de validação
+## Estado de conclusão
+
+### Concluído no repositório
+
+- pin do Diligent e shaders/resources;
+- ownership e single-present definidos;
+- mapeamento real do lifecycle da Main;
+- bridge de attach/resize/shutdown;
+- validação de versão OpenGL 4.6 e diagnósticos;
+- loader modular do backend OpenGL;
+- setup reproduzível Win32/OpenGL/HLSL;
+- fallback legado quando dependência/DLL/capability não estiver disponível.
+
+### Ainda não validado
 
 A Fase 2 só será considerada **runtime-concluída** após build/execução Windows comprovando:
 
-- Diligent v2.5.6 disponível no `Main.vcxproj` Win32 e `MU_ENABLE_DILIGENT` habilitado;
+- o script prepara DiligentCore e compila `GraphicsEngineOpenGL_32r/32d.dll`;
+- `Main.sln` compila com os headers pinados;
 - criação/anexação do backend OpenGL;
 - versão efetiva >= 4.6;
 - resize sem crash;
@@ -100,4 +158,4 @@ A Fase 2 só será considerada **runtime-concluída** após build/execução Win
 
 ## Próxima ação
 
-Integrar os headers/libs do pin Diligent ao `Main.vcxproj` Win32, habilitar `MU_ENABLE_DILIGENT` em uma configuração de teste e executar o gate acima. Somente depois disso entram os layouts CPU/GPU, constant buffers, Skeleton Texture e o primeiro BMD moderno de duas instâncias.
+Executar `setup_diligent_opengl46.ps1 -BuildMain` em Windows/Visual Studio e rodar a Main para fechar o gate runtime. Depois disso entram os layouts CPU/GPU concretos, constant buffers, pose conversion, Skeleton Texture e o primeiro BMD moderno de duas instâncias.
