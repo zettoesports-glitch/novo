@@ -6,16 +6,30 @@ Modernize the Main 5.2 rendering pipeline with OpenGL 4.6 as the first active ba
 ## Current verified repository state
 - Branch: `modernization`
 - Main 5.2 root: `SRCMainGS/Source/Main5.2`
-- Main 5.2 currently contains `Main.sln`, `dependencies`, and `source`.
-- Renderer modernization work must be integrated inside the existing Main source tree rather than assuming a separate `resource` directory under Main5.2.
+- Main 5.2 contains `Main.sln`, `dependencies`, and `source`.
+- Renderer modernization work is integrated inside the existing Main source tree rather than assuming a separate `resource` directory under Main5.2.
 
 ## Phase 1 discovery
 
-The static Main-to-renderer mapping is documented in [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERER_MAPPING.md). It identifies initial call paths, data producers, snapshot ownership, materials and the Diligent integration boundary. Runtime and GPU validation remain pending.
+The static Main-to-renderer mapping is documented in [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERER_MAPPING.md). It identifies initial call paths, data producers, snapshot ownership, materials and the Diligent integration boundary. Phase 1 static discovery is complete.
 
 ## Phase 2 runtime bootstrap
 
-Phase 2 is defined in [PHASE2_OPENGL46_BOOTSTRAP.md](PHASE2_OPENGL46_BOOTSTRAP.md). It establishes the runtime boundary for Diligent/OpenGL 4.6: native-window ownership, context/profile requirements, resize ownership, exactly one presentation per frame, capability diagnostics and coexistence rules with the legacy renderer. The implementation must bind these contracts to the real Main window/context/present code before any BMD path is migrated.
+Phase 2 is defined in [PHASE2_OPENGL46_BOOTSTRAP.md](PHASE2_OPENGL46_BOOTSTRAP.md) and detailed in [PHASE2_RUNTIME_DISCOVERY.md](PHASE2_RUNTIME_DISCOVERY.md).
+
+The repository-side bootstrap is implemented:
+
+- legacy Main remains owner of `HWND`, `HDC`, `HGLRC` and `SwapBuffers`;
+- Diligent attaches to the already-current WGL context with `AttachToActiveGLContext`;
+- effective OpenGL >= 4.6 is required for modern activation;
+- resize and pre-WGL-teardown shutdown are wired through a temporary `WH_CALLWNDPROC` coexistence bridge;
+- the OpenGL backend is loaded through the official Diligent DLL loader;
+- Release/x86 and Debug/x86 have both compiled successfully against the pinned Diligent setup;
+- runtime decisions are persisted to `Client_2/ModernGraphics.log`;
+- optional KHR_debug diagnostics are available through `MU_MODERN_GL_DEBUG=1`;
+- `run_phase2_runtime_test.ps1` provides a reproducible local GPU validation gate.
+
+The only bootstrap certification that cannot be provided by hosted CI is the real interactive GPU/WGL run. Phase 2 must not be called runtime-complete until that gate passes.
 
 ## Architecture target
 
@@ -36,14 +50,16 @@ Expose game-facing contracts for:
 The game should not directly depend on OpenGL calls after a render path has been migrated.
 
 ### Diligent / OpenGL 4.6 integration
-Implement first:
-- Pin Diligent and submodule revisions, build architecture and runtime dependencies.
-- Establish explicit OpenGL 4.6 context creation and capability validation; selecting the GL backend alone does not guarantee 4.6.
-- Define host window, render target, resize and presentation ownership.
-- Create buffers/textures through Diligent; compile HLSL through its shader interface.
-- Define constant buffers, pipeline state objects and shader resource bindings.
-- Submit indexed/non-indexed draws and resource transitions through Diligent.
-- Log shader/resource failures with source, entity and pass identifiers.
+The implementation sequence is:
+- pin Diligent and reference shader/resource revisions;
+- establish/validate the OpenGL 4.6 runtime boundary and explicit presentation ownership;
+- prove the attached-context lifecycle on the target GPU;
+- create buffers/textures through Diligent and compile shared HLSL through its shader interface;
+- define constant buffers, pipeline state objects and shader resource bindings;
+- submit indexed/non-indexed draws and resource transitions through Diligent;
+- log shader/resource failures with source, entity and pass identifiers.
+
+The current coexistence mode validates the effective version of the context returned by legacy `wglCreateContext()`. An explicit 4.6 compatibility-context creation path may be introduced later if target-driver validation shows it is required and legacy GL behavior remains intact.
 
 ### Future backend integration
 Prepare typed factories, conditional builds and explicit availability checks for:
@@ -58,7 +74,7 @@ Do not mix Vulkan/DX11 implementation into the first migration phase.
 2. Identify BMD/model mesh upload and draw paths. **Completed statically in Phase 1.**
 3. Identify texture/material/light/fog contracts used by legacy rendering. **Completed initially in Phase 1.**
 4. Document shader inputs and outputs from the NextMU/reference material available in the repository. **Completed initially in Phase 1.**
-5. Establish Diligent/OpenGL 4.6 runtime bootstrap and ownership. **Phase 2 active.**
+5. Establish Diligent/OpenGL 4.6 bootstrap, ownership, reproducible Win32 build and runtime evidence path. **Repository/build implementation complete; target-GPU validation pending.**
 6. Implement concrete CPU/GPU contracts and pose conversion.
 7. Bridge BMD mesh data into persistent GPU resources.
 8. Introduce modern object/material/frame parameter blocks.
@@ -68,7 +84,7 @@ Do not mix Vulkan/DX11 implementation into the first migration phase.
 12. Migrate terrain, effects, particles, UI and special passes separately.
 
 ## Compatibility strategy
-During the transition, renderer selection must be explicit per render path. A temporary legacy path requires a validated context/profile and explicit state boundaries. Legacy calls cannot execute inside a Core-only context or a Vulkan/D3D11 renderer. Validate a host-owned OpenGL 4.6 compatibility context with Diligent attachment, or use an isolated Core harness until coexistence is proven. Define who presents the frame exactly once.
+During the transition, renderer selection must be explicit per render path. The legacy Main currently owns a compatibility-sensitive WGL context and fixed-function/client-array paths, so no Core-only migration can be assumed safe. Diligent attaches to the host-owned context and invalidates its cached GL state at raw-GL -> Diligent boundaries. Presentation remains owned by the legacy scene code exactly once per frame.
 
 The modern renderer must never reuse object-instance state from another entity. Per-object matrices, material state, animation state, lighting and texture bindings must be supplied explicitly for every draw.
 
@@ -109,13 +125,13 @@ Required work:
 - Introduce explicit mesh/material/object handles.
 
 ## Diagnostics required before broad rollout
-- OpenGL version/vendor/renderer log
+- OpenGL version/vendor/renderer log — **implemented in Phase 2; runtime evidence pending**
 - shader compile/link errors with source name
 - resource creation/destruction counters
 - draw-call counters
 - fallback reason logging
 - entity/object identifier in renderer diagnostics
-- optional GL debug callback in development builds
+- optional GL debug callback — **implemented in Phase 2; runtime evidence pending**
 
 ## Validation gates
 A render path is considered migrated only when:
@@ -128,11 +144,11 @@ A render path is considered migrated only when:
 - No new crash appears during map change or resource destruction.
 
 ## Next implementation slice
-Use the completed static phase-1 map as input:
-1. Pin Diligent and shader versions.
-2. Locate and wire the real Windows window/context/resize/present integration points.
-3. Validate the Windows OpenGL 4.6 context/profile and presentation model in a narrow prototype.
-4. Implement and verify the documented CPU/GPU contracts and pose conversion.
+Use the completed Phase 1 map and repository-side Phase 2 bootstrap as input:
+1. Finish the permanent combined Release+Debug x86 CI gate against the latest bootstrap source.
+2. Run `run_phase2_runtime_test.ps1 -EnableGLDebug -RequireResize` on the target Windows/OpenGL 4.6 GPU and validate `ModernGraphics.log`.
+3. After the GPU gate, implement concrete CPU/GPU contracts and pose conversion.
+4. Add persistent BMD geometry buffers, Frame/Object/Material constant buffers and the shared-HLSL model pipeline.
 5. Render one BMD with two independent instances.
 6. Compare Hero, remote player/BotBuffer and inventory-preview behavior before expanding coverage.
 
