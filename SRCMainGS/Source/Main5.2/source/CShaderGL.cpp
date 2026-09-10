@@ -290,7 +290,7 @@ public:
 			GetCurrentThreadId());
 
 		if (g_ModernGraphicsWindowHook == NULL)
-			OutputDebugStringA("[ModernGraphics] Failed to install the Phase 2 Win32 lifecycle bridge.\n");
+			ModernGraphicsLog("[ModernGraphics] Failed to install the Phase 2 Win32 lifecycle bridge.\n");
 	}
 
 	~CModernGraphicsLifecycleBridge()
