@@ -19,7 +19,7 @@ This document records the real Main 5.2 lifecycle points used by the Phase 2 Ope
 
 `SRCMainGS/Source/Main5.2/source/Winmain.cpp`
 
-`CreateOpenglWindow()` currently owns the legacy Win32/WGL initialization:
+`CreateOpenglWindow()` owns the legacy Win32/WGL initialization:
 
 1. `GetDC()` stores `g_hDC`;
 2. `ChoosePixelFormat` / `SetPixelFormat` configure a double-buffered window surface;
@@ -29,7 +29,7 @@ This document records the real Main 5.2 lifecycle points used by the Phase 2 Ope
 
 The context is therefore externally created from Diligent's point of view. Phase 2 uses `AttachToActiveGLContext`; it does not create a second OpenGL context or swap chain.
 
-Important: the current code uses legacy `wglCreateContext()` rather than explicitly requesting a 4.6 context. The bootstrap therefore validates the **effective** GL version and remains inactive if the driver does not expose >= 4.6. Creating an explicit 4.6 compatibility context can be evaluated later, before asset creation, but must not invalidate legacy GL objects.
+The current code still uses legacy `wglCreateContext()` rather than explicitly requesting a 4.6 context. The bootstrap validates the **effective** GL version and remains inactive if the driver does not expose >= 4.6. Explicit 4.6 compatibility-context creation can be evaluated later, before modern asset creation, only if it does not invalidate legacy GL objects.
 
 ### Present ownership
 
@@ -45,19 +45,19 @@ if (Success)
 }
 ```
 
-`LoadingScene(HDC)` also owns presentation while that scene is active. No Phase 2 code calls `SwapBuffers`, and no Diligent swap chain is created. Therefore there remains exactly one application-owned presentation path per rendered scene frame.
+`LoadingScene(HDC)` also owns presentation while that scene is active. No Phase 2 code calls `SwapBuffers`, and no Diligent swap chain is created. There remains exactly one application-owned presentation path per rendered scene frame.
 
 ### Resize
 
-`CWINHANDLE::WndProc` receives `WM_SIZE`. Before Phase 2 it only handled minimization state and did not notify a modern renderer.
+`CWINHANDLE::WndProc` receives `WM_SIZE`. The temporary Phase 2 lifecycle bridge observes `WM_SIZE` on the same UI thread and calls `CModernGraphicsBootstrap::OnResize(width, height)` for the attached window when the new size is non-zero and not minimized.
 
-The current Phase 2 lifecycle bridge observes `WM_SIZE` on the same UI thread and calls `CModernGraphicsBootstrap::OnResize(width, height)` for the attached window when the new size is non-zero and not minimized.
+`OnResize()` currently records the dimensions and writes a persistent runtime marker; it does not own a swap chain or recreate legacy framebuffer resources.
 
 ### Shutdown
 
 `CWINHANDLE::WndProc` handles `WM_CLOSE` / `WM_DESTROY` and then calls `KillGLWindow()`. `KillGLWindow()` unbinds/deletes `g_hRC` and releases `g_hDC`.
 
-The Phase 2 bridge observes `WM_CLOSE`, `WM_DESTROY` and `WM_NCDESTROY` before the legacy WndProc processes them and calls `CModernGraphicsBootstrap::Shutdown()`. This releases the Diligent immediate context/device while the external WGL context is still alive.
+The Phase 2 bridge observes `WM_CLOSE`, `WM_DESTROY` and `WM_NCDESTROY` before the legacy WndProc processes them and calls `CModernGraphicsBootstrap::Shutdown()`. This flushes/releases the Diligent immediate context/device while the external WGL context is still alive, disables the optional GL debug callback while the context is current, and records a persistent shutdown marker.
 
 ## Coexistence bridge
 
@@ -72,7 +72,7 @@ This is a bootstrap bridge, not a replacement window system. It deliberately doe
 - create a Diligent swap chain;
 - move BMD/terrain/effects/UI to the modern renderer yet.
 
-The hook is still a **temporary Phase 2 bridge**. It has not been presented as the final window-system architecture. After the Windows GPU gate is proven, initialization/resize/shutdown may be moved directly into `CreateOpenglWindow()`, `CWINHANDLE::WndProc` and the pre-`KillGLWindow()` path without changing `CModernGraphicsBootstrap`'s public contract.
+The hook remains a **temporary Phase 2 bridge**. After the Windows GPU gate is proven, initialization/resize/shutdown may be moved directly into `CreateOpenglWindow()`, `CWINHANDLE::WndProc` and the pre-`KillGLWindow()` path without changing `CModernGraphicsBootstrap`'s public contract.
 
 ## Capability and diagnostics
 
@@ -81,14 +81,18 @@ The hook is still a **temporary Phase 2 bridge**. It has not been presented as t
 - verifies the supplied `HWND/HDC/HGLRC` are valid;
 - verifies the supplied WGL context/DC are current;
 - reads/parses the effective OpenGL major/minor version;
-- logs vendor, renderer, OpenGL version, GLSL version and context profile;
+- records vendor, renderer, OpenGL version, GLSL version and context profile;
 - refuses modern activation below OpenGL 4.6;
 - loads the Diligent OpenGL backend through the official Win32 DLL loader;
 - obtains `IEngineFactoryOpenGL` from the backend module;
 - attaches Diligent through `AttachToActiveGLContext`;
 - records ownership as `Attached` after successful attachment.
 
-The existing `CErrorReport::WriteOpenGLInfo()` remains the application's persistent OpenGL information log. Phase 2's `OutputDebugStringA` diagnostics add the modern-backend decision/profile details without taking over the legacy logger.
+Diagnostics are sent both to `OutputDebugStringA` and to `Client_2/ModernGraphics.log` when the client is launched with `Client_2` as its working directory. This creates persistent evidence without requiring a debugger.
+
+Setting environment variable `MU_MODERN_GL_DEBUG=1` requests an OpenGL debug callback when GL 4.3/KHR_debug entry points are available. Callback messages are appended to the same log. This is opt-in so the legacy runtime is not flooded by driver diagnostics by default.
+
+The existing `CErrorReport::WriteOpenGLInfo()` remains the application's original OpenGL information path; the Phase 2 log supplements rather than replaces it.
 
 ## Dependency/build state
 
@@ -109,47 +113,71 @@ The generated Diligent checkout/build directories are ignored by `Main5.2/.gitig
 
 `ModernGraphicsBootstrap.h` auto-enables `MU_ENABLE_DILIGENT` for MSVC/Win32 when the expected local Diligent OpenGL header exists. Main's `DEBUG` configuration is mapped to Diligent's public debug definitions so the official loader selects the debug backend; Release selects the release backend.
 
-No Diligent engine import library is required by the Main for this Phase 2 path: the backend is loaded dynamically.
+No Diligent engine import library is required by Main for this Phase 2 path: the backend is loaded dynamically.
+
+`source/Directory.Build.targets` scopes a C++17 override to `Debug|Win32` for Main only. Release was already C++17. DiligentCore retains its upstream project settings.
 
 ## Windows/x86 compile evidence
 
-GitHub Actions now provides real Windows/MSBuild evidence rather than only static source inspection.
-
-### Successful Release gate
+### Release/x86
 
 Workflow run `34533022717`, commit `b641263293ca1eebf5ed28e96cbfbd2643f1269b`:
 
-- Windows Server 2022 / Visual Studio 2022 runner;
-- pinned DiligentCore checkout/submodules completed successfully;
+- pinned Diligent checkout/submodules completed successfully;
 - OpenGL-only Win32 configuration completed successfully;
-- `GraphicsEngineOpenGL_32r.dll` built successfully;
-- `GraphicsEngineOpenGL_32d.dll` built successfully;
-- `Main.sln` built as `Release|x86` using `/std:c++17`;
-- `CShaderGL.cpp` (and therefore the Phase 2 bootstrap/bridge implementation included by that translation unit) compiled successfully;
+- both `_32r` and `_32d` backend DLLs were built;
+- `Main.sln` built as `Release|x86` using C++17;
+- `CShaderGL.cpp` and the included Phase 2 bootstrap compiled successfully;
 - `Client_2/Main.exe` linked successfully;
-- final Main result: 13 warnings, **0 errors**;
-- workflow verified `Main.exe`, `_32r.dll` and `_32d.dll` existed in `Client_2`.
+- final Main result: **0 errors**.
 
-This closes the repository-side Release/x86 compile/setup gate. It does **not** prove a GPU/runtime attach because the hosted CI job does not launch the game client in its intended interactive WGL environment.
+### Debug/x86
 
-### Debug configuration issue and correction
+Workflow run `34533868904`, commit `51a21347b0f55a98957f85e53a6a5fde6bf7b2a4`:
 
-Earlier workflow run `34529126049` built both Diligent OpenGL DLL configurations but failed when Main Debug started compiling. The failure occurred in legacy/vendored `sol2` headers because `Debug|Win32` in `Main.vcxproj` used `/std:c++14`, while the same Main source already requires C++17 (`std::string_view`, `std::variant`, `std::byte`, inline variables).
+- the same pinned Diligent preparation completed successfully;
+- Main Debug/x86 compiled using the Main-only C++17 normalization;
+- `Client_2/Main.exe` linked successfully;
+- final Main result: **0 errors**.
 
-The failure was therefore not caused by Diligent or `AttachToActiveGLContext`.
+The earlier Debug failure was caused by the legacy project using C++14 while its vendored sol2 headers already require C++17; it was not a Diligent attach failure.
 
-`SRCMainGS/Source/Main5.2/source/Directory.Build.targets` now scopes a `stdcpp17` override to `Debug|Win32` for the Main project directory only. This avoids changing DiligentCore's upstream project settings. The replacement Debug/x86 workflow must pass before Debug is recorded as build-proven.
+### Permanent combined gate
+
+`.github/workflows/phase2-win32-build.yml` now builds Release/x86 and Debug/x86 sequentially in one Windows job and verifies `Main.exe`, `_32r.dll` and `_32d.dll` after each configuration. The latest combined gate is run `34535389139`, triggered by the persistent runtime-diagnostics changes. Its result must be checked before the combined gate is called closed.
+
+## Reproducible GPU runtime evidence
+
+`SRCMainGS/Source/Main5.2/run_phase2_runtime_test.ps1` turns the remaining manual GPU gate into a repeatable validation procedure.
+
+From `SRCMainGS/Source/Main5.2`:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\run_phase2_runtime_test.ps1 -EnableGLDebug -RequireResize
+```
+
+The script verifies the executable and both backend DLLs, clears stale evidence, launches `Main.exe` from the correct `Client_2` working directory, waits for normal client shutdown and then checks `ModernGraphics.log` for:
+
+- bootstrap attach attempt;
+- OpenGL vendor/version/profile diagnostics;
+- successful Diligent attach to the existing WGL context;
+- resize marker when `-RequireResize` is requested;
+- optional GL debug callback activation when `-EnableGLDebug` is requested;
+- modern shutdown before legacy WGL teardown;
+- absence of a `Legacy renderer remains active` fallback marker.
+
+The log is intentionally ignored by Git so local runtime evidence is not accidentally committed as a generated client file.
 
 ## Remaining runtime gate
 
-The Windows compile path is proven for Release/x86. A real GPU-backed Main run must still prove:
+A real GPU-backed Main run must still prove:
 
-- the expected backend DLL is found and its factory export loads at runtime;
-- effective OpenGL version is >= 4.6 on the test system;
+- expected backend DLL/factory loads at runtime;
+- effective OpenGL version is >= 4.6 on the target system;
 - `AttachToActiveGLContext` succeeds against the real Main WGL context;
 - resize remains stable;
 - only the legacy `SwapBuffers` presents;
 - shutdown has no lifetime/context errors;
 - legacy scenes render without regression.
 
-Until those runtime checks pass, Phase 2 is source/build-path complete for Release but **not runtime-certified**.
+Until those runtime checks pass, Phase 2 is repository/build-path implemented and independently compile-proven for both x86 configurations, but **not GPU runtime-certified**.
