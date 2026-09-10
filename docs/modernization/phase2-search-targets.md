@@ -1,0 +1,1 @@
+Search targets for Phase 2: SwapBuffers, wglCreateContext, wglMakeCurrent, SetPixelFormat, WM_SIZE, BeginOpengl, CreateWindow/CreateWindowEx, window HDC/HWND storage, shutdown context deletion, and any existing Diligent headers/libraries/project references.
