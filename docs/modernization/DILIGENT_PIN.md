@@ -83,6 +83,17 @@ The reference shader contracts used by the modernization work are pinned to the 
 
 This snapshot is the evidence baseline for the NextMU model/world/effect shader contracts already mapped in `ReverseEngineering/NextMU/`. The production shared-HLSL shader package for Main 5.2 is a later implementation task; this pin prevents the reference inputs from drifting while that bridge is built.
 
+## Windows build evidence
+
+GitHub Actions run `34533022717` successfully exercised the pin on Windows/Visual Studio 2022:
+
+- the exact DiligentCore commit and recursive submodules were checked out;
+- Win32 OpenGL-only/HLSL configuration completed;
+- both `GraphicsEngineOpenGL_32r.dll` and `GraphicsEngineOpenGL_32d.dll` built and were copied to `Client_2`;
+- Main Release/x86 compiled with the prepared headers and produced `Client_2/Main.exe` with 0 build errors.
+
+This proves the dependency pin and Release/x86 build path are reproducible in CI. Runtime attachment to the real game WGL context remains a separate gate.
+
 ## Validation boundary
 
-The setup/build path is now represented in the repository, but Phase 2 is **not runtime-certified** until it is executed on Windows and the OpenGL 4.6 attach/resize/present/shutdown gate passes.
+The Windows dependency/build path has been executed successfully. Phase 2 is still **not runtime-certified** until a GPU-backed Main execution proves the OpenGL 4.6 DLL/factory attach, effective context version/profile, resize behavior, single-present ownership, clean shutdown and legacy-render regression checks.
