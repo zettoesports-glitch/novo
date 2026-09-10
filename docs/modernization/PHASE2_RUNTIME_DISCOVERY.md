@@ -57,7 +57,7 @@ if (Success)
 
 `CWINHANDLE::WndProc` handles `WM_CLOSE` / `WM_DESTROY` and then calls `KillGLWindow()`. `KillGLWindow()` unbinds/deletes `g_hRC` and releases `g_hDC`.
 
-The Phase 2 bridge observes `WM_CLOSE`, `WM_DESTROY` and `WM_NCDESTROY` before the legacy WndProc processes them and calls `CModernGraphicsBootstrap::Shutdown()`. This flushes/releases the Diligent immediate context/device while the external WGL context is still alive, disables the optional GL debug callback while the context is current, and records a persistent shutdown marker.
+The Phase 2 bridge observes `WM_CLOSE`, `WM_DESTROY` and `WM_NCDESTROY` before the legacy WndProc processes them and calls `CModernGraphicsBootstrap::Shutdown()`. This flushes/releases the Diligent immediate context/device while the external WGL context is still alive and records a persistent shutdown marker.
 
 ## Coexistence bridge
 
@@ -74,6 +74,8 @@ This is a bootstrap bridge, not a replacement window system. It deliberately doe
 
 The hook remains a **temporary Phase 2 bridge**. After the Windows GPU gate is proven, initialization/resize/shutdown may be moved directly into `CreateOpenglWindow()`, `CWINHANDLE::WndProc` and the pre-`KillGLWindow()` path without changing `CModernGraphicsBootstrap`'s public contract.
 
+A hook-installation failure is also persisted to `ModernGraphics.log`, so the runtime evidence path does not depend on an attached debugger.
+
 ## Capability and diagnostics
 
 `CModernGraphicsBootstrap::InitializeOpenGL46()`:
@@ -85,12 +87,14 @@ The hook remains a **temporary Phase 2 bridge**. After the Windows GPU gate is p
 - refuses modern activation below OpenGL 4.6;
 - loads the Diligent OpenGL backend through the official Win32 DLL loader;
 - obtains `IEngineFactoryOpenGL` from the backend module;
+- registers `ModernDiligentMessageCallback` through `IEngineFactory::SetMessageCallback()` so Diligent diagnostics are persisted;
+- when `MU_MODERN_GL_DEBUG=1`, enables `EngineGLCreateInfo.EnableValidation`, allowing the Diligent OpenGL backend to own KHR_debug and route those messages through the same factory callback;
 - attaches Diligent through `AttachToActiveGLContext`;
 - records ownership as `Attached` after successful attachment.
 
-Diagnostics are sent both to `OutputDebugStringA` and to `Client_2/ModernGraphics.log` when the client is launched with `Client_2` as its working directory. This creates persistent evidence without requiring a debugger.
+This avoids registering a competing raw `glDebugMessageCallback` in Main. Diligent v2.5.6 already registers its own OpenGL debug callback when validation is enabled, so factory-level message routing is the correct ownership boundary.
 
-Setting environment variable `MU_MODERN_GL_DEBUG=1` requests an OpenGL debug callback when GL 4.3/KHR_debug entry points are available. Callback messages are appended to the same log. This is opt-in so the legacy runtime is not flooded by driver diagnostics by default.
+Diagnostics are sent both to `OutputDebugStringA` and to `Client_2/ModernGraphics.log` when the client is launched with `Client_2` as its working directory. This creates persistent evidence without requiring a debugger.
 
 The existing `CErrorReport::WriteOpenGLInfo()` remains the application's original OpenGL information path; the Phase 2 log supplements rather than replaces it.
 
@@ -144,7 +148,7 @@ The earlier Debug failure was caused by the legacy project using C++14 while its
 
 ### Permanent combined gate
 
-`.github/workflows/phase2-win32-build.yml` now builds Release/x86 and Debug/x86 sequentially in one Windows job and verifies `Main.exe`, `_32r.dll` and `_32d.dll` after each configuration. The latest combined gate is run `34535389139`, triggered by the persistent runtime-diagnostics changes. Its result must be checked before the combined gate is called closed.
+`.github/workflows/phase2-win32-build.yml` builds Release/x86 and Debug/x86 sequentially in one Windows job, verifies `Main.exe`, `_32r.dll` and `_32d.dll`, and finally validates `run_phase2_runtime_test.ps1 -ValidateOnly` against synthetic Phase 2 evidence. The final current-source gate is workflow run `34536286797`.
 
 ## Reproducible GPU runtime evidence
 
@@ -161,10 +165,12 @@ The script verifies the executable and both backend DLLs, clears stale evidence,
 - bootstrap attach attempt;
 - OpenGL vendor/version/profile diagnostics;
 - successful Diligent attach to the existing WGL context;
+- Diligent validation/OpenGL debug routing when `-EnableGLDebug` is requested;
 - resize marker when `-RequireResize` is requested;
-- optional GL debug callback activation when `-EnableGLDebug` is requested;
 - modern shutdown before legacy WGL teardown;
 - absence of a `Legacy renderer remains active` fallback marker.
+
+The script also supports `-ValidateOnly`. The Windows CI uses this mode with synthetic evidence after compiling both configurations. This validates the PowerShell parser/path/assertion logic without falsely treating hosted CI as a real GPU runtime test.
 
 The log is intentionally ignored by Git so local runtime evidence is not accidentally committed as a generated client file.
 
@@ -175,6 +181,7 @@ A real GPU-backed Main run must still prove:
 - expected backend DLL/factory loads at runtime;
 - effective OpenGL version is >= 4.6 on the target system;
 - `AttachToActiveGLContext` succeeds against the real Main WGL context;
+- Diligent validation/KHR_debug operates without callback ownership conflict;
 - resize remains stable;
 - only the legacy `SwapBuffers` presents;
 - shutdown has no lifetime/context errors;
