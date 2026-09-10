@@ -19,7 +19,9 @@ concurrency:
 jobs:
   build-main-x86:
     name: Main Debug x86 + Diligent OpenGL
-    runs-on: windows-latest
+    # Main Debug is PlatformToolset v143. Keep CI on the VS2022 image instead
+    # of windows-latest, which currently resolves to the VS2026 image.
+    runs-on: windows-2022
     timeout-minutes: 60
 
     steps:
