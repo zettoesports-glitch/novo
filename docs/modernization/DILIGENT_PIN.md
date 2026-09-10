@@ -85,15 +85,26 @@ This snapshot is the evidence baseline for the NextMU model/world/effect shader 
 
 ## Windows build evidence
 
-GitHub Actions run `34533022717` successfully exercised the pin on Windows/Visual Studio 2022:
+The exact pin has been exercised successfully on Windows/Visual Studio for both Main x86 configurations.
 
-- the exact DiligentCore commit and recursive submodules were checked out;
+### Release/x86 — run `34533022717`
+
+- exact DiligentCore commit and recursive submodules checked out;
 - Win32 OpenGL-only/HLSL configuration completed;
-- both `GraphicsEngineOpenGL_32r.dll` and `GraphicsEngineOpenGL_32d.dll` built and were copied to `Client_2`;
-- Main Release/x86 compiled with the prepared headers and produced `Client_2/Main.exe` with 0 build errors.
+- both `GraphicsEngineOpenGL_32r.dll` and `GraphicsEngineOpenGL_32d.dll` built and copied to `Client_2`;
+- Main Release/x86 compiled with the prepared headers;
+- `Client_2/Main.exe` produced with **0 build errors**.
 
-This proves the dependency pin and Release/x86 build path are reproducible in CI. Runtime attachment to the real game WGL context remains a separate gate.
+### Debug/x86 — run `34533868904`
+
+- the same pinned dependency/setup path completed;
+- Main Debug/x86 compiled after its project-local language standard was normalized to C++17, which its existing sol2 headers already require;
+- `Client_2/Main.exe` produced with **0 build errors**.
+
+The current permanent workflow builds both configurations in one job and also validates the runtime-evidence script. Its latest result is tracked in `STATUS.md` and `IMPLEMENTATION_CHECKLIST.md` rather than changing the dependency pin itself.
+
+This proves the pinned dependency path is reproducible for both supported Main x86 configurations. Runtime attachment to the real game WGL context remains a separate gate.
 
 ## Validation boundary
 
-The Windows dependency/build path has been executed successfully. Phase 2 is still **not runtime-certified** until a GPU-backed Main execution proves the OpenGL 4.6 DLL/factory attach, effective context version/profile, resize behavior, single-present ownership, clean shutdown and legacy-render regression checks.
+The Windows dependency/build path has been executed successfully for Release/x86 and Debug/x86. Phase 2 is still **not runtime-certified** until a GPU-backed Main execution proves the OpenGL 4.6 DLL/factory attach, effective context version/profile, resize behavior, single-present ownership, clean shutdown and legacy-render regression checks.
