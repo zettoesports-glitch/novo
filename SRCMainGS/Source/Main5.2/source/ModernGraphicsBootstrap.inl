@@ -1,5 +1,5 @@
 #ifdef MU_ENABLE_DILIGENT
-#include "Graphics/GraphicsEngineOpenGL/interface/EngineFactoryOpenGL.h"
+#include "../dependencies/DiligentCore/Graphics/GraphicsEngineOpenGL/interface/EngineFactoryOpenGL.h"
 #endif
 
 namespace
@@ -121,15 +121,25 @@ bool CModernGraphicsBootstrap::InitializeOpenGL46(HWND hWnd, HDC hDC, HGLRC hGLR
     }
 
 #ifndef MU_ENABLE_DILIGENT
-    OutputDebugStringA("[ModernGraphics] OpenGL 4.6 is available, but MU_ENABLE_DILIGENT is not enabled. Legacy renderer remains active.\n");
+    OutputDebugStringA("[ModernGraphics] OpenGL 4.6 is available, but the pinned DiligentCore headers are not prepared. Legacy renderer remains active.\n");
     return false;
 #else
     Diligent::EngineGLCreateInfo engineCreateInfo;
-    Diligent::IEngineFactoryOpenGL* factory = Diligent::GetEngineFactoryOpenGL();
 
+    // ENGINE_DLL=1 makes Diligent's public OpenGL header expose the explicit
+    // Windows loader. This intentionally mirrors NextMU's backend-module model:
+    // Release loads GraphicsEngineOpenGL_32r.dll and Debug loads _32d.dll.
+    const auto loadFactory = Diligent::LoadGraphicsEngineOpenGL();
+    if (loadFactory == nullptr)
+    {
+        OutputDebugStringA("[ModernGraphics] Unable to load the Diligent OpenGL backend DLL. Legacy renderer remains active.\n");
+        return false;
+    }
+
+    Diligent::IEngineFactoryOpenGL* factory = loadFactory();
     if (factory == nullptr)
     {
-        OutputDebugStringA("[ModernGraphics] Diligent OpenGL factory is unavailable. Legacy renderer remains active.\n");
+        OutputDebugStringA("[ModernGraphics] Diligent OpenGL factory export returned null. Legacy renderer remains active.\n");
         return false;
     }
 
