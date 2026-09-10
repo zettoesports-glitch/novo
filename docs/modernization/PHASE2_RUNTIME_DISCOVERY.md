@@ -29,13 +29,13 @@ This document records the real Main 5.2 lifecycle points used by the Phase 2 Ope
 
 The context is externally created from Diligent's point of view. Phase 2 uses `AttachToActiveGLContext`; it does not create a second OpenGL context or swap chain.
 
-The current code still uses legacy `wglCreateContext()` rather than explicitly requesting a 4.6 context. The bootstrap validates the effective GL version; the real runtime gate additionally requires `profile=compatibility`, because the legacy coexistence path still depends on fixed-function/client-array behavior.
+The current code still uses legacy `wglCreateContext()` rather than explicitly requesting a 4.6 context. The bootstrap validates the effective GL version and now also rejects core-only contexts before the Diligent attach. The real runtime gate requires OpenGL >= 4.6 with `profile=compatibility`, because the legacy coexistence path still depends on fixed-function/client-array behavior.
 
 ### Present ownership
 
 `SRCMainGS/Source/Main5.2/source/ZzzScene.cpp`
 
-The audited legacy source contains the expected presentation sites in `LoadingScene(HDC)` and `MainScene(HDC)`. No Phase 2 code calls `SwapBuffers`, and no Diligent swap chain is created. Presentation therefore remains application/legacy-owned during coexistence.
+The audited legacy source contains the legacy `SwapBuffers(hDC)` presentation call in the scene flow. No Phase 2 code calls `SwapBuffers`, and no Diligent swap chain is created. Presentation therefore remains application/legacy-owned during coexistence, with no second modern presentation path.
 
 ### Resize
 
@@ -49,11 +49,11 @@ The audited legacy source contains the expected presentation sites in `LoadingSc
 
 The audit found all currently known `KillGLWindow()` call classes:
 
-- error exits inside `CreateOpenglWindow()`; these occur before a successful modern attach can exist;
-- `WM_CLOSE` / `WM_DESTROY` cleanup in `CWINHANDLE::WndProc`;
+- error exits inside `CreateOpenglWindow()`; these are initialization-failure cleanup paths before a successful modern attach can exist;
+- `WM_DESTROY` cleanup in `CWINHANDLE::WndProc`;
 - the exceptional `WM_USER_MEMORYHACK` path, which also calls `KillGLWindow()` directly.
 
-The initial bridge already shut Diligent down before `WM_CLOSE`, `WM_DESTROY` and `WM_NCDESTROY`. The audit found that `WM_USER_MEMORYHACK` was not covered. Commit `cf20045e70c888a14b2b3197663e095e51b60768` fixed that omission, so the bridge now calls `CModernGraphicsBootstrap::Shutdown()` before every currently known post-attach message path that can destroy the WGL context.
+The lifecycle bridge shuts Diligent down before `WM_CLOSE`, `WM_DESTROY`, `WM_NCDESTROY` and `WM_USER_MEMORYHACK`. Commit `cf20045e70c888a14b2b3197663e095e51b60768` added the exceptional `WM_USER_MEMORYHACK` coverage, so the bridge now releases the modern runtime before every currently known post-attach message path that can destroy the WGL context.
 
 `Shutdown()` flushes/releases the Diligent immediate context/device while the external WGL context is still alive, then records the shutdown marker.
 
@@ -80,6 +80,7 @@ After the real GPU gate is proven, initialization/resize/shutdown can be reasses
 - reads/parses effective OpenGL major/minor;
 - records vendor, renderer, OpenGL version, GLSL version and context profile;
 - refuses modern activation below OpenGL 4.6;
+- refuses modern activation for a core-only/non-compatibility profile, preserving the legacy renderer;
 - loads the Diligent OpenGL backend through the official Win32 DLL loader;
 - obtains `IEngineFactoryOpenGL`;
 - registers `ModernDiligentMessageCallback` through `IEngineFactory::SetMessageCallback()`;
@@ -117,12 +118,13 @@ Earlier independent proof:
 - Release/x86 run `34533022717`: pinned Diligent prepared, both backend DLLs produced, Main linked with 0 errors.
 - Debug/x86 run `34533868904`: Main linked with 0 errors after the Main-only C++17 normalization.
 - Combined baseline run `34538658227`: Release + Debug + output verification + synthetic runtime-evidence validation all passed.
+- Lifecycle/runtime-gate audit run `34540959623`: Release + Debug + compatibility-profile synthetic evidence all passed after teardown/runtime-gate hardening.
 
-### Final audited Phase 2 gate
+### Latest audited Phase 2 source gate
 
-After the lifecycle audit and runtime-gate hardening, the final source revision is commit `d24e117270113918d877e17abd4609cad236d92e`.
+The latest source-affecting Phase 2 revision is commit `e6c0a678ecbb870262d62ed362902ce999adb06c`, which enforces the OpenGL compatibility profile before Diligent attach.
 
-Workflow run `34540959623` completed successfully. It passed:
+Workflow run `34542334616` completed successfully. It passed:
 
 - checkout/toolchain setup;
 - PowerShell syntax preflight;
@@ -131,7 +133,7 @@ Workflow run `34540959623` completed successfully. It passed:
 - Debug/x86 Main build and output verification;
 - `run_phase2_runtime_test.ps1 -ValidateOnly` against compatibility-profile synthetic evidence.
 
-This run includes both the `WM_USER_MEMORYHACK` teardown fix and the hardened runtime script.
+This gate includes the previous `WM_USER_MEMORYHACK` teardown fix, hardened runtime script and the core-only-context rejection in the bootstrap.
 
 ## Reproducible GPU runtime evidence
 
@@ -154,7 +156,7 @@ The real launch path verifies `Main.exe`, both Diligent backend DLLs, removes st
 - modern shutdown before legacy WGL teardown;
 - absence of a `Legacy renderer remains active` fallback marker.
 
-`-ValidateOnly` remains a parser/evidence-test mode for CI; it does not pretend to be a GPU run. The final combined run `34540959623` passed this parser validation with compatibility-profile synthetic evidence.
+`-ValidateOnly` remains a parser/evidence-test mode for CI; it does not pretend to be a GPU run. The latest source-affecting gate `34542334616` passed this parser validation with compatibility-profile synthetic evidence.
 
 ## Remaining runtime gate
 
