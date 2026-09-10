@@ -4,6 +4,63 @@
 
 namespace
 {
+void ModernGraphicsLog(const char* message)
+{
+    if (message == NULL)
+        return;
+
+    OutputDebugStringA(message);
+
+    HANDLE file = CreateFileA(
+        "ModernGraphics.log",
+        FILE_APPEND_DATA,
+        FILE_SHARE_READ | FILE_SHARE_WRITE,
+        NULL,
+        OPEN_ALWAYS,
+        FILE_ATTRIBUTE_NORMAL,
+        NULL);
+
+    if (file != INVALID_HANDLE_VALUE)
+    {
+        DWORD written = 0;
+        WriteFile(file, message, static_cast<DWORD>(lstrlenA(message)), &written, NULL);
+        CloseHandle(file);
+    }
+}
+
+bool IsModernGLDebugRequested()
+{
+    char value[16] = { 0 };
+    const DWORD length = GetEnvironmentVariableA("MU_MODERN_GL_DEBUG", value, sizeof(value));
+    if (length == 0 || length >= sizeof(value))
+        return false;
+
+    return value[0] == '1' || value[0] == 'y' || value[0] == 'Y' || value[0] == 't' || value[0] == 'T';
+}
+
+void APIENTRY ModernOpenGLDebugCallback(
+    GLenum source,
+    GLenum type,
+    GLuint id,
+    GLenum severity,
+    GLsizei length,
+    const GLchar* message,
+    const void* userParam)
+{
+    UNREFERENCED_PARAMETER(source);
+    UNREFERENCED_PARAMETER(type);
+    UNREFERENCED_PARAMETER(severity);
+    UNREFERENCED_PARAMETER(length);
+    UNREFERENCED_PARAMETER(userParam);
+
+    char output[1200];
+    wsprintfA(output,
+        "[ModernGraphics][GLDebug] id=%u message=%s\n",
+        static_cast<unsigned int>(id),
+        message != NULL ? message : "unavailable");
+    ModernGraphicsLog(output);
+}
+
 const char* SafeGLString(GLenum name)
 {
     const GLubyte* value = glGetString(name);
@@ -33,6 +90,7 @@ void CModernGraphicsBootstrap::ResetState()
     m_gl46Capable = false;
     m_active = false;
     m_initializationAttempted = false;
+    m_debugCallbackEnabled = false;
     m_backend = ModernGraphicsBackend::Legacy;
     m_ownership = ModernGraphicsOwnership::None;
 }
@@ -61,7 +119,7 @@ void CModernGraphicsBootstrap::LogOpenGLDiagnostics() const
         m_glMajor,
         m_glMinor,
         profile);
-    OutputDebugStringA(message);
+    ModernGraphicsLog(message);
 }
 
 bool CModernGraphicsBootstrap::InitializeOpenGL46(HWND hWnd, HDC hDC, HGLRC hGLRC, unsigned int width, unsigned int height)
@@ -75,9 +133,11 @@ bool CModernGraphicsBootstrap::InitializeOpenGL46(HWND hWnd, HDC hDC, HGLRC hGLR
     m_width = width;
     m_height = height;
 
+    ModernGraphicsLog("[ModernGraphics] Phase 2 OpenGL 4.6 attach attempt started.\n");
+
     if (m_hWnd == NULL || m_hDC == NULL || m_hGLRC == NULL)
     {
-        OutputDebugStringA("[ModernGraphics] OpenGL 4.6 attach skipped: invalid Win32/WGL handles.\n");
+        ModernGraphicsLog("[ModernGraphics] OpenGL 4.6 attach skipped: invalid Win32/WGL handles.\n");
         return false;
     }
 
@@ -85,7 +145,7 @@ bool CModernGraphicsBootstrap::InitializeOpenGL46(HWND hWnd, HDC hDC, HGLRC hGLR
     // CreateOpenglWindow() has already made current on this thread.
     if (wglGetCurrentContext() != m_hGLRC || wglGetCurrentDC() != m_hDC)
     {
-        OutputDebugStringA("[ModernGraphics] OpenGL 4.6 attach skipped: legacy WGL context is not current.\n");
+        ModernGraphicsLog("[ModernGraphics] OpenGL 4.6 attach skipped: legacy WGL context is not current.\n");
         return false;
     }
 
@@ -116,12 +176,28 @@ bool CModernGraphicsBootstrap::InitializeOpenGL46(HWND hWnd, HDC hDC, HGLRC hGLR
             "[ModernGraphics] OpenGL 4.6 unavailable (reported %d.%d). Legacy renderer remains active.\n",
             m_glMajor,
             m_glMinor);
-        OutputDebugStringA(message);
+        ModernGraphicsLog(message);
         return false;
     }
 
+    if (IsModernGLDebugRequested())
+    {
+        if (GLEW_VERSION_4_3 || GLEW_KHR_debug)
+        {
+            glEnable(GL_DEBUG_OUTPUT);
+            glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+            glDebugMessageCallback(ModernOpenGLDebugCallback, NULL);
+            m_debugCallbackEnabled = true;
+            ModernGraphicsLog("[ModernGraphics] OpenGL debug callback enabled by MU_MODERN_GL_DEBUG.\n");
+        }
+        else
+        {
+            ModernGraphicsLog("[ModernGraphics] MU_MODERN_GL_DEBUG requested, but KHR_debug entry points are unavailable.\n");
+        }
+    }
+
 #ifndef MU_ENABLE_DILIGENT
-    OutputDebugStringA("[ModernGraphics] OpenGL 4.6 is available, but the pinned DiligentCore headers are not prepared. Legacy renderer remains active.\n");
+    ModernGraphicsLog("[ModernGraphics] OpenGL 4.6 is available, but the pinned DiligentCore headers are not prepared. Legacy renderer remains active.\n");
     return false;
 #else
     Diligent::EngineGLCreateInfo engineCreateInfo;
@@ -132,14 +208,14 @@ bool CModernGraphicsBootstrap::InitializeOpenGL46(HWND hWnd, HDC hDC, HGLRC hGLR
     const auto loadFactory = Diligent::LoadGraphicsEngineOpenGL();
     if (loadFactory == nullptr)
     {
-        OutputDebugStringA("[ModernGraphics] Unable to load the Diligent OpenGL backend DLL. Legacy renderer remains active.\n");
+        ModernGraphicsLog("[ModernGraphics] Unable to load the Diligent OpenGL backend DLL. Legacy renderer remains active.\n");
         return false;
     }
 
     Diligent::IEngineFactoryOpenGL* factory = loadFactory();
     if (factory == nullptr)
     {
-        OutputDebugStringA("[ModernGraphics] Diligent OpenGL factory export returned null. Legacy renderer remains active.\n");
+        ModernGraphicsLog("[ModernGraphics] Diligent OpenGL factory export returned null. Legacy renderer remains active.\n");
         return false;
     }
 
@@ -155,20 +231,22 @@ bool CModernGraphicsBootstrap::InitializeOpenGL46(HWND hWnd, HDC hDC, HGLRC hGLR
     {
         m_immediateContext.Release();
         m_device.Release();
-        OutputDebugStringA("[ModernGraphics] Diligent failed to attach to the active OpenGL context. Legacy renderer remains active.\n");
+        ModernGraphicsLog("[ModernGraphics] Diligent failed to attach to the active OpenGL context. Legacy renderer remains active.\n");
         return false;
     }
 
     m_backend = ModernGraphicsBackend::OpenGL46;
     m_ownership = ModernGraphicsOwnership::Attached;
     m_active = true;
-    OutputDebugStringA("[ModernGraphics] Diligent attached to the existing OpenGL 4.6 context; legacy SwapBuffers remains authoritative.\n");
+    ModernGraphicsLog("[ModernGraphics] Diligent attached to the existing OpenGL 4.6 context; legacy SwapBuffers remains authoritative.\n");
     return true;
 #endif
 }
 
 void CModernGraphicsBootstrap::Shutdown()
 {
+    const bool hadRuntimeState = m_initializationAttempted || m_active;
+
 #ifdef MU_ENABLE_DILIGENT
     if (m_immediateContext)
     {
@@ -177,6 +255,16 @@ void CModernGraphicsBootstrap::Shutdown()
     }
     m_device.Release();
 #endif
+
+    if (m_debugCallbackEnabled && wglGetCurrentContext() == m_hGLRC)
+    {
+        glDebugMessageCallback(NULL, NULL);
+        glDisable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glDisable(GL_DEBUG_OUTPUT);
+    }
+
+    if (hadRuntimeState)
+        ModernGraphicsLog("[ModernGraphics] Shutdown completed before legacy WGL teardown.\n");
 
     ResetState();
 }
@@ -198,6 +286,13 @@ void CModernGraphicsBootstrap::OnResize(unsigned int width, unsigned int height)
 {
     m_width = width;
     m_height = height;
+
+    char message[192];
+    wsprintfA(message,
+        "[ModernGraphics] Resize observed: %ux%u. Presentation remains legacy-owned.\n",
+        width,
+        height);
+    ModernGraphicsLog(message);
 }
 
 bool CModernGraphicsBootstrap::IsActive() const
