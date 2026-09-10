@@ -30,9 +30,10 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [x] Locate and wire real Main window/context/resize/present integration points
 - [x] Pin Diligent and reference shader revisions (`DILIGENT_PIN.md`)
 - [x] Context/capability validation implemented (effective >= 4.6, diagnostics; target-GPU runtime pending)
+- [x] Reject OpenGL core-only contexts before Diligent attach; require compatibility profile for legacy coexistence
 - [x] Add reproducible pinned DiligentCore Win32/OpenGL/HLSL setup script
 - [x] Add official Diligent explicit backend-DLL loading (`GraphicsEngineOpenGL_32r/32d.dll`)
-- [x] Preserve dependency-absent and DLL-load-failure legacy fallback
+- [x] Preserve dependency-absent, unsupported-GL, core-only-profile and DLL-load-failure legacy fallback
 - [x] Align Main Debug definitions with the Diligent debug backend selection
 - [x] Normalize Main Debug/x86 to C++17 without modifying DiligentCore project settings
 - [x] Add GitHub Actions Windows/x86 compile gate (`.github/workflows/phase2-win32-build.yml`)
@@ -41,12 +42,14 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [x] Compile `Main.sln` Debug/x86 with C++17 and the pinned Diligent headers enabled
 - [x] Preserve a single legacy `SwapBuffers` presentation owner; no modern swap chain/present added
 - [x] Cover all currently known post-attach WGL teardown messages (`WM_CLOSE`, `WM_DESTROY`, `WM_NCDESTROY`, `WM_USER_MEMORYHACK`) before `KillGLWindow()`
+- [x] Confirm `KillGLWindow()` calls inside `CreateOpenglWindow()` are pre-attach initialization-failure cleanup paths
 - [x] Add persistent `Client_2/ModernGraphics.log` evidence for attach/capability/resize/shutdown and bridge failures
 - [x] Route Diligent validation and OpenGL/KHR_debug through `IEngineFactory::SetMessageCallback()` when `MU_MODERN_GL_DEBUG=1`, without installing a competing raw GL callback in Main
 - [x] Add reproducible local GPU validation script (`run_phase2_runtime_test.ps1`)
 - [x] Require compatibility profile evidence and normal `Main.exe` exit in the real GPU validation path
 - [x] Add CI `-ValidateOnly` coverage for the runtime-evidence parser using compatibility-profile synthetic evidence
-- [x] Re-audit the Phase 2 source and pass the final combined Release+Debug x86 gate after teardown/runtime-gate hardening (run `34540959623`, source commit `d24e117270113918d877e17abd4609cad236d92e`)
+- [x] Re-audit lifecycle/runtime gate after `WM_USER_MEMORYHACK` hardening (run `34540959623`, source commit `d24e117270113918d877e17abd4609cad236d92e`)
+- [x] Pass the latest source-affecting combined Release+Debug x86 gate after enforcing compatibility profile in the bootstrap (run `34542334616`, source commit `e6c0a678ecbb870262d62ed362902ce999adb06c`)
 - [ ] Pass the real Phase 2 Windows/GPU runtime gate: DLL load/factory, attach, GL >= 4.6 compatibility profile, validation/debug routing, resize, single-present behavior, clean shutdown and legacy regression check
 - [ ] After the real runtime gate, replace/reassess the temporary `WH_CALLWNDPROC` coexistence bridge with direct lifecycle calls if validation shows no need to retain the bridge
 
