@@ -18,10 +18,10 @@ concurrency:
 
 jobs:
   build-main-x86:
-    name: Main Debug x86 + Diligent OpenGL
-    # Debug is normalized to C++17 by source/Directory.Build.targets because
-    # the vendored sol2 headers require C++17. Keep CI on VS2022 while the
-    # Phase 2 coexistence/bootstrap path is validated.
+    name: Main Release + Debug x86 + Diligent OpenGL
+    # Both Main configurations are required to stay buildable. Debug is
+    # normalized to C++17 by source/Directory.Build.targets because the
+    # vendored sol2 headers already require C++17.
     runs-on: windows-2022
     timeout-minutes: 60
 
@@ -39,25 +39,54 @@ jobs:
           cmake --version
           msbuild -version
 
-      - name: Prepare pinned Diligent and build Main
+      - name: Prepare pinned Diligent OpenGL backends
         shell: powershell
         working-directory: SRCMainGS/Source/Main5.2
         run: |
-          .\setup_diligent_opengl46.ps1 -BuildMain -MainConfiguration Debug
+          .\setup_diligent_opengl46.ps1
 
-      - name: Verify expected outputs
+      - name: Build Main Release x86
+        shell: powershell
+        working-directory: SRCMainGS/Source/Main5.2
+        run: |
+          msbuild .\Main.sln /m /p:Configuration=Release /p:Platform=x86
+
+      - name: Verify Release outputs
         shell: powershell
         run: |
           $client = Join-Path $PWD 'Client_2'
           $required = @(
-            (Join-Path $client 'GraphicsEngineOpenGL_32d.dll'),
             (Join-Path $client 'GraphicsEngineOpenGL_32r.dll'),
+            (Join-Path $client 'GraphicsEngineOpenGL_32d.dll'),
             (Join-Path $client 'Main.exe')
           )
 
           foreach ($path in $required) {
             if (-not (Test-Path $path)) {
-              throw "Expected Phase 2 build output was not produced: $path"
+              throw "Expected Phase 2 Release output was not produced: $path"
             }
-            Write-Host "[Phase2 CI] Found $path"
+            Write-Host "[Phase2 CI][Release] Found $path"
+          }
+
+      - name: Build Main Debug x86
+        shell: powershell
+        working-directory: SRCMainGS/Source/Main5.2
+        run: |
+          msbuild .\Main.sln /m /p:Configuration=Debug /p:Platform=x86
+
+      - name: Verify Debug outputs
+        shell: powershell
+        run: |
+          $client = Join-Path $PWD 'Client_2'
+          $required = @(
+            (Join-Path $client 'GraphicsEngineOpenGL_32r.dll'),
+            (Join-Path $client 'GraphicsEngineOpenGL_32d.dll'),
+            (Join-Path $client 'Main.exe')
+          )
+
+          foreach ($path in $required) {
+            if (-not (Test-Path $path)) {
+              throw "Expected Phase 2 Debug output was not produced: $path"
+            }
+            Write-Host "[Phase2 CI][Debug] Found $path"
           }
