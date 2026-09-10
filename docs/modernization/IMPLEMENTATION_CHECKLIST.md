@@ -36,15 +36,15 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [x] Align Main Debug definitions with the Diligent debug backend selection
 - [x] Normalize Main Debug/x86 to C++17 without modifying DiligentCore project settings
 - [x] Add GitHub Actions Windows/x86 compile gate (`.github/workflows/phase2-win32-build.yml`)
-- [x] Execute pinned Diligent setup successfully on Windows (runs `34533022717` and `34533868904`; both `_32r` and `_32d` produced)
-- [x] Compile `Main.sln` Release/x86 with the pinned Diligent headers enabled (run `34533022717`, 0 errors)
-- [x] Compile `Main.sln` Debug/x86 with C++17 and the pinned Diligent headers enabled (run `34533868904`, 0 errors)
+- [x] Execute pinned Diligent setup successfully on Windows (runs `34533022717`, `34533868904` and final combined run `34538658227`; both `_32r` and `_32d` produced)
+- [x] Compile `Main.sln` Release/x86 with the pinned Diligent headers enabled (run `34533022717`, 0 errors; reconfirmed in `34538658227`)
+- [x] Compile `Main.sln` Debug/x86 with C++17 and the pinned Diligent headers enabled (run `34533868904`, 0 errors; reconfirmed in `34538658227`)
 - [x] Observe successful Phase 2 Windows/x86 CI runs for both Main configurations independently
-- [ ] Observe the permanent combined Release+Debug x86 workflow gate succeed against the final Phase 2 source (run `34536286797`)
-- [x] Add persistent `Client_2/ModernGraphics.log` evidence for attach/capability/resize/shutdown and bridge failures (source implemented; final combined compile gate pending)
-- [x] Route Diligent validation and OpenGL/KHR_debug through `IEngineFactory::SetMessageCallback()` when `MU_MODERN_GL_DEBUG=1`, without installing a competing raw GL callback in Main (source implemented; GPU runtime pending)
+- [x] Observe the permanent combined Release+Debug x86 workflow gate succeed against the final Phase 2 source (run `34538658227`, source/workflow commit `35cffa30b904071dcdf8a086a6ed5e03daca0342`)
+- [x] Add persistent `Client_2/ModernGraphics.log` evidence for attach/capability/resize/shutdown and bridge failures (source/build proven; GPU runtime pending)
+- [x] Route Diligent validation and OpenGL/KHR_debug through `IEngineFactory::SetMessageCallback()` when `MU_MODERN_GL_DEBUG=1`, without installing a competing raw GL callback in Main (source/build proven; GPU runtime pending)
 - [x] Add reproducible local GPU validation script (`run_phase2_runtime_test.ps1`)
-- [x] Add CI `-ValidateOnly` coverage for the runtime-evidence script using synthetic evidence (final combined workflow result pending)
+- [x] Add CI `-ValidateOnly` coverage for the runtime-evidence script using synthetic evidence (passed in final combined workflow run `34538658227`)
 - [ ] Diligent buffer/texture lifecycle and transitions
 - [ ] Diligent HLSL shader compilation diagnostics
 - [ ] Diligent constant-buffer path
