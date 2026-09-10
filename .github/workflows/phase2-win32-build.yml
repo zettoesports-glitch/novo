@@ -99,7 +99,7 @@ jobs:
           @(
             '[ModernGraphics] Phase 2 OpenGL 4.6 attach attempt started.'
             '[ModernGraphics] OpenGL vendor=CI | renderer=CI | version=4.6 | GLSL=4.60 | parsed=4.6 | profile=compatibility.'
-            '[ModernGraphics] OpenGL debug callback enabled by MU_MODERN_GL_DEBUG.'
+            '[ModernGraphics] Diligent validation/OpenGL debug routing enabled by MU_MODERN_GL_DEBUG.'
             '[ModernGraphics] Diligent attached to the existing OpenGL 4.6 context; legacy SwapBuffers remains authoritative.'
             '[ModernGraphics] Resize observed: 1280x720. Presentation remains legacy-owned.'
             '[ModernGraphics] Shutdown completed before legacy WGL teardown.'
