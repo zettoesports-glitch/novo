@@ -1,0 +1,57 @@
+name: Phase 2 Win32 Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - modernization
+    paths:
+      - '.github/workflows/phase2-win32-build.yml'
+      - 'SRCMainGS/Source/Main5.2/**'
+      - 'docs/modernization/**'
+
+permissions:
+  contents: read
+
+jobs:
+  build-main-x86:
+    name: Main Debug x86 + Diligent OpenGL
+    runs-on: windows-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout modernization
+        uses: actions/checkout@v7
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v3
+
+      - name: Show toolchain
+        shell: powershell
+        run: |
+          git --version
+          cmake --version
+          msbuild -version
+
+      - name: Prepare pinned Diligent and build Main
+        shell: powershell
+        working-directory: SRCMainGS/Source/Main5.2
+        run: |
+          .\setup_diligent_opengl46.ps1 -BuildMain -MainConfiguration Debug
+
+      - name: Verify expected outputs
+        shell: powershell
+        run: |
+          $client = Join-Path $PWD 'Client_2'
+          $required = @(
+            (Join-Path $client 'GraphicsEngineOpenGL_32d.dll'),
+            (Join-Path $client 'GraphicsEngineOpenGL_32r.dll'),
+            (Join-Path $client 'Main.exe')
+          )
+
+          foreach ($path in $required) {
+            if (-not (Test-Path $path)) {
+              throw "Expected Phase 2 build output was not produced: $path"
+            }
+            Write-Host "[Phase2 CI] Found $path"
+          }
