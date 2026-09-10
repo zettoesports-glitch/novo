@@ -119,7 +119,7 @@ private:
     bool m_gl46Capable;
     bool m_active;
     bool m_initializationAttempted;
-    bool m_debugCallbackEnabled;
+    bool m_validationEnabled;
     ModernGraphicsBackend m_backend;
     ModernGraphicsOwnership m_ownership;
 
