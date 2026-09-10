@@ -1,0 +1,15 @@
+{
+	"model": "model.bmd",
+	"bone_head": -1,
+	"animations": [
+		{
+			"id": "animation_0",
+			"index": 0,
+			"loop": false,
+			"play_speed": 0.1599999964237213
+		}
+	],
+	"settings": {
+		"virtual_meshes": []
+	}
+}

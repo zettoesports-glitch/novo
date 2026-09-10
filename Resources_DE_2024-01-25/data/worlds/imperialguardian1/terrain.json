@@ -1,0 +1,378 @@
+{
+	"id": "imperialguardian1",
+	"program": "terrain",
+	"grass_program": "grass",
+	"heightmap": "heightmap.ozb",
+	"height_multiplier": 1.5,
+	"lightmap": "lightmap.ozb",
+	"light": [
+		0.5,
+		-0.5,
+		0.5
+	],
+	"filter": "nearest",
+	"wrap": "repeat",
+	"uv": {
+		"normal": 64.0,
+		"scaled": 16.0
+	},
+	"water": {
+		"mod": 20000.0,
+		"mul": 4.999999873689376e-05
+	},
+	"wind": {
+		"scale": 10.0,
+		"mod": 720000.0,
+		"mul": 0.0020000000949949026
+	},
+	"grass_textures": [
+		{
+			"id": 0,
+			"path": "tilegrass01.ozt"
+		},
+		{
+			"id": 1,
+			"path": "tilegrass02.ozt"
+		},
+		{
+			"id": 2,
+			"path": "tilegrass03.ozt"
+		}
+	],
+	"textures": [
+		{
+			"id": 0,
+			"path": "tilegrass01.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 1,
+			"path": "tilegrass02.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 2,
+			"path": "tileground01.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 3,
+			"path": "tileground02.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 4,
+			"path": "tileground03.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 5,
+			"path": "tilewater01.ozj",
+			"scaled": false,
+			"water": true
+		},
+		{
+			"id": 6,
+			"path": "tilewood01.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 7,
+			"path": "tilerock01.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 8,
+			"path": "tilerock02.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 9,
+			"path": "tilerock03.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 10,
+			"path": "tilerock04.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 11,
+			"path": "tilerock05.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 12,
+			"path": "tilerock06.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 13,
+			"path": "tilerock07.ozj",
+			"scaled": false,
+			"water": false
+		}
+	],
+	"mappings": "encterrain.map",
+	"attributes": "encterrain.att",
+	"objects": "objects.json",
+	"models": [
+		{
+			"id": 0,
+			"path": "objects/object01"
+		},
+		{
+			"id": 1,
+			"path": "objects/object02"
+		},
+		{
+			"id": 6,
+			"path": "objects/object07"
+		},
+		{
+			"id": 9,
+			"path": "objects/object10"
+		},
+		{
+			"id": 10,
+			"path": "objects/object11"
+		},
+		{
+			"id": 18,
+			"path": "objects/object19"
+		},
+		{
+			"id": 19,
+			"path": "objects/object20"
+		},
+		{
+			"id": 20,
+			"path": "objects/object21"
+		},
+		{
+			"id": 26,
+			"path": "objects/object27"
+		},
+		{
+			"id": 29,
+			"path": "objects/object30"
+		},
+		{
+			"id": 31,
+			"path": "objects/object32"
+		},
+		{
+			"id": 33,
+			"path": "objects/object34"
+		},
+		{
+			"id": 34,
+			"path": "objects/object35"
+		},
+		{
+			"id": 38,
+			"path": "objects/object39"
+		},
+		{
+			"id": 39,
+			"path": "objects/object40"
+		},
+		{
+			"id": 40,
+			"path": "objects/object41"
+		},
+		{
+			"id": 41,
+			"path": "objects/object42"
+		},
+		{
+			"id": 42,
+			"path": "objects/object43"
+		},
+		{
+			"id": 43,
+			"path": "objects/object44"
+		},
+		{
+			"id": 55,
+			"path": "objects/object56"
+		},
+		{
+			"id": 56,
+			"path": "objects/object57"
+		},
+		{
+			"id": 60,
+			"path": "objects/object61"
+		},
+		{
+			"id": 61,
+			"path": "objects/object62"
+		},
+		{
+			"id": 68,
+			"path": "objects/object69"
+		},
+		{
+			"id": 69,
+			"path": "objects/object70"
+		},
+		{
+			"id": 71,
+			"path": "objects/object72"
+		},
+		{
+			"id": 74,
+			"path": "objects/object75"
+		},
+		{
+			"id": 79,
+			"path": "objects/object80"
+		},
+		{
+			"id": 82,
+			"path": "objects/object83"
+		},
+		{
+			"id": 86,
+			"path": "objects/object87"
+		},
+		{
+			"id": 91,
+			"path": "objects/object92"
+		},
+		{
+			"id": 95,
+			"path": ""
+		},
+		{
+			"id": 96,
+			"path": "objects/object97"
+		},
+		{
+			"id": 97,
+			"path": "objects/object98"
+		},
+		{
+			"id": 98,
+			"path": "objects/object99"
+		},
+		{
+			"id": 99,
+			"path": "objects/object100"
+		},
+		{
+			"id": 100,
+			"path": "objects/object101"
+		},
+		{
+			"id": 101,
+			"path": "objects/object102"
+		},
+		{
+			"id": 102,
+			"path": "objects/object103"
+		},
+		{
+			"id": 103,
+			"path": "objects/object104"
+		},
+		{
+			"id": 104,
+			"path": "objects/object105"
+		},
+		{
+			"id": 105,
+			"path": "objects/object106"
+		},
+		{
+			"id": 106,
+			"path": "objects/object107"
+		},
+		{
+			"id": 107,
+			"path": "objects/object108"
+		},
+		{
+			"id": 110,
+			"path": "objects/object111"
+		},
+		{
+			"id": 111,
+			"path": "objects/object112"
+		},
+		{
+			"id": 113,
+			"path": "objects/object114"
+		},
+		{
+			"id": 115,
+			"path": "objects/object116"
+		},
+		{
+			"id": 116,
+			"path": "objects/object117"
+		},
+		{
+			"id": 117,
+			"path": "objects/object118"
+		},
+		{
+			"id": 118,
+			"path": "objects/object119"
+		},
+		{
+			"id": 119,
+			"path": "objects/object120"
+		},
+		{
+			"id": 120,
+			"path": "objects/object121"
+		},
+		{
+			"id": 121,
+			"path": "objects/object122"
+		},
+		{
+			"id": 122,
+			"path": "objects/object123"
+		},
+		{
+			"id": 123,
+			"path": "objects/object124"
+		},
+		{
+			"id": 124,
+			"path": "objects/object125"
+		},
+		{
+			"id": 126,
+			"path": ""
+		},
+		{
+			"id": 127,
+			"path": "objects/object128"
+		},
+		{
+			"id": 128,
+			"path": "objects/object129"
+		},
+		{
+			"id": 132,
+			"path": "objects/object133"
+		}
+	],
+	"nav_mesh": "terrain.nav"
+}

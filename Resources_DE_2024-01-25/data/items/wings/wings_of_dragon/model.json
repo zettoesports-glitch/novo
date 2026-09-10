@@ -1,0 +1,36 @@
+{
+	"model": "model.bmd",
+	"bone_head": -1,
+	"settings": {
+		"meshes": [
+			{
+				"id": 0,
+				"program": "mesh_blend",
+				"normal": {
+					"write": {
+						"depth": false
+					},
+					"cull": "none",
+					"depth_test": "less_equal",
+					"blend": {
+						"src": "one",
+						"dst": "one",
+						"equation": "add"
+					}
+				},
+				"alpha": {
+					"write": {
+						"depth": false
+					},
+					"cull": "none",
+					"depth_test": "less_equal",
+					"blend": {
+						"src": "one",
+						"dst": "one",
+						"equation": "add"
+					}
+				}
+			}
+		]
+	}
+}

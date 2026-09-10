@@ -1,0 +1,2500 @@
+{
+	"objects": [
+		{
+			"type": 0,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				11460.4814453125,
+				15222.2373046875,
+				179.0006103515625
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 2.039999008178711,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 0,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				11850.5322265625,
+				16858.35546875,
+				179.00048828125
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 1.1399998664855957,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 0,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				11437.18359375,
+				16640.3125,
+				179.00048828125
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 1.6799993515014648,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					-0.1899999976158142,
+					-0.1899999976158142,
+					-0.1899999976158142
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 0,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				13173.171875,
+				15199.6337890625,
+				179.00048828125
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 1.5199995040893555,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 0,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				13802.61328125,
+				14587.5322265625,
+				179.00048828125
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 1.9999990463256836,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 0,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				13558.5966796875,
+				16641.03515625,
+				179.0006103515625
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 2.279998779296875,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 0,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				13277.572265625,
+				16526.6796875,
+				182.00054931640625
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 1.3799996376037598,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					-0.2200000286102295,
+					-0.2200000286102295,
+					-0.2200000286102295
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 0,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12951.9033203125,
+				17499.5234375,
+				179.0003662109375
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 1.3799996376037598,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 0,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				14608.5029296875,
+				15757.0634765625,
+				179.00048828125
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 1.3199996948242188,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 1,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12376.9248046875,
+				14926.1318359375,
+				174.000732421875
+			],
+			"angle": [
+				0.0,
+				0.0,
+				90.0
+			],
+			"scale": 3.3999977111816406,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 1,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12376.6904296875,
+				14926.419921875,
+				174.00079345703125
+			],
+			"angle": [
+				0.0,
+				0.0,
+				180.0
+			],
+			"scale": 3.3999977111816406,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 1,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12375.197265625,
+				14926.5625,
+				174.00070190429688
+			],
+			"angle": [
+				0.0,
+				0.0,
+				270.0
+			],
+			"scale": 3.3999977111816406,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 1,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12375.3837890625,
+				14925.65234375,
+				174.000732421875
+			],
+			"angle": [
+				0.0,
+				0.0,
+				360.0
+			],
+			"scale": 3.3999977111816406,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 1,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12371.126953125,
+				16729.052734375,
+				174.0006103515625
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 1.8999991416931152,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 1,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12370.794921875,
+				16732.12109375,
+				174.0008544921875
+			],
+			"angle": [
+				0.0,
+				0.0,
+				270.0
+			],
+			"scale": 1.8999991416931152,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 1,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12370.375,
+				16730.16015625,
+				174.0006103515625
+			],
+			"angle": [
+				0.0,
+				0.0,
+				90.0
+			],
+			"scale": 1.8999991416931152,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 1,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12370.322265625,
+				16732.53515625,
+				174.00088500976563
+			],
+			"angle": [
+				0.0,
+				0.0,
+				180.0
+			],
+			"scale": 1.8999991416931152,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 1,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				14002.19140625,
+				15956.546875,
+				174.000732421875
+			],
+			"angle": [
+				0.0,
+				0.0,
+				180.0
+			],
+			"scale": 2.4999985694885254,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 1,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				14002.1083984375,
+				15955.9892578125,
+				174.000732421875
+			],
+			"angle": [
+				0.0,
+				0.0,
+				90.0
+			],
+			"scale": 2.4999985694885254,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 1,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				14001.947265625,
+				15956.3759765625,
+				174.00076293945313
+			],
+			"angle": [
+				0.0,
+				0.0,
+				270.0
+			],
+			"scale": 2.4999985694885254,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 1,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				14002.1435546875,
+				15955.62890625,
+				174.00051879882813
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 2.4999985694885254,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 2,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				11186.748046875,
+				16103.4609375,
+				179.6353759765625
+			],
+			"angle": [
+				0.0,
+				0.0,
+				-60.0
+			],
+			"scale": 0.8000001907348633,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 2,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				11174.1630859375,
+				16104.138671875,
+				180.56845092773438
+			],
+			"angle": [
+				0.0,
+				0.0,
+				90.0
+			],
+			"scale": 0.8000001907348633,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					-0.21000002324581146,
+					-0.21000002324581146,
+					-0.21000002324581146
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 2,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12611.8017578125,
+				14271.0126953125,
+				184.0
+			],
+			"angle": [
+				0.0,
+				0.0,
+				110.0
+			],
+			"scale": 1.0,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					-0.3299999535083771,
+					-0.3299999535083771,
+					-0.3299999535083771
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 2,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12610.6435546875,
+				14267.052734375,
+				186.00006103515625
+			],
+			"angle": [
+				0.0,
+				0.0,
+				160.0
+			],
+			"scale": 1.0999999046325684,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					-0.3599999248981476,
+					-0.3599999248981476,
+					-0.3599999248981476
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 2,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12095.375,
+				16350.794921875,
+				179.0
+			],
+			"angle": [
+				0.0,
+				0.0,
+				40.0
+			],
+			"scale": 0.9600000381469727,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					-0.31999996304512024,
+					-0.31999996304512024,
+					-0.31999996304512024
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 2,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12097.40234375,
+				16345.5322265625,
+				179.0
+			],
+			"angle": [
+				0.0,
+				0.0,
+				90.0
+			],
+			"scale": 0.9600000381469727,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					-0.3899998962879181,
+					-0.3899998962879181,
+					-0.3899998962879181
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 2,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12567.1015625,
+				17346.294921875,
+				178.5828857421875
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 0.7400002479553223,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					-0.3599999248981476,
+					-0.3599999248981476,
+					-0.3599999248981476
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 2,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				14268.8486328125,
+				15441.7060546875,
+				193.0
+			],
+			"angle": [
+				0.0,
+				0.0,
+				156.0
+			],
+			"scale": 0.7600002288818359,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					-0.2200000286102295,
+					-0.2200000286102295,
+					-0.2200000286102295
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 2,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				14268.095703125,
+				15445.9423828125,
+				185.0
+			],
+			"angle": [
+				0.0,
+				0.0,
+				207.0
+			],
+			"scale": 0.6000003814697266,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					-0.21000002324581146,
+					-0.21000002324581146,
+					-0.21000002324581146
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 2,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				13277.20703125,
+				16170.7021484375,
+				178.9998779296875
+			],
+			"angle": [
+				0.0,
+				0.0,
+				100.0
+			],
+			"scale": 0.8600001335144043,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					-0.3699999153614044,
+					-0.3699999153614044,
+					-0.3699999153614044
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 2,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				13278.83203125,
+				16166.1044921875,
+				177.9998779296875
+			],
+			"angle": [
+				0.0,
+				0.0,
+				135.0
+			],
+			"scale": 0.8600001335144043,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					-0.3399999439716339,
+					-0.3399999439716339,
+					-0.3399999439716339
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 3,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12579.650390625,
+				10610.8759765625,
+				197.0
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 1.5799994468688965,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 3,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				13004.115234375,
+				11398.44921875,
+				187.0
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 2.1399989128112793,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.07999999076128006,
+					0.07999999076128006,
+					0.07999999076128006
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 4,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12305.42578125,
+				11067.3115234375,
+				187.0118408203125
+			],
+			"angle": [
+				0.0,
+				0.0,
+				110.0
+			],
+			"scale": 1.6199994087219238,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					-0.08999998867511749,
+					-0.08999998867511749,
+					-0.08999998867511749
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 4,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12837.27734375,
+				10628.482421875,
+				189.68865966796875
+			],
+			"angle": [
+				0.0,
+				0.0,
+				100.0
+			],
+			"scale": 1.6199994087219238,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					-0.12999998033046722,
+					-0.12999998033046722,
+					-0.12999998033046722
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 4,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				13022.15625,
+				11299.544921875,
+				174.96185302734375
+			],
+			"angle": [
+				0.0,
+				0.0,
+				80.0
+			],
+			"scale": 1.9399991035461426,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					-0.1900000125169754,
+					-0.1900000125169754,
+					-0.1900000125169754
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 5,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12147.2802734375,
+				11384.9501953125,
+				186.0
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 1.429999589920044,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.07999999076128006,
+					0.07999999076128006,
+					0.07999999076128006
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 5,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				13456.5556640625,
+				10837.056640625,
+				184.0
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 1.4399995803833008,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 5,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				13270.5146484375,
+				11961.232421875,
+				213.09814453125
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 1.0,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.10999998450279236,
+					0.10999998450279236,
+					0.10999998450279236
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				10954.177734375,
+				15835.6044921875,
+				178.238037109375
+			],
+			"angle": [
+				0.0,
+				0.0,
+				70.0
+			],
+			"scale": 2.3199987411499023,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.1599999964237213,
+					0.1599999964237213,
+					0.1599999964237213
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				11182.771484375,
+				16636.484375,
+				185.9952392578125
+			],
+			"angle": [
+				0.0,
+				0.0,
+				250.0
+			],
+			"scale": 2.4999985694885254,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.12999998033046722,
+					0.12999998033046722,
+					0.12999998033046722
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12296.484375,
+				10491.8525390625,
+				182.904052734375
+			],
+			"angle": [
+				0.0,
+				0.0,
+				-180.0
+			],
+			"scale": 2.099998950958252,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.04999999701976776,
+					0.04999999701976776,
+					0.04999999701976776
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				11934.4306640625,
+				11195.0380859375,
+				180.7662353515625
+			],
+			"angle": [
+				0.0,
+				0.0,
+				65.0
+			],
+			"scale": 2.099998950958252,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.04999999701976776,
+					0.04999999701976776,
+					0.04999999701976776
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12095.0302734375,
+				11690.6884765625,
+				178.0
+			],
+			"angle": [
+				0.0,
+				0.0,
+				-115.0
+			],
+			"scale": 1.8399991989135742,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.04999999701976776,
+					0.04999999701976776,
+					0.04999999701976776
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12332.74609375,
+				11967.5380859375,
+				181.6259765625
+			],
+			"angle": [
+				0.0,
+				0.0,
+				-140.0
+			],
+			"scale": 1.6399993896484375,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.04999999701976776,
+					0.04999999701976776,
+					0.04999999701976776
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12141.158203125,
+				13967.935546875,
+				210.1298828125
+			],
+			"angle": [
+				0.0,
+				0.0,
+				210.0
+			],
+			"scale": 2.3199987411499023,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.07999999076128006,
+					0.07999999076128006,
+					0.07999999076128006
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				11389.685546875,
+				14517.6796875,
+				185.33270263671875
+			],
+			"angle": [
+				0.0,
+				0.0,
+				40.0
+			],
+			"scale": 2.3199987411499023,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.18000000715255737,
+					0.18000000715255737,
+					0.18000000715255737
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12182.1142578125,
+				17477.517578125,
+				185.72515869140625
+			],
+			"angle": [
+				0.0,
+				0.0,
+				250.0
+			],
+			"scale": 2.3199987411499023,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.08999998867511749,
+					0.08999998867511749,
+					0.08999998867511749
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				13507.28125,
+				11132.232421875,
+				178.68756103515625
+			],
+			"angle": [
+				0.0,
+				0.0,
+				80.0
+			],
+			"scale": 1.5199995040893555,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12930.0556640625,
+				10400.7626953125,
+				173.9998779296875
+			],
+			"angle": [
+				0.0,
+				0.0,
+				60.0
+			],
+			"scale": 2.099998950958252,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.04999999701976776,
+					0.04999999701976776,
+					0.04999999701976776
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				13572.5888671875,
+				10676.8173828125,
+				174.0
+			],
+			"angle": [
+				0.0,
+				0.0,
+				70.0
+			],
+			"scale": 1.6799993515014648,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.059999994933605194,
+					0.059999994933605194,
+					0.059999994933605194
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				12995.5166015625,
+				12096.400390625,
+				175.9998779296875
+			],
+			"angle": [
+				0.0,
+				0.0,
+				142.0
+			],
+			"scale": 1.5599994659423828,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.03999999910593033,
+					0.03999999910593033,
+					0.03999999910593033
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				13401.2041015625,
+				11924.6044921875,
+				199.10809326171875
+			],
+			"angle": [
+				0.0,
+				0.0,
+				190.0
+			],
+			"scale": 1.7199993133544922,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.07999999076128006,
+					0.07999999076128006,
+					0.07999999076128006
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				13709.384765625,
+				11279.4208984375,
+				205.02618408203125
+			],
+			"angle": [
+				0.0,
+				0.0,
+				140.0
+			],
+			"scale": 1.5199995040893555,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.23000003397464752,
+					0.23000003397464752,
+					0.23000003397464752
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				13487.306640625,
+				11730.23046875,
+				201.321533203125
+			],
+			"angle": [
+				0.0,
+				0.0,
+				142.0
+			],
+			"scale": 1.6799993515014648,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.03999999910593033,
+					0.03999999910593033,
+					0.03999999910593033
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				13025.3427734375,
+				13920.3525390625,
+				186.2593994140625
+			],
+			"angle": [
+				0.0,
+				0.0,
+				40.0
+			],
+			"scale": 2.3199987411499023,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.07999999076128006,
+					0.07999999076128006,
+					0.07999999076128006
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				14228.5517578125,
+				14628.798828125,
+				199.40606689453125
+			],
+			"angle": [
+				0.0,
+				0.0,
+				580.0
+			],
+			"scale": 2.4799985885620117,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.2200000286102295,
+					0.2200000286102295,
+					0.2200000286102295
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				13987.2080078125,
+				17251.400390625,
+				185.708251953125
+			],
+			"angle": [
+				0.0,
+				0.0,
+				170.0
+			],
+			"scale": 2.4799985885620117,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.1599999964237213,
+					0.1599999964237213,
+					0.1599999964237213
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				13273.9716796875,
+				17337.966796875,
+				194.4786376953125
+			],
+			"angle": [
+				0.0,
+				0.0,
+				290.0
+			],
+			"scale": 2.339998722076416,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.13999998569488525,
+					0.13999998569488525,
+					0.13999998569488525
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				14460.306640625,
+				15044.4111328125,
+				189.4493408203125
+			],
+			"angle": [
+				0.0,
+				0.0,
+				80.0
+			],
+			"scale": 2.4799985885620117,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.11999998241662979,
+					0.11999998241662979,
+					0.11999998241662979
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 6,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				14663.765625,
+				16115.59765625,
+				185.9287109375
+			],
+			"angle": [
+				0.0,
+				0.0,
+				330.0
+			],
+			"scale": 2.4799985885620117,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.18000000715255737,
+					0.18000000715255737,
+					0.18000000715255737
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 79,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				1850.0,
+				3950.0,
+				169.49998474121094
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 1.0,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		},
+		{
+			"type": 79,
+			"renderable": true,
+			"interactive": false,
+			"light_enable": true,
+			"position": [
+				1850.0,
+				3950.0,
+				169.5
+			],
+			"angle": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale": 1.0,
+			"light": {
+				"mode": "terrain",
+				"primary_light": true,
+				"intensity": 1.0,
+				"color": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"bounding_box": {
+				"min": [
+					-40.0,
+					-40.0,
+					0.0
+				],
+				"max": [
+					40.0,
+					40.0,
+					80.0
+				]
+			}
+		}
+	]
+}

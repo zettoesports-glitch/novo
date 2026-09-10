@@ -1,0 +1,190 @@
+[
+	{
+		"id": "player",
+		"keys": [
+			"stop",
+			"stop_sz",
+			"walk",
+			"walk_sz",
+			"run",
+			"swim",
+			"attack"
+		],
+		"nodes": [
+			{
+				"condition": "safezone",
+				"routes": [
+					{
+						"value": true,
+						"nodes": [
+							{
+								"condition": "action",
+								"routes": [
+									{
+										"value": "stop",
+										"nodes": [
+											{
+												"condition": "sex",
+												"routes": [
+													{
+														"value": "male",
+														"animation": "stop_male",
+														"nodes": [
+															{
+																"condition": "class",
+																"routes": [
+																	{
+																		"value": "rage_fighter",
+																		"animation": "stop_ragefighter"
+																	}
+																]
+															}
+														]
+													},
+													{
+														"value": "female",
+														"animation": "stop_female",
+														"nodes": [
+															{
+																"condition": "class",
+																"routes": [
+																	{
+																		"value": "summoner",
+																		"animation": "stop_summoner"
+																	}
+																]
+															}
+														]
+													}
+												]
+											}
+										]
+									},
+									{
+										"value": "walk",
+										"nodes": [
+											{
+												"condition": "sex",
+												"routes": [
+													{
+														"value": "male",
+														"animation": "walk_male"
+													},
+													{
+														"value": "female",
+														"animation": "walk_female"
+													}
+												]
+											}
+										]
+									}
+								]
+							}
+						]
+					},
+					{
+						"nodes": [
+							{
+								"condition": "action",
+								"routes": [
+									{
+										"value": "stop",
+										"nodes": [
+											{
+												"condition": "mount",
+												"routes": [
+													{
+														"value": "fenrir",
+														"animation": "fenrir_stand",
+														"nodes": [
+															{
+																"condition": "class",
+																"routes": [
+																	{
+																		"value": "rage_fighter",
+																		"animation": "rage_fenrir_stand",
+																		"nodes": [
+																			{
+																				"condition": "weapons",
+																				"routes": [
+																					{
+																						"value": "left_sword",
+																						"animation": "fenrir_stand_one_left"
+																					},
+																					{
+																						"value": "right_sword",
+																						"animation": "fenrir_stand_one_right"
+																					},
+																					{
+																						"value": "dual_sword",
+																						"animation": "fenrir_stand_two_sword"
+																					}
+																				]
+																			},
+																			{
+																				"condition": "right_weapon",
+																				"routes": [
+																					{
+																						"value": "any",
+																						"animation": "fenrir_stand_one_right"
+																					}
+																				]
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													}
+												]
+											},
+											{
+												"condition": "sex",
+												"routes": [
+													{
+														"value": "male",
+														"animation": "stop_male",
+														"nodes": [
+															{
+																"condition": "class",
+																"routes": [
+																	{
+																		"value": "rage_fighter",
+																		"animation": "stop_ragefighter"
+																	}
+																]
+															}
+														]
+													},
+													{
+														"value": "female",
+														"animation": "stop_female",
+														"nodes": [
+															{
+																"condition": "class",
+																"routes": [
+																	{
+																		"value": "summoner",
+																		"animation": "stop_summoner"
+																	}
+																]
+															}
+														]
+													}
+												]
+											}
+										]
+									},
+									{
+										"value": "walk",
+										"animation": "run"
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+]

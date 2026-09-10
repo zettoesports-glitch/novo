@@ -1,0 +1,282 @@
+{
+	"id": "doublegoer4",
+	"program": "terrain",
+	"grass_program": "grass",
+	"heightmap": "heightmap.ozb",
+	"height_multiplier": 1.5,
+	"lightmap": "",
+	"light": [
+		0.5,
+		-0.5,
+		0.5
+	],
+	"filter": "nearest",
+	"wrap": "repeat",
+	"uv": {
+		"normal": 64.0,
+		"scaled": 16.0
+	},
+	"water": {
+		"mod": 20000.0,
+		"mul": 4.999999873689376e-05
+	},
+	"wind": {
+		"scale": 10.0,
+		"mod": 720000.0,
+		"mul": 0.0020000000949949026
+	},
+	"grass_textures": [
+		{
+			"id": 0,
+			"path": "tilegrass01.ozt"
+		},
+		{
+			"id": 1,
+			"path": "tilegrass02.ozt"
+		}
+	],
+	"textures": [
+		{
+			"id": 0,
+			"path": "tilegrass01.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 1,
+			"path": "tilegrass02.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 2,
+			"path": "tileground01.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 3,
+			"path": "tileground02.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 4,
+			"path": "tileground03.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 5,
+			"path": "tilewater01.ozj",
+			"scaled": false,
+			"water": true
+		},
+		{
+			"id": 6,
+			"path": "tilewood01.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 7,
+			"path": "tilerock01.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 8,
+			"path": "tilerock02.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 9,
+			"path": "tilerock03.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 10,
+			"path": "tilerock04.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 11,
+			"path": "tilerock05.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 12,
+			"path": "tilerock06.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 13,
+			"path": "tilerock07.ozj",
+			"scaled": false,
+			"water": false
+		}
+	],
+	"mappings": "encterrain.map",
+	"attributes": "encterrain.att",
+	"objects": "objects.json",
+	"models": [
+		{
+			"id": 1,
+			"path": "objects/object02"
+		},
+		{
+			"id": 2,
+			"path": "objects/object03"
+		},
+		{
+			"id": 6,
+			"path": "objects/object07"
+		},
+		{
+			"id": 8,
+			"path": "objects/object09"
+		},
+		{
+			"id": 12,
+			"path": "objects/object13"
+		},
+		{
+			"id": 18,
+			"path": "objects/object19"
+		},
+		{
+			"id": 19,
+			"path": "objects/object20"
+		},
+		{
+			"id": 20,
+			"path": "objects/object21"
+		},
+		{
+			"id": 26,
+			"path": "objects/object27"
+		},
+		{
+			"id": 27,
+			"path": "objects/object28"
+		},
+		{
+			"id": 30,
+			"path": "objects/object31"
+		},
+		{
+			"id": 31,
+			"path": "objects/object32"
+		},
+		{
+			"id": 33,
+			"path": "objects/object34"
+		},
+		{
+			"id": 34,
+			"path": ""
+		},
+		{
+			"id": 37,
+			"path": "objects/object38"
+		},
+		{
+			"id": 46,
+			"path": "objects/object47"
+		},
+		{
+			"id": 48,
+			"path": "objects/object49"
+		},
+		{
+			"id": 62,
+			"path": "objects/object63"
+		},
+		{
+			"id": 63,
+			"path": "objects/object64"
+		},
+		{
+			"id": 65,
+			"path": "objects/object66"
+		},
+		{
+			"id": 67,
+			"path": "objects/object68"
+		},
+		{
+			"id": 68,
+			"path": "objects/object69"
+		},
+		{
+			"id": 69,
+			"path": "objects/object70"
+		},
+		{
+			"id": 72,
+			"path": "objects/object73"
+		},
+		{
+			"id": 74,
+			"path": "objects/object75"
+		},
+		{
+			"id": 75,
+			"path": "objects/object76"
+		},
+		{
+			"id": 79,
+			"path": "objects/object80"
+		},
+		{
+			"id": 80,
+			"path": "objects/object81"
+		},
+		{
+			"id": 95,
+			"path": "objects/object96"
+		},
+		{
+			"id": 99,
+			"path": "objects/object100"
+		},
+		{
+			"id": 106,
+			"path": "objects/object107"
+		},
+		{
+			"id": 107,
+			"path": "objects/object108"
+		},
+		{
+			"id": 117,
+			"path": "objects/object118"
+		},
+		{
+			"id": 139,
+			"path": "objects/object140"
+		},
+		{
+			"id": 140,
+			"path": "objects/object141"
+		},
+		{
+			"id": 141,
+			"path": "objects/object142"
+		},
+		{
+			"id": 142,
+			"path": "objects/object143"
+		},
+		{
+			"id": 175,
+			"path": ""
+		}
+	],
+	"nav_mesh": "terrain.nav"
+}

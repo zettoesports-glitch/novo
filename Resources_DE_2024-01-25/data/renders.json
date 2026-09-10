@@ -1,0 +1,196 @@
+[
+	{
+		"id": "dk_head",
+		"model": "dk_head",
+		"is_linked": false
+	},
+	{
+		"id": "small_axe",
+		"model": "small_axe",
+		"is_linked": true,
+		"animations": [
+			{
+				"id": ["default"],
+				"visible": true,
+				"attachments": [
+					{
+						"id": "default",
+						"bone": "weapon_right",
+						"position": [0.0, 0.0, 0.0],
+						"angle": [0.0, 0.0, 0.0],
+						"scale": 1.0
+					},
+					{
+						"id": "item_left",
+						"bone": "weapon_left",
+						"position": [0.0, 0.0, 0.0],
+						"angle": [0.0, 0.0, 0.0],
+						"scale": 1.0
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "crystal_sword",
+		"model": "crystal_sword",
+		"is_linked": true,
+		"animations": [
+			{
+				"id": ["default"],
+				"visible": true,
+				"attachments": [
+					{
+						"id": "default",
+						"bone": "weapon_right",
+						"position": [0.0, 0.0, 0.0],
+						"angle": [0.0, 0.0, 0.0],
+						"scale": 1.0
+					},
+					{
+						"id": "item_left",
+						"bone": "weapon_left",
+						"position": [0.0, 0.0, 0.0],
+						"angle": [0.0, 0.0, 0.0],
+						"scale": 1.0
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "legendary_staff",
+		"model": "legendary_staff",
+		"is_linked": true,
+		"animations": [
+			{
+				"id": ["default"],
+				"visible": true,
+				"attachments": [
+					{
+						"id": "default",
+						"bone": "weapon_right",
+						"position": [0.0, 0.0, 0.0],
+						"angle": [0.0, 0.0, 0.0],
+						"scale": 1.0
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "bronze_helm",
+		"model": "bronze_helm",
+		"is_linked": false
+	},
+	{
+		"id": "bronze_armor",
+		"model": "bronze_armor",
+		"is_linked": false
+	},
+	{
+		"id": "bronze_pants",
+		"model": "bronze_pants",
+		"is_linked": false
+	},
+	{
+		"id": "bronze_gloves",
+		"model": "bronze_gloves",
+		"is_linked": false
+	},
+	{
+		"id": "bronze_boots",
+		"model": "bronze_boots",
+		"is_linked": false
+	},
+	{
+		"id": "dragon_helm",
+		"model": "dragon_helm",
+		"is_linked": false
+	},
+	{
+		"id": "dragon_armor",
+		"model": "dragon_armor",
+		"is_linked": false
+	},
+	{
+		"id": "dragon_pants",
+		"model": "dragon_pants",
+		"is_linked": false
+	},
+	{
+		"id": "dragon_gloves",
+		"model": "dragon_gloves",
+		"is_linked": false
+	},
+	{
+		"id": "dragon_boots",
+		"model": "dragon_boots",
+		"is_linked": false
+	},
+	{
+		"id": "legendary_helm",
+		"model": "legendary_helm",
+		"is_linked": false
+	},
+	{
+		"id": "legendary_armor",
+		"model": "legendary_armor",
+		"is_linked": false
+	},
+	{
+		"id": "legendary_pants",
+		"model": "legendary_pants",
+		"is_linked": false
+	},
+	{
+		"id": "legendary_gloves",
+		"model": "legendary_gloves",
+		"is_linked": false
+	},
+	{
+		"id": "legendary_boots",
+		"model": "legendary_boots",
+		"is_linked": false
+	},
+	{
+		"id": "wings_of_soul",
+		"model": "wings_of_soul",
+		"is_linked": true,
+		"animations": [
+			{
+				"id": ["default"],
+				"visible": true,
+				"attachments": [
+					{
+						"id": "default",
+						"bone": "wings",
+						"position": [0.0, 0.0, 0.0],
+						"angle": [0.0, 0.0, 0.0],
+						"scale": 1.0
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "wings_of_dragon",
+		"model": "wings_of_dragon",
+		"is_linked": true,
+		"animations": [
+			{
+				"id": ["default"],
+				"visible": true,
+				"attachments": [
+					{
+						"id": "default",
+						"bone": "wings",
+						"position": [0.0, 0.0, 0.0],
+						"angle": [0.0, 0.0, 0.0],
+						"scale": 1.0
+					}
+				]
+			}
+		]
+	}
+]

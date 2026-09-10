@@ -1,0 +1,17 @@
+<rml>
+<head>
+	<link type="text/css" href="index.rcss"/>
+	<title>Window</title>
+	<style>
+		body
+		{
+			width: 400dp;
+			height: 300dp;
+
+			margin: auto;
+		}
+	</style>
+</head>
+<body class="window">
+</body>
+</rml>

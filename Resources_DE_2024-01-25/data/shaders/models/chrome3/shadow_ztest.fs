@@ -1,0 +1,37 @@
+Texture2D    g_Texture;
+SamplerState g_Texture_sampler;
+
+cbuffer ModelSettings
+{
+	float4 g_LightPosition;
+	float4 g_BodyLight;
+	float4 g_BodyOrigin;
+	float g_BoneOffset;
+	float g_NormalScale;
+	float g_EnableLight;
+	float g_AlphaTest;
+	float g_PremultiplyAlpha;
+	float g_WorldTime;
+	float g_ZTestRef;
+	float g_Dummy1;
+	float2 g_BlendTexCoord;
+};
+
+struct PSInput 
+{ 
+    float4 Position : SV_POSITION;
+    float4 PositionModelView : MODEL_VIEW_POS;
+    float3 PosInLightViewSpace : LIGHT_SPACE_POS;
+    float3 NormalWS : NORMALWS;
+    float4 Color  : COLOR0;
+    float2 UV : TEXCOORD0;
+};
+
+void main(in  PSInput  PSIn)
+{
+	if (PSIn.PositionModelView.y < g_ZTestRef) discard;
+	float4 color = g_Texture.Sample(g_Texture_sampler, PSIn.UV) * PSIn.Color;
+	color.rgb *= lerp(1.0, PSIn.Color.a, g_PremultiplyAlpha);
+	float alpha = lerp(color.a, max(color.r, max(color.g, color.b)), g_PremultiplyAlpha);
+	if(alpha < g_AlphaTest) discard;
+}

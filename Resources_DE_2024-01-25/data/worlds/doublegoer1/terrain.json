@@ -1,0 +1,266 @@
+{
+	"id": "doublegoer1",
+	"program": "terrain",
+	"grass_program": "grass",
+	"heightmap": "heightmap.ozb",
+	"height_multiplier": 1.5,
+	"lightmap": "",
+	"light": [
+		0.5,
+		-0.5,
+		0.5
+	],
+	"filter": "nearest",
+	"wrap": "repeat",
+	"uv": {
+		"normal": 64.0,
+		"scaled": 16.0
+	},
+	"water": {
+		"mod": 20000.0,
+		"mul": 4.999999873689376e-05
+	},
+	"wind": {
+		"scale": 10.0,
+		"mod": 720000.0,
+		"mul": 0.0020000000949949026
+	},
+	"grass_textures": [
+		{
+			"id": 0,
+			"path": "tilegrass01.ozt"
+		},
+		{
+			"id": 1,
+			"path": "tilegrass02.ozt"
+		},
+		{
+			"id": 2,
+			"path": "tilegrass03.ozt"
+		}
+	],
+	"textures": [
+		{
+			"id": 0,
+			"path": "tilegrass01.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 1,
+			"path": "tilegrass02.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 2,
+			"path": "tileground01.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 3,
+			"path": "tileground02.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 4,
+			"path": "tileground03.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 5,
+			"path": "tilewater01.ozj",
+			"scaled": false,
+			"water": true
+		},
+		{
+			"id": 6,
+			"path": "tilewood01.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 7,
+			"path": "tilerock01.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 8,
+			"path": "tilerock02.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 9,
+			"path": "tilerock03.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 10,
+			"path": "tilerock04.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 11,
+			"path": "tilerock05.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 12,
+			"path": "tilerock06.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 13,
+			"path": "tilerock07.ozj",
+			"scaled": false,
+			"water": false
+		}
+	],
+	"mappings": "encterrain.map",
+	"attributes": "encterrain.att",
+	"objects": "objects.json",
+	"models": [
+		{
+			"id": 0,
+			"path": "objects/object01"
+		},
+		{
+			"id": 1,
+			"path": "objects/object02"
+		},
+		{
+			"id": 2,
+			"path": "objects/object03"
+		},
+		{
+			"id": 3,
+			"path": "objects/object04"
+		},
+		{
+			"id": 5,
+			"path": "objects/object06"
+		},
+		{
+			"id": 6,
+			"path": ""
+		},
+		{
+			"id": 7,
+			"path": "objects/object08"
+		},
+		{
+			"id": 8,
+			"path": "objects/object09"
+		},
+		{
+			"id": 9,
+			"path": "objects/object10"
+		},
+		{
+			"id": 10,
+			"path": "objects/object11"
+		},
+		{
+			"id": 19,
+			"path": "objects/object20"
+		},
+		{
+			"id": 20,
+			"path": "objects/object21"
+		},
+		{
+			"id": 31,
+			"path": "objects/object32"
+		},
+		{
+			"id": 32,
+			"path": ""
+		},
+		{
+			"id": 33,
+			"path": "objects/object34"
+		},
+		{
+			"id": 52,
+			"path": "objects/object53"
+		},
+		{
+			"id": 54,
+			"path": "objects/object55"
+		},
+		{
+			"id": 55,
+			"path": "objects/object56"
+		},
+		{
+			"id": 56,
+			"path": "objects/object57"
+		},
+		{
+			"id": 76,
+			"path": "objects/object77"
+		},
+		{
+			"id": 83,
+			"path": "objects/object84"
+		},
+		{
+			"id": 88,
+			"path": "objects/object89"
+		},
+		{
+			"id": 89,
+			"path": "objects/object90"
+		},
+		{
+			"id": 90,
+			"path": "objects/object91"
+		},
+		{
+			"id": 91,
+			"path": "objects/object92"
+		},
+		{
+			"id": 93,
+			"path": "objects/object94"
+		},
+		{
+			"id": 94,
+			"path": "objects/object95"
+		},
+		{
+			"id": 96,
+			"path": ""
+		},
+		{
+			"id": 98,
+			"path": "objects/object99"
+		},
+		{
+			"id": 99,
+			"path": "objects/object100"
+		},
+		{
+			"id": 100,
+			"path": "objects/object101"
+		},
+		{
+			"id": 101,
+			"path": "objects/object102"
+		},
+		{
+			"id": 247,
+			"path": ""
+		}
+	],
+	"nav_mesh": "terrain.nav"
+}

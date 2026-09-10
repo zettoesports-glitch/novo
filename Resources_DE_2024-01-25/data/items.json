@@ -1,0 +1,122 @@
+[
+	{
+		"category": 1,
+		"index": 0,
+		"name": "Small Axe",
+		"render": "small_axe"
+	},
+	{
+		"category": 2,
+		"index": 5,
+		"name": "Crystal Sword",
+		"render": "crystal_sword"
+	},
+	{
+		"category": 5,
+		"index": 5,
+		"name": "Legendary Staff",
+		"render": "legendary_staff"
+	},
+	{
+		"category": 7,
+		"index": 0,
+		"name": "Bronze Helm",
+		"render": "bronze_helm"
+	},
+	{
+		"category": 8,
+		"index": 0,
+		"name": "Bronze Armor",
+		"render": "bronze_armor"
+	},
+	{
+		"category": 9,
+		"index": 0,
+		"name": "Bronze Pants",
+		"render": "bronze_pants"
+	},
+	{
+		"category": 10,
+		"index": 0,
+		"name": "Bronze Gloves",
+		"render": "bronze_gloves"
+	},
+	{
+		"category": 11,
+		"index": 0,
+		"name": "Bronze Boots",
+		"render": "bronze_boots"
+	},
+	{
+		"category": 7,
+		"index": 1,
+		"name": "Dragon Helm",
+		"render": "dragon_helm"
+	},
+	{
+		"category": 8,
+		"index": 1,
+		"name": "Dragon Armor",
+		"render": "dragon_armor"
+	},
+	{
+		"category": 9,
+		"index": 1,
+		"name": "Dragon Pants",
+		"render": "dragon_pants"
+	},
+	{
+		"category": 10,
+		"index": 1,
+		"name": "Dragon Gloves",
+		"render": "dragon_gloves"
+	},
+	{
+		"category": 11,
+		"index": 1,
+		"name": "Dragon Boots",
+		"render": "dragon_boots"
+	},
+	{
+		"category": 7,
+		"index": 3,
+		"name": "Legendary Helm",
+		"render": "legendary_helm"
+	},
+	{
+		"category": 8,
+		"index": 3,
+		"name": "Legendary Armor",
+		"render": "legendary_armor"
+	},
+	{
+		"category": 9,
+		"index": 3,
+		"name": "Legendary Pants",
+		"render": "legendary_pants"
+	},
+	{
+		"category": 10,
+		"index": 3,
+		"name": "Legendary Gloves",
+		"render": "legendary_gloves"
+	},
+	{
+		"category": 11,
+		"index": 3,
+		"name": "Legendary Boots",
+		"render": "legendary_boots"
+	},
+	{
+		"category": 12,
+		"index": 4,
+		"name": "Wings of Soul",
+		"render": "wings_of_soul"
+	},
+	{
+		"category": 12,
+		"index": 5,
+		"name": "Wings of Dragon",
+		"render": "wings_of_dragon"
+	}
+]

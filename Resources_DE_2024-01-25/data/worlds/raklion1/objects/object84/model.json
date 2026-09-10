@@ -1,0 +1,161 @@
+{
+	"model": "model.bmd",
+	"bone_head": -1,
+	"animations": [
+		{
+			"id": "animation_0",
+			"index": 0,
+			"loop": false,
+			"play_speed": 0.1599999964237213
+		}
+	],
+	"settings": {
+		"virtual_meshes": [
+			{
+				"id": 0,
+				"program": "mesh_normal",
+				"normal": {
+					"write": {
+						"depth": true,
+						"alpha": true,
+						"rgb": true
+					},
+					"cull": "cw",
+					"depth_test": "less_equal"
+				},
+				"alpha": {
+					"write": {
+						"depth": true,
+						"alpha": true,
+						"rgb": true
+					},
+					"cull": "cw",
+					"depth_test": "less_equal"
+				},
+				"light": 1.0
+			},
+			{
+				"id": 1,
+				"program": "mesh_normal",
+				"normal": {
+					"write": {
+						"depth": true,
+						"alpha": true,
+						"rgb": true
+					},
+					"cull": "cw",
+					"depth_test": "less_equal"
+				},
+				"alpha": {
+					"write": {
+						"depth": true,
+						"alpha": true,
+						"rgb": true
+					},
+					"cull": "cw",
+					"depth_test": "less_equal"
+				},
+				"light": 1.0
+			},
+			{
+				"id": 2,
+				"program": "mesh_normal",
+				"normal": {
+					"write": {
+						"depth": false,
+						"alpha": true,
+						"rgb": true
+					},
+					"cull": "none",
+					"depth_test": "less_equal",
+					"blend": {
+						"src": "one",
+						"dst": "one",
+						"equation": "add"
+					}
+				},
+				"alpha": {
+					"write": {
+						"depth": false,
+						"alpha": true,
+						"rgb": true
+					},
+					"cull": "none",
+					"depth_test": "less_equal",
+					"blend": {
+						"src": "one",
+						"dst": "one",
+						"equation": "add"
+					}
+				},
+				"light": 1.0
+			},
+			{
+				"id": 3,
+				"program": "mesh_normal",
+				"normal": {
+					"write": {
+						"depth": false,
+						"alpha": true,
+						"rgb": true
+					},
+					"cull": "none",
+					"depth_test": "less_equal",
+					"blend": {
+						"src": "one",
+						"dst": "one",
+						"equation": "add"
+					}
+				},
+				"alpha": {
+					"write": {
+						"depth": false,
+						"alpha": true,
+						"rgb": true
+					},
+					"cull": "none",
+					"depth_test": "less_equal",
+					"blend": {
+						"src": "one",
+						"dst": "one",
+						"equation": "add"
+					}
+				},
+				"light": 1.0
+			},
+			{
+				"id": 4,
+				"program": "mesh_normal",
+				"normal": {
+					"write": {
+						"depth": false,
+						"alpha": true,
+						"rgb": true
+					},
+					"cull": "none",
+					"depth_test": "less_equal",
+					"blend": {
+						"src": "one",
+						"dst": "one",
+						"equation": "add"
+					}
+				},
+				"alpha": {
+					"write": {
+						"depth": false,
+						"alpha": true,
+						"rgb": true
+					},
+					"cull": "none",
+					"depth_test": "less_equal",
+					"blend": {
+						"src": "one",
+						"dst": "one",
+						"equation": "add"
+					}
+				},
+				"light": 1.0
+			}
+		]
+	}
+}

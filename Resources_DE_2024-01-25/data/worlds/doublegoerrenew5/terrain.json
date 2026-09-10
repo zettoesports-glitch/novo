@@ -1,0 +1,200 @@
+{
+	"id": "doublegoerrenew5",
+	"program": "terrain",
+	"grass_program": "grass",
+	"heightmap": "heightmap.ozb",
+	"height_multiplier": 1.5,
+	"lightmap": "lightmap.ozb",
+	"light": [
+		0.5,
+		-0.5,
+		0.5
+	],
+	"filter": "nearest",
+	"wrap": "repeat",
+	"uv": {
+		"normal": 64.0,
+		"scaled": 16.0
+	},
+	"water": {
+		"mod": 20000.0,
+		"mul": 4.999999873689376e-05
+	},
+	"wind": {
+		"scale": 10.0,
+		"mod": 720000.0,
+		"mul": 0.0020000000949949026
+	},
+	"grass_textures": [
+		{
+			"id": 0,
+			"path": "tilegrass01.ozt"
+		}
+	],
+	"textures": [
+		{
+			"id": 0,
+			"path": "tilegrass01.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 1,
+			"path": "tilegrass02.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 2,
+			"path": "tileground01.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 3,
+			"path": "tileground02.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 4,
+			"path": "tileground03.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 5,
+			"path": "tilewater01.ozj",
+			"scaled": false,
+			"water": true
+		},
+		{
+			"id": 6,
+			"path": "tilewood01.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 7,
+			"path": "tilerock01.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 8,
+			"path": "tilerock02.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 9,
+			"path": "tilerock03.ozj",
+			"scaled": false,
+			"water": false
+		},
+		{
+			"id": 10,
+			"path": "tilerock04.ozj",
+			"scaled": false,
+			"water": false
+		}
+	],
+	"mappings": "encterrain.map",
+	"attributes": "encterrain.att",
+	"objects": "objects.json",
+	"models": [
+		{
+			"id": 0,
+			"path": "objects/object01"
+		},
+		{
+			"id": 1,
+			"path": "objects/object02"
+		},
+		{
+			"id": 3,
+			"path": "objects/object04"
+		},
+		{
+			"id": 4,
+			"path": "objects/object05"
+		},
+		{
+			"id": 6,
+			"path": "objects/object07"
+		},
+		{
+			"id": 10,
+			"path": "objects/object11"
+		},
+		{
+			"id": 16,
+			"path": "objects/object17"
+		},
+		{
+			"id": 19,
+			"path": "objects/object20"
+		},
+		{
+			"id": 20,
+			"path": "objects/object21"
+		},
+		{
+			"id": 22,
+			"path": "objects/object23"
+		},
+		{
+			"id": 25,
+			"path": "objects/object26"
+		},
+		{
+			"id": 26,
+			"path": "objects/object27"
+		},
+		{
+			"id": 29,
+			"path": "objects/object30"
+		},
+		{
+			"id": 31,
+			"path": "objects/object32"
+		},
+		{
+			"id": 33,
+			"path": "objects/object34"
+		},
+		{
+			"id": 48,
+			"path": "objects/object49"
+		},
+		{
+			"id": 68,
+			"path": ""
+		},
+		{
+			"id": 69,
+			"path": "objects/object70"
+		},
+		{
+			"id": 70,
+			"path": "objects/object71"
+		},
+		{
+			"id": 72,
+			"path": "objects/object73"
+		},
+		{
+			"id": 76,
+			"path": ""
+		},
+		{
+			"id": 77,
+			"path": "objects/object78"
+		},
+		{
+			"id": 80,
+			"path": "objects/object81"
+		}
+	],
+	"nav_mesh": "terrain.nav"
+}

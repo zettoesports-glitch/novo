@@ -1,0 +1,2503 @@
+{
+	"attachments": [
+		"normal",
+		"skin",
+		"skin_hq",
+		"skin_hq_alt",
+		"hair",
+		"hair_hq",
+		"hair_hq_alt",
+		"face",
+		"hide"
+	],
+	"shaders": [
+		{
+			"id": "terrain",
+			"vertex": "shaders/worlds/normal/shader.vs",
+			"fragment": "shaders/worlds/normal/shader.fs",
+			"resource_id": "terrain"
+		},
+		{
+			"id": "grass",
+			"vertex": "shaders/worlds/grass/shader.vs",
+			"fragment": "shaders/worlds/grass/shader.fs",
+			"resource_id": "terrain"
+		},
+		{
+			"id": "terrain_shadow",
+			"vertex": "shaders/worlds/normal/shader.vs",
+			"fragment": "shaders/worlds/normal/shadow.fs",
+			"resource_id": "terrain",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "grass_shadow",
+			"vertex": "shaders/worlds/grass/shader.vs",
+			"fragment": "shaders/worlds/grass/shadow.fs",
+			"resource_id": "terrain",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_normal",
+			"vertex": "shaders/models/texture/shader.vs",
+			"fragment": "shaders/models/texture/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_normal_shadowmap",
+			"vertex": "shaders/models/texture/shader_shadowmap.vs",
+			"fragment": "shaders/models/texture/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_normal_wave",
+			"vertex": "shaders/models/texture/shader_wave.vs",
+			"fragment": "shaders/models/texture/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_normal_ztest",
+			"vertex": "shaders/models/texture/shader_ztest.vs",
+			"fragment": "shaders/models/texture/shader_ztest.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_blend",
+			"vertex": "shaders/models/blend/shader.vs",
+			"fragment": "shaders/models/blend/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_blend_shadowmap",
+			"vertex": "shaders/models/blend/shader_shadowmap.vs",
+			"fragment": "shaders/models/blend/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_blend_wave",
+			"vertex": "shaders/models/blend/shader_wave.vs",
+			"fragment": "shaders/models/blend/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_blend_ztest",
+			"vertex": "shaders/models/blend/shader_ztest.vs",
+			"fragment": "shaders/models/blend/shader_ztest.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome",
+			"vertex": "shaders/models/chrome/shader.vs",
+			"fragment": "shaders/models/chrome/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome_shadowmap",
+			"vertex": "shaders/models/chrome/shader_shadowmap.vs",
+			"fragment": "shaders/models/chrome/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome_wave",
+			"vertex": "shaders/models/chrome/shader_wave.vs",
+			"fragment": "shaders/models/chrome/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome_ztest",
+			"vertex": "shaders/models/chrome/shader_ztest.vs",
+			"fragment": "shaders/models/chrome/shader_ztest.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome2",
+			"vertex": "shaders/models/chrome2/shader.vs",
+			"fragment": "shaders/models/chrome2/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome2_shadowmap",
+			"vertex": "shaders/models/chrome2/shader_shadowmap.vs",
+			"fragment": "shaders/models/chrome2/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome2_wave",
+			"vertex": "shaders/models/chrome2/shader_wave.vs",
+			"fragment": "shaders/models/chrome2/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome2_ztest",
+			"vertex": "shaders/models/chrome2/shader_ztest.vs",
+			"fragment": "shaders/models/chrome2/shader_ztest.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome3",
+			"vertex": "shaders/models/chrome3/shader.vs",
+			"fragment": "shaders/models/chrome3/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome3_shadowmap",
+			"vertex": "shaders/models/chrome3/shader_shadowmap.vs",
+			"fragment": "shaders/models/chrome3/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome3_wave",
+			"vertex": "shaders/models/chrome3/shader_wave.vs",
+			"fragment": "shaders/models/chrome3/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome3_ztest",
+			"vertex": "shaders/models/chrome3/shader_ztest.vs",
+			"fragment": "shaders/models/chrome3/shader_ztest.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome4",
+			"vertex": "shaders/models/chrome4/shader.vs",
+			"fragment": "shaders/models/chrome4/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome4_shadowmap",
+			"vertex": "shaders/models/chrome4/shader_shadowmap.vs",
+			"fragment": "shaders/models/chrome4/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome4_wave",
+			"vertex": "shaders/models/chrome4/shader_wave.vs",
+			"fragment": "shaders/models/chrome4/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome4_ztest",
+			"vertex": "shaders/models/chrome4/shader_ztest.vs",
+			"fragment": "shaders/models/chrome4/shader_ztest.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome5",
+			"vertex": "shaders/models/chrome5/shader.vs",
+			"fragment": "shaders/models/chrome5/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome5_shadowmap",
+			"vertex": "shaders/models/chrome5/shader_shadowmap.vs",
+			"fragment": "shaders/models/chrome5/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome5_wave",
+			"vertex": "shaders/models/chrome5/shader_wave.vs",
+			"fragment": "shaders/models/chrome5/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome5_ztest",
+			"vertex": "shaders/models/chrome5/shader_ztest.vs",
+			"fragment": "shaders/models/chrome5/shader_ztest.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome6",
+			"vertex": "shaders/models/chrome6/shader.vs",
+			"fragment": "shaders/models/chrome6/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome6_shadowmap",
+			"vertex": "shaders/models/chrome6/shader_shadowmap.vs",
+			"fragment": "shaders/models/chrome6/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome6_wave",
+			"vertex": "shaders/models/chrome6/shader_wave.vs",
+			"fragment": "shaders/models/chrome6/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome6_ztest",
+			"vertex": "shaders/models/chrome6/shader_ztest.vs",
+			"fragment": "shaders/models/chrome6/shader_ztest.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome7",
+			"vertex": "shaders/models/chrome7/shader.vs",
+			"fragment": "shaders/models/chrome7/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome7_shadowmap",
+			"vertex": "shaders/models/chrome7/shader_shadowmap.vs",
+			"fragment": "shaders/models/chrome7/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome7_wave",
+			"vertex": "shaders/models/chrome7/shader_wave.vs",
+			"fragment": "shaders/models/chrome7/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome7_ztest",
+			"vertex": "shaders/models/chrome7/shader_ztest.vs",
+			"fragment": "shaders/models/chrome7/shader_ztest.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome8",
+			"vertex": "shaders/models/chrome8/shader.vs",
+			"fragment": "shaders/models/chrome8/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome8_shadowmap",
+			"vertex": "shaders/models/chrome8/shader_shadowmap.vs",
+			"fragment": "shaders/models/chrome8/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome8_wave",
+			"vertex": "shaders/models/chrome8/shader_wave.vs",
+			"fragment": "shaders/models/chrome8/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_chrome8_ztest",
+			"vertex": "shaders/models/chrome8/shader_ztest.vs",
+			"fragment": "shaders/models/chrome8/shader_ztest.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_metal",
+			"vertex": "shaders/models/metal/shader.vs",
+			"fragment": "shaders/models/metal/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_metal_shadowmap",
+			"vertex": "shaders/models/metal/shader_shadowmap.vs",
+			"fragment": "shaders/models/metal/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_metal_wave",
+			"vertex": "shaders/models/metal/shader_wave.vs",
+			"fragment": "shaders/models/metal/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_metal_ztest",
+			"vertex": "shaders/models/metal/shader_ztest.vs",
+			"fragment": "shaders/models/metal/shader_ztest.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_oil",
+			"vertex": "shaders/models/oil/shader.vs",
+			"fragment": "shaders/models/oil/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_oil_shadowmap",
+			"vertex": "shaders/models/oil/shader_shadowmap.vs",
+			"fragment": "shaders/models/oil/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_oil_wave",
+			"vertex": "shaders/models/oil/shader_wave.vs",
+			"fragment": "shaders/models/oil/shader.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_oil_ztest",
+			"vertex": "shaders/models/oil/shader_ztest.vs",
+			"fragment": "shaders/models/oil/shader_ztest.fs",
+			"resource_id": "mesh"
+		},
+		{
+			"id": "mesh_normal_shadow",
+			"vertex": "shaders/models/texture/shader.vs",
+			"fragment": "shaders/models/texture/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_normal_shadowmap_shadow",
+			"vertex": "shaders/models/texture/shader_shadowmap.vs",
+			"fragment": "shaders/models/texture/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_normal_wave_shadow",
+			"vertex": "shaders/models/texture/shader_wave.vs",
+			"fragment": "shaders/models/texture/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_normal_ztest_shadow",
+			"vertex": "shaders/models/texture/shader_ztest.vs",
+			"fragment": "shaders/models/texture/shadow_ztest.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_blend_shadow",
+			"vertex": "shaders/models/blend/shader.vs",
+			"fragment": "shaders/models/blend/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_blend_shadowmap_shadow",
+			"vertex": "shaders/models/blend/shader_shadowmap.vs",
+			"fragment": "shaders/models/blend/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_blend_wave_shadow",
+			"vertex": "shaders/models/blend/shader_wave.vs",
+			"fragment": "shaders/models/blend/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_blend_ztest_shadow",
+			"vertex": "shaders/models/blend/shader_ztest.vs",
+			"fragment": "shaders/models/blend/shadow_ztest.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome_shadow",
+			"vertex": "shaders/models/chrome/shader.vs",
+			"fragment": "shaders/models/chrome/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome_shadowmap_shadow",
+			"vertex": "shaders/models/chrome/shader_shadowmap.vs",
+			"fragment": "shaders/models/chrome/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome_wave_shadow",
+			"vertex": "shaders/models/chrome/shader_wave.vs",
+			"fragment": "shaders/models/chrome/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome_ztest_shadow",
+			"vertex": "shaders/models/chrome/shader_ztest.vs",
+			"fragment": "shaders/models/chrome/shadow_ztest.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome2_shadow",
+			"vertex": "shaders/models/chrome2/shader.vs",
+			"fragment": "shaders/models/chrome2/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome2_shadowmap_shadow",
+			"vertex": "shaders/models/chrome2/shader_shadowmap.vs",
+			"fragment": "shaders/models/chrome2/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome2_wave_shadow",
+			"vertex": "shaders/models/chrome2/shader_wave.vs",
+			"fragment": "shaders/models/chrome2/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome2_ztest_shadow",
+			"vertex": "shaders/models/chrome2/shader_ztest.vs",
+			"fragment": "shaders/models/chrome2/shadow_ztest.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome3_shadow",
+			"vertex": "shaders/models/chrome3/shader.vs",
+			"fragment": "shaders/models/chrome3/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome3_shadowmap_shadow",
+			"vertex": "shaders/models/chrome3/shader_shadowmap.vs",
+			"fragment": "shaders/models/chrome3/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome3_wave_shadow",
+			"vertex": "shaders/models/chrome3/shader_wave.vs",
+			"fragment": "shaders/models/chrome3/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome3_ztest_shadow",
+			"vertex": "shaders/models/chrome3/shader_ztest.vs",
+			"fragment": "shaders/models/chrome3/shadow_ztest.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome4_shadow",
+			"vertex": "shaders/models/chrome4/shader.vs",
+			"fragment": "shaders/models/chrome4/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome4_shadowmap_shadow",
+			"vertex": "shaders/models/chrome4/shader_shadowmap.vs",
+			"fragment": "shaders/models/chrome4/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome4_wave_shadow",
+			"vertex": "shaders/models/chrome4/shader_wave.vs",
+			"fragment": "shaders/models/chrome4/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome4_ztest_shadow",
+			"vertex": "shaders/models/chrome4/shader_ztest.vs",
+			"fragment": "shaders/models/chrome4/shadow_ztest.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome5_shadow",
+			"vertex": "shaders/models/chrome5/shader.vs",
+			"fragment": "shaders/models/chrome5/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome5_shadowmap_shadow",
+			"vertex": "shaders/models/chrome5/shader_shadowmap.vs",
+			"fragment": "shaders/models/chrome5/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome5_wave_shadow",
+			"vertex": "shaders/models/chrome5/shader_wave.vs",
+			"fragment": "shaders/models/chrome5/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome5_ztest_shadow",
+			"vertex": "shaders/models/chrome5/shader_ztest.vs",
+			"fragment": "shaders/models/chrome5/shadow_ztest.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome6_shadow",
+			"vertex": "shaders/models/chrome6/shader.vs",
+			"fragment": "shaders/models/chrome6/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome6_shadowmap_shadow",
+			"vertex": "shaders/models/chrome6/shader_shadowmap.vs",
+			"fragment": "shaders/models/chrome6/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome6_wave_shadow",
+			"vertex": "shaders/models/chrome6/shader_wave.vs",
+			"fragment": "shaders/models/chrome6/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome6_ztest_shadow",
+			"vertex": "shaders/models/chrome6/shader_ztest.vs",
+			"fragment": "shaders/models/chrome6/shadow_ztest.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome7_shadow",
+			"vertex": "shaders/models/chrome7/shader.vs",
+			"fragment": "shaders/models/chrome7/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome7_shadowmap_shadow",
+			"vertex": "shaders/models/chrome7/shader_shadowmap.vs",
+			"fragment": "shaders/models/chrome7/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome7_wave_shadow",
+			"vertex": "shaders/models/chrome7/shader_wave.vs",
+			"fragment": "shaders/models/chrome7/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome7_ztest_shadow",
+			"vertex": "shaders/models/chrome7/shader_ztest.vs",
+			"fragment": "shaders/models/chrome7/shadow_ztest.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome8_shadow",
+			"vertex": "shaders/models/chrome8/shader.vs",
+			"fragment": "shaders/models/chrome8/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome8_shadowmap_shadow",
+			"vertex": "shaders/models/chrome8/shader_shadowmap.vs",
+			"fragment": "shaders/models/chrome8/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome8_wave_shadow",
+			"vertex": "shaders/models/chrome8/shader_wave.vs",
+			"fragment": "shaders/models/chrome8/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_chrome8_ztest_shadow",
+			"vertex": "shaders/models/chrome8/shader_ztest.vs",
+			"fragment": "shaders/models/chrome8/shadow_ztest.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_metal_shadow",
+			"vertex": "shaders/models/metal/shader.vs",
+			"fragment": "shaders/models/metal/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_metal_shadowmap_shadow",
+			"vertex": "shaders/models/metal/shader_shadowmap.vs",
+			"fragment": "shaders/models/metal/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_metal_wave_shadow",
+			"vertex": "shaders/models/metal/shader_wave.vs",
+			"fragment": "shaders/models/metal/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_metal_ztest_shadow",
+			"vertex": "shaders/models/metal/shader_ztest.vs",
+			"fragment": "shaders/models/metal/shadow_ztest.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_oil_shadow",
+			"vertex": "shaders/models/oil/shader.vs",
+			"fragment": "shaders/models/oil/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_oil_shadowmap_shadow",
+			"vertex": "shaders/models/oil/shader_shadowmap.vs",
+			"fragment": "shaders/models/oil/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_oil_wave_shadow",
+			"vertex": "shaders/models/oil/shader_wave.vs",
+			"fragment": "shaders/models/oil/shadow.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "mesh_oil_ztest_shadow",
+			"vertex": "shaders/models/oil/shader_ztest.vs",
+			"fragment": "shaders/models/oil/shadow_ztest.fs",
+			"resource_id": "mesh",
+			"macros": [
+				{
+					"type": "integer",
+					"name": "SHADOW_OUTPUT",
+					"value": 1
+				}
+			]
+		},
+		{
+			"id": "particle",
+			"vertex": "shaders/particle/shader.vs",
+			"fragment": "shaders/particle/shader.fs",
+			"resource_id": "particle"
+		},
+		{
+			"id": "joint",
+			"vertex": "shaders/joint/shader.vs",
+			"fragment": "shaders/joint/shader.fs",
+			"resource_id": "joint"
+		},
+		{
+			"id": "boundingbox",
+			"vertex": "shaders/bbox/shader.vs",
+			"fragment": "shaders/bbox/shader.fs",
+			"resource_id": "bbox"
+		},
+		{
+			"id": "rmlui_color",
+			"vertex": "shaders/rmlui/shader.vs",
+			"fragment": "shaders/rmlui/shader_color.fs",
+			"resource_id": "rmlui_color"
+		},
+		{
+			"id": "rmlui_texture",
+			"vertex": "shaders/rmlui/shader.vs",
+			"fragment": "shaders/rmlui/shader_texture.fs",
+			"resource_id": "rmlui_texture"
+		}
+	],
+	"models": [
+		{
+			"id": "player_ani",
+			"path": "player"
+		},
+		{
+			"id": "dark_wizard_body_head",
+			"path": "player/dark_wizard/helm"
+		},
+		{
+			"id": "dark_wizard_body_chest",
+			"path": "player/dark_wizard/armor"
+		},
+		{
+			"id": "dark_wizard_body_arms",
+			"path": "player/dark_wizard/gloves"
+		},
+		{
+			"id": "dark_wizard_body_legs",
+			"path": "player/dark_wizard/boots"
+		},
+		{
+			"id": "dark_wizard_body_lower",
+			"path": "player/dark_wizard/pants"
+		},
+		{
+			"id": "soul_master_body_head",
+			"path": "player/soul_master/helm"
+		},
+		{
+			"id": "soul_master_body_chest",
+			"path": "player/soul_master/armor"
+		},
+		{
+			"id": "soul_master_body_arms",
+			"path": "player/soul_master/gloves"
+		},
+		{
+			"id": "soul_master_body_legs",
+			"path": "player/soul_master/boots"
+		},
+		{
+			"id": "soul_master_body_lower",
+			"path": "player/soul_master/pants"
+		},
+		{
+			"id": "grand_master_body_head",
+			"path": "player/grand_master/helm"
+		},
+		{
+			"id": "grand_master_body_chest",
+			"path": "player/grand_master/armor"
+		},
+		{
+			"id": "grand_master_body_arms",
+			"path": "player/grand_master/gloves"
+		},
+		{
+			"id": "grand_master_body_legs",
+			"path": "player/grand_master/boots"
+		},
+		{
+			"id": "grand_master_body_lower",
+			"path": "player/grand_master/pants"
+		},
+		{
+			"id": "soul_wizard_body_head",
+			"path": "player/soul_wizard/helm"
+		},
+		{
+			"id": "soul_wizard_body_chest",
+			"path": "player/soul_wizard/armor"
+		},
+		{
+			"id": "soul_wizard_body_arms",
+			"path": "player/soul_wizard/gloves"
+		},
+		{
+			"id": "soul_wizard_body_legs",
+			"path": "player/soul_wizard/boots"
+		},
+		{
+			"id": "soul_wizard_body_lower",
+			"path": "player/soul_wizard/pants"
+		},
+		{
+			"id": "dark_knight_body_head",
+			"path": "player/dark_knight/helm"
+		},
+		{
+			"id": "dark_knight_body_chest",
+			"path": "player/dark_knight/armor"
+		},
+		{
+			"id": "dark_knight_body_arms",
+			"path": "player/dark_knight/gloves"
+		},
+		{
+			"id": "dark_knight_body_legs",
+			"path": "player/dark_knight/boots"
+		},
+		{
+			"id": "dark_knight_body_lower",
+			"path": "player/dark_knight/pants"
+		},
+		{
+			"id": "blade_knight_body_head",
+			"path": "player/blade_knight/helm"
+		},
+		{
+			"id": "blade_knight_body_chest",
+			"path": "player/blade_knight/armor"
+		},
+		{
+			"id": "blade_knight_body_arms",
+			"path": "player/blade_knight/gloves"
+		},
+		{
+			"id": "blade_knight_body_legs",
+			"path": "player/blade_knight/boots"
+		},
+		{
+			"id": "blade_knight_body_lower",
+			"path": "player/blade_knight/pants"
+		},
+		{
+			"id": "blade_master_body_head",
+			"path": "player/blade_master/helm"
+		},
+		{
+			"id": "blade_master_body_chest",
+			"path": "player/blade_master/armor"
+		},
+		{
+			"id": "blade_master_body_arms",
+			"path": "player/blade_master/gloves"
+		},
+		{
+			"id": "blade_master_body_legs",
+			"path": "player/blade_master/boots"
+		},
+		{
+			"id": "blade_master_body_lower",
+			"path": "player/blade_master/pants"
+		},
+		{
+			"id": "dragon_knight_body_head",
+			"path": "player/dragon_knight/helm"
+		},
+		{
+			"id": "dragon_knight_body_chest",
+			"path": "player/dragon_knight/armor"
+		},
+		{
+			"id": "dragon_knight_body_arms",
+			"path": "player/dragon_knight/gloves"
+		},
+		{
+			"id": "dragon_knight_body_legs",
+			"path": "player/dragon_knight/boots"
+		},
+		{
+			"id": "dragon_knight_body_lower",
+			"path": "player/dragon_knight/pants"
+		},
+		{
+			"id": "elf_body_head",
+			"path": "player/elf/helm"
+		},
+		{
+			"id": "elf_body_chest",
+			"path": "player/elf/armor"
+		},
+		{
+			"id": "elf_body_arms",
+			"path": "player/elf/gloves"
+		},
+		{
+			"id": "elf_body_legs",
+			"path": "player/elf/boots"
+		},
+		{
+			"id": "elf_body_lower",
+			"path": "player/elf/pants"
+		},
+		{
+			"id": "muse_elf_body_head",
+			"path": "player/muse_elf/helm"
+		},
+		{
+			"id": "muse_elf_body_chest",
+			"path": "player/muse_elf/armor"
+		},
+		{
+			"id": "muse_elf_body_arms",
+			"path": "player/muse_elf/gloves"
+		},
+		{
+			"id": "muse_elf_body_legs",
+			"path": "player/muse_elf/boots"
+		},
+		{
+			"id": "muse_elf_body_lower",
+			"path": "player/muse_elf/pants"
+		},
+		{
+			"id": "high_elf_body_head",
+			"path": "player/high_elf/helm"
+		},
+		{
+			"id": "high_elf_body_chest",
+			"path": "player/high_elf/armor"
+		},
+		{
+			"id": "high_elf_body_arms",
+			"path": "player/high_elf/gloves"
+		},
+		{
+			"id": "high_elf_body_legs",
+			"path": "player/high_elf/boots"
+		},
+		{
+			"id": "high_elf_body_lower",
+			"path": "player/high_elf/pants"
+		},
+		{
+			"id": "noble_elf_body_head",
+			"path": "player/noble_elf/helm"
+		},
+		{
+			"id": "noble_elf_body_chest",
+			"path": "player/noble_elf/armor"
+		},
+		{
+			"id": "noble_elf_body_arms",
+			"path": "player/noble_elf/gloves"
+		},
+		{
+			"id": "noble_elf_body_legs",
+			"path": "player/noble_elf/boots"
+		},
+		{
+			"id": "noble_elf_body_lower",
+			"path": "player/noble_elf/pants"
+		},
+		{
+			"id": "magic_gladiator_body_head",
+			"path": "player/magic_gladiator/helm"
+		},
+		{
+			"id": "magic_gladiator_body_chest",
+			"path": "player/magic_gladiator/armor"
+		},
+		{
+			"id": "magic_gladiator_body_arms",
+			"path": "player/magic_gladiator/gloves"
+		},
+		{
+			"id": "magic_gladiator_body_legs",
+			"path": "player/magic_gladiator/boots"
+		},
+		{
+			"id": "magic_gladiator_body_lower",
+			"path": "player/magic_gladiator/pants"
+		},
+		{
+			"id": "duel_master_body_head",
+			"path": "player/duel_master/helm"
+		},
+		{
+			"id": "duel_master_body_chest",
+			"path": "player/duel_master/armor"
+		},
+		{
+			"id": "duel_master_body_arms",
+			"path": "player/duel_master/gloves"
+		},
+		{
+			"id": "duel_master_body_legs",
+			"path": "player/duel_master/boots"
+		},
+		{
+			"id": "duel_master_body_lower",
+			"path": "player/duel_master/pants"
+		},
+		{
+			"id": "magic_knight_body_head",
+			"path": "player/magic_knight/helm"
+		},
+		{
+			"id": "magic_knight_body_chest",
+			"path": "player/magic_knight/armor"
+		},
+		{
+			"id": "magic_knight_body_arms",
+			"path": "player/magic_knight/gloves"
+		},
+		{
+			"id": "magic_knight_body_legs",
+			"path": "player/magic_knight/boots"
+		},
+		{
+			"id": "magic_knight_body_lower",
+			"path": "player/magic_knight/pants"
+		},
+		{
+			"id": "dark_lord_body_head",
+			"path": "player/dark_lord/helm"
+		},
+		{
+			"id": "dark_lord_body_chest",
+			"path": "player/dark_lord/armor"
+		},
+		{
+			"id": "dark_lord_body_arms",
+			"path": "player/dark_lord/gloves"
+		},
+		{
+			"id": "dark_lord_body_legs",
+			"path": "player/dark_lord/boots"
+		},
+		{
+			"id": "dark_lord_body_lower",
+			"path": "player/dark_lord/pants"
+		},
+		{
+			"id": "lord_emperor_body_head",
+			"path": "player/lord_emperor/helm"
+		},
+		{
+			"id": "lord_emperor_body_chest",
+			"path": "player/lord_emperor/armor"
+		},
+		{
+			"id": "lord_emperor_body_arms",
+			"path": "player/lord_emperor/gloves"
+		},
+		{
+			"id": "lord_emperor_body_legs",
+			"path": "player/lord_emperor/boots"
+		},
+		{
+			"id": "lord_emperor_body_lower",
+			"path": "player/lord_emperor/pants"
+		},
+		{
+			"id": "empire_lord_body_head",
+			"path": "player/empire_lord/helm"
+		},
+		{
+			"id": "empire_lord_body_chest",
+			"path": "player/empire_lord/armor"
+		},
+		{
+			"id": "empire_lord_body_arms",
+			"path": "player/empire_lord/gloves"
+		},
+		{
+			"id": "empire_lord_body_legs",
+			"path": "player/empire_lord/boots"
+		},
+		{
+			"id": "empire_lord_body_lower",
+			"path": "player/empire_lord/pants"
+		},
+		{
+			"id": "summoner_body_head",
+			"path": "player/summoner/helm"
+		},
+		{
+			"id": "summoner_body_chest",
+			"path": "player/summoner/armor"
+		},
+		{
+			"id": "summoner_body_arms",
+			"path": "player/summoner/gloves"
+		},
+		{
+			"id": "summoner_body_legs",
+			"path": "player/summoner/boots"
+		},
+		{
+			"id": "summoner_body_lower",
+			"path": "player/summoner/pants"
+		},
+		{
+			"id": "bloody_summoner_body_head",
+			"path": "player/bloody_summoner/helm"
+		},
+		{
+			"id": "bloody_summoner_body_chest",
+			"path": "player/bloody_summoner/armor"
+		},
+		{
+			"id": "bloody_summoner_body_arms",
+			"path": "player/bloody_summoner/gloves"
+		},
+		{
+			"id": "bloody_summoner_body_legs",
+			"path": "player/bloody_summoner/boots"
+		},
+		{
+			"id": "bloody_summoner_body_lower",
+			"path": "player/bloody_summoner/pants"
+		},
+		{
+			"id": "dimension_master_body_head",
+			"path": "player/dimension_master/helm"
+		},
+		{
+			"id": "dimension_master_body_chest",
+			"path": "player/dimension_master/armor"
+		},
+		{
+			"id": "dimension_master_body_arms",
+			"path": "player/dimension_master/gloves"
+		},
+		{
+			"id": "dimension_master_body_legs",
+			"path": "player/dimension_master/boots"
+		},
+		{
+			"id": "dimension_master_body_lower",
+			"path": "player/dimension_master/pants"
+		},
+		{
+			"id": "dimension_summoner_body_head",
+			"path": "player/dimension_summoner/helm"
+		},
+		{
+			"id": "dimension_summoner_body_chest",
+			"path": "player/dimension_summoner/armor"
+		},
+		{
+			"id": "dimension_summoner_body_arms",
+			"path": "player/dimension_summoner/gloves"
+		},
+		{
+			"id": "dimension_summoner_body_legs",
+			"path": "player/dimension_summoner/boots"
+		},
+		{
+			"id": "dimension_summoner_body_lower",
+			"path": "player/dimension_summoner/pants"
+		},
+		{
+			"id": "rage_fighter_body_head",
+			"path": "player/rage_fighter/helm"
+		},
+		{
+			"id": "rage_fighter_body_chest",
+			"path": "player/rage_fighter/armor"
+		},
+		{
+			"id": "rage_fighter_body_arms",
+			"path": "player/rage_fighter/gloves"
+		},
+		{
+			"id": "rage_fighter_body_legs",
+			"path": "player/rage_fighter/boots"
+		},
+		{
+			"id": "rage_fighter_body_lower",
+			"path": "player/rage_fighter/pants"
+		},
+		{
+			"id": "fist_master_body_head",
+			"path": "player/fist_master/helm"
+		},
+		{
+			"id": "fist_master_body_chest",
+			"path": "player/fist_master/armor"
+		},
+		{
+			"id": "fist_master_body_arms",
+			"path": "player/fist_master/gloves"
+		},
+		{
+			"id": "fist_master_body_legs",
+			"path": "player/fist_master/boots"
+		},
+		{
+			"id": "fist_master_body_lower",
+			"path": "player/fist_master/pants"
+		},
+		{
+			"id": "fist_blazer_body_head",
+			"path": "player/fist_blazer/helm"
+		},
+		{
+			"id": "fist_blazer_body_chest",
+			"path": "player/fist_blazer/armor"
+		},
+		{
+			"id": "fist_blazer_body_arms",
+			"path": "player/fist_blazer/gloves"
+		},
+		{
+			"id": "fist_blazer_body_legs",
+			"path": "player/fist_blazer/boots"
+		},
+		{
+			"id": "fist_blazer_body_lower",
+			"path": "player/fist_blazer/pants"
+		},
+		{
+			"id": "grow_lancer_body_head",
+			"path": "player/grow_lancer/helm"
+		},
+		{
+			"id": "grow_lancer_body_chest",
+			"path": "player/grow_lancer/armor"
+		},
+		{
+			"id": "grow_lancer_body_arms",
+			"path": "player/grow_lancer/gloves"
+		},
+		{
+			"id": "grow_lancer_body_legs",
+			"path": "player/grow_lancer/boots"
+		},
+		{
+			"id": "grow_lancer_body_lower",
+			"path": "player/grow_lancer/pants"
+		},
+		{
+			"id": "mirage_lancer_body_head",
+			"path": "player/mirage_lancer/helm"
+		},
+		{
+			"id": "mirage_lancer_body_chest",
+			"path": "player/mirage_lancer/armor"
+		},
+		{
+			"id": "mirage_lancer_body_arms",
+			"path": "player/mirage_lancer/gloves"
+		},
+		{
+			"id": "mirage_lancer_body_legs",
+			"path": "player/mirage_lancer/boots"
+		},
+		{
+			"id": "mirage_lancer_body_lower",
+			"path": "player/mirage_lancer/pants"
+		},
+		{
+			"id": "shinning_lancer_body_head",
+			"path": "player/shinning_lancer/helm"
+		},
+		{
+			"id": "shinning_lancer_body_chest",
+			"path": "player/shinning_lancer/armor"
+		},
+		{
+			"id": "shinning_lancer_body_arms",
+			"path": "player/shinning_lancer/gloves"
+		},
+		{
+			"id": "shinning_lancer_body_legs",
+			"path": "player/shinning_lancer/boots"
+		},
+		{
+			"id": "shinning_lancer_body_lower",
+			"path": "player/shinning_lancer/pants"
+		},
+		{
+			"id": "rune_mage_body_head",
+			"path": "player/rune_mage/helm"
+		},
+		{
+			"id": "rune_mage_body_chest",
+			"path": "player/rune_mage/armor"
+		},
+		{
+			"id": "rune_mage_body_arms",
+			"path": "player/rune_mage/gloves"
+		},
+		{
+			"id": "rune_mage_body_legs",
+			"path": "player/rune_mage/boots"
+		},
+		{
+			"id": "rune_mage_body_lower",
+			"path": "player/rune_mage/pants"
+		},
+		{
+			"id": "rune_spell_master_body_head",
+			"path": "player/rune_spell_master/helm"
+		},
+		{
+			"id": "rune_spell_master_body_chest",
+			"path": "player/rune_spell_master/armor"
+		},
+		{
+			"id": "rune_spell_master_body_arms",
+			"path": "player/rune_spell_master/gloves"
+		},
+		{
+			"id": "rune_spell_master_body_legs",
+			"path": "player/rune_spell_master/boots"
+		},
+		{
+			"id": "rune_spell_master_body_lower",
+			"path": "player/rune_spell_master/pants"
+		},
+		{
+			"id": "grand_rune_master_body_head",
+			"path": "player/grand_rune_master/helm"
+		},
+		{
+			"id": "grand_rune_master_body_chest",
+			"path": "player/grand_rune_master/armor"
+		},
+		{
+			"id": "grand_rune_master_body_arms",
+			"path": "player/grand_rune_master/gloves"
+		},
+		{
+			"id": "grand_rune_master_body_legs",
+			"path": "player/grand_rune_master/boots"
+		},
+		{
+			"id": "grand_rune_master_body_lower",
+			"path": "player/grand_rune_master/pants"
+		},
+		{
+			"id": "majestic_rune_wizard_body_head",
+			"path": "player/majestic_rune_wizard/helm"
+		},
+		{
+			"id": "majestic_rune_wizard_body_chest",
+			"path": "player/majestic_rune_wizard/armor"
+		},
+		{
+			"id": "majestic_rune_wizard_body_arms",
+			"path": "player/majestic_rune_wizard/gloves"
+		},
+		{
+			"id": "majestic_rune_wizard_body_legs",
+			"path": "player/majestic_rune_wizard/boots"
+		},
+		{
+			"id": "majestic_rune_wizard_body_lower",
+			"path": "player/majestic_rune_wizard/pants"
+		},
+		{
+			"id": "slayer_body_head",
+			"path": "player/slayer/helm"
+		},
+		{
+			"id": "slayer_body_chest",
+			"path": "player/slayer/armor"
+		},
+		{
+			"id": "slayer_body_arms",
+			"path": "player/slayer/gloves"
+		},
+		{
+			"id": "slayer_body_legs",
+			"path": "player/slayer/boots"
+		},
+		{
+			"id": "slayer_body_lower",
+			"path": "player/slayer/pants"
+		},
+		{
+			"id": "royal_slayer_body_head",
+			"path": "player/royal_slayer/helm"
+		},
+		{
+			"id": "royal_slayer_body_chest",
+			"path": "player/royal_slayer/armor"
+		},
+		{
+			"id": "royal_slayer_body_arms",
+			"path": "player/royal_slayer/gloves"
+		},
+		{
+			"id": "royal_slayer_body_legs",
+			"path": "player/royal_slayer/boots"
+		},
+		{
+			"id": "royal_slayer_body_lower",
+			"path": "player/royal_slayer/pants"
+		},
+		{
+			"id": "master_slayer_body_head",
+			"path": "player/master_slayer/helm"
+		},
+		{
+			"id": "master_slayer_body_chest",
+			"path": "player/master_slayer/armor"
+		},
+		{
+			"id": "master_slayer_body_arms",
+			"path": "player/master_slayer/gloves"
+		},
+		{
+			"id": "master_slayer_body_legs",
+			"path": "player/master_slayer/boots"
+		},
+		{
+			"id": "master_slayer_body_lower",
+			"path": "player/master_slayer/pants"
+		},
+		{
+			"id": "slaughterer_body_head",
+			"path": "player/slaughterer/helm"
+		},
+		{
+			"id": "slaughterer_body_chest",
+			"path": "player/slaughterer/armor"
+		},
+		{
+			"id": "slaughterer_body_arms",
+			"path": "player/slaughterer/gloves"
+		},
+		{
+			"id": "slaughterer_body_legs",
+			"path": "player/slaughterer/boots"
+		},
+		{
+			"id": "slaughterer_body_lower",
+			"path": "player/slaughterer/pants"
+		},
+		{
+			"id": "gun_crasher_body_head",
+			"path": "player/gun_crasher/helm"
+		},
+		{
+			"id": "gun_crasher_body_chest",
+			"path": "player/gun_crasher/armor"
+		},
+		{
+			"id": "gun_crasher_body_arms",
+			"path": "player/gun_crasher/gloves"
+		},
+		{
+			"id": "gun_crasher_body_legs",
+			"path": "player/gun_crasher/boots"
+		},
+		{
+			"id": "gun_crasher_body_lower",
+			"path": "player/gun_crasher/pants"
+		},
+		{
+			"id": "gun_breaker_body_head",
+			"path": "player/gun_breaker/helm"
+		},
+		{
+			"id": "gun_breaker_body_chest",
+			"path": "player/gun_breaker/armor"
+		},
+		{
+			"id": "gun_breaker_body_arms",
+			"path": "player/gun_breaker/gloves"
+		},
+		{
+			"id": "gun_breaker_body_legs",
+			"path": "player/gun_breaker/boots"
+		},
+		{
+			"id": "gun_breaker_body_lower",
+			"path": "player/gun_breaker/pants"
+		},
+		{
+			"id": "master_gun_breaker_body_head",
+			"path": "player/master_gun_breaker/helm"
+		},
+		{
+			"id": "master_gun_breaker_body_chest",
+			"path": "player/master_gun_breaker/armor"
+		},
+		{
+			"id": "master_gun_breaker_body_arms",
+			"path": "player/master_gun_breaker/gloves"
+		},
+		{
+			"id": "master_gun_breaker_body_legs",
+			"path": "player/master_gun_breaker/boots"
+		},
+		{
+			"id": "master_gun_breaker_body_lower",
+			"path": "player/master_gun_breaker/pants"
+		},
+		{
+			"id": "heist_gun_breaker_body_head",
+			"path": "player/heist_gun_breaker/helm"
+		},
+		{
+			"id": "heist_gun_breaker_body_chest",
+			"path": "player/heist_gun_breaker/armor"
+		},
+		{
+			"id": "heist_gun_breaker_body_arms",
+			"path": "player/heist_gun_breaker/gloves"
+		},
+		{
+			"id": "heist_gun_breaker_body_legs",
+			"path": "player/heist_gun_breaker/boots"
+		},
+		{
+			"id": "heist_gun_breaker_body_lower",
+			"path": "player/heist_gun_breaker/pants"
+		},
+		{
+			"id": "white_wizard_body_head",
+			"path": "player/white_wizard/helm"
+		},
+		{
+			"id": "white_wizard_body_chest",
+			"path": "player/white_wizard/armor"
+		},
+		{
+			"id": "white_wizard_body_arms",
+			"path": "player/white_wizard/gloves"
+		},
+		{
+			"id": "white_wizard_body_legs",
+			"path": "player/white_wizard/boots"
+		},
+		{
+			"id": "white_wizard_body_lower",
+			"path": "player/white_wizard/pants"
+		},
+		{
+			"id": "light_master_body_head",
+			"path": "player/light_master/helm"
+		},
+		{
+			"id": "light_master_body_chest",
+			"path": "player/light_master/armor"
+		},
+		{
+			"id": "light_master_body_arms",
+			"path": "player/light_master/gloves"
+		},
+		{
+			"id": "light_master_body_legs",
+			"path": "player/light_master/boots"
+		},
+		{
+			"id": "light_master_body_lower",
+			"path": "player/light_master/pants"
+		},
+		{
+			"id": "shine_wizard_body_head",
+			"path": "player/shine_wizard/helm"
+		},
+		{
+			"id": "shine_wizard_body_chest",
+			"path": "player/shine_wizard/armor"
+		},
+		{
+			"id": "shine_wizard_body_arms",
+			"path": "player/shine_wizard/gloves"
+		},
+		{
+			"id": "shine_wizard_body_legs",
+			"path": "player/shine_wizard/boots"
+		},
+		{
+			"id": "shine_wizard_body_lower",
+			"path": "player/shine_wizard/pants"
+		},
+		{
+			"id": "shine_master_body_head",
+			"path": "player/shine_master/helm"
+		},
+		{
+			"id": "shine_master_body_chest",
+			"path": "player/shine_master/armor"
+		},
+		{
+			"id": "shine_master_body_arms",
+			"path": "player/shine_master/gloves"
+		},
+		{
+			"id": "shine_master_body_legs",
+			"path": "player/shine_master/boots"
+		},
+		{
+			"id": "shine_master_body_lower",
+			"path": "player/shine_master/pants"
+		},
+		{
+			"id": "mage_body_head",
+			"path": "player/mage/helm"
+		},
+		{
+			"id": "mage_body_chest",
+			"path": "player/mage/armor"
+		},
+		{
+			"id": "mage_body_arms",
+			"path": "player/mage/gloves"
+		},
+		{
+			"id": "mage_body_legs",
+			"path": "player/mage/boots"
+		},
+		{
+			"id": "mage_body_lower",
+			"path": "player/mage/pants"
+		},
+		{
+			"id": "wo_mage_body_head",
+			"path": "player/wo_mage/helm"
+		},
+		{
+			"id": "wo_mage_body_chest",
+			"path": "player/wo_mage/armor"
+		},
+		{
+			"id": "wo_mage_body_arms",
+			"path": "player/wo_mage/gloves"
+		},
+		{
+			"id": "wo_mage_body_legs",
+			"path": "player/wo_mage/boots"
+		},
+		{
+			"id": "wo_mage_body_lower",
+			"path": "player/wo_mage/pants"
+		},
+		{
+			"id": "arch_mage_body_head",
+			"path": "player/arch_mage/helm"
+		},
+		{
+			"id": "arch_mage_body_chest",
+			"path": "player/arch_mage/armor"
+		},
+		{
+			"id": "arch_mage_body_arms",
+			"path": "player/arch_mage/gloves"
+		},
+		{
+			"id": "arch_mage_body_legs",
+			"path": "player/arch_mage/boots"
+		},
+		{
+			"id": "arch_mage_body_lower",
+			"path": "player/arch_mage/pants"
+		},
+		{
+			"id": "mystic_mage_body_head",
+			"path": "player/mystic_mage/helm"
+		},
+		{
+			"id": "mystic_mage_body_chest",
+			"path": "player/mystic_mage/armor"
+		},
+		{
+			"id": "mystic_mage_body_arms",
+			"path": "player/mystic_mage/gloves"
+		},
+		{
+			"id": "mystic_mage_body_legs",
+			"path": "player/mystic_mage/boots"
+		},
+		{
+			"id": "mystic_mage_body_lower",
+			"path": "player/mystic_mage/pants"
+		},
+		{
+			"id": "illusion_knight_body_head",
+			"path": "player/illusion_knight/helm"
+		},
+		{
+			"id": "illusion_knight_body_chest",
+			"path": "player/illusion_knight/armor"
+		},
+		{
+			"id": "illusion_knight_body_arms",
+			"path": "player/illusion_knight/gloves"
+		},
+		{
+			"id": "illusion_knight_body_legs",
+			"path": "player/illusion_knight/boots"
+		},
+		{
+			"id": "illusion_knight_body_lower",
+			"path": "player/illusion_knight/pants"
+		},
+		{
+			"id": "mirage_knight_body_head",
+			"path": "player/mirage_knight/helm"
+		},
+		{
+			"id": "mirage_knight_body_chest",
+			"path": "player/mirage_knight/armor"
+		},
+		{
+			"id": "mirage_knight_body_arms",
+			"path": "player/mirage_knight/gloves"
+		},
+		{
+			"id": "mirage_knight_body_legs",
+			"path": "player/mirage_knight/boots"
+		},
+		{
+			"id": "mirage_knight_body_lower",
+			"path": "player/mirage_knight/pants"
+		},
+		{
+			"id": "illusion_master_body_head",
+			"path": "player/illusion_master/helm"
+		},
+		{
+			"id": "illusion_master_body_chest",
+			"path": "player/illusion_master/armor"
+		},
+		{
+			"id": "illusion_master_body_arms",
+			"path": "player/illusion_master/gloves"
+		},
+		{
+			"id": "illusion_master_body_legs",
+			"path": "player/illusion_master/boots"
+		},
+		{
+			"id": "illusion_master_body_lower",
+			"path": "player/illusion_master/pants"
+		},
+		{
+			"id": "mystic_knight_body_head",
+			"path": "player/mystic_knight/helm"
+		},
+		{
+			"id": "mystic_knight_body_chest",
+			"path": "player/mystic_knight/armor"
+		},
+		{
+			"id": "mystic_knight_body_arms",
+			"path": "player/mystic_knight/gloves"
+		},
+		{
+			"id": "mystic_knight_body_legs",
+			"path": "player/mystic_knight/boots"
+		},
+		{
+			"id": "mystic_knight_body_lower",
+			"path": "player/mystic_knight/pants"
+		},
+		{
+			"id": "small_axe",
+			"path": "items/axes/small_axe"
+		},
+		{
+			"id": "crystal_sword",
+			"path": "items/swords/crystal_sword"
+		},
+		{
+			"id": "legendary_staff",
+			"path": "items/staffs/legendary_staff"
+		},
+		{
+			"id": "bronze_helm",
+			"path": "items/sets/bronze/helm"
+		},
+		{
+			"id": "bronze_armor",
+			"path": "items/sets/bronze/armor"
+		},
+		{
+			"id": "bronze_pants",
+			"path": "items/sets/bronze/pants"
+		},
+		{
+			"id": "bronze_gloves",
+			"path": "items/sets/bronze/gloves"
+		},
+		{
+			"id": "bronze_boots",
+			"path": "items/sets/bronze/boots"
+		},
+		{
+			"id": "dragon_helm",
+			"path": "items/sets/dragon/helm"
+		},
+		{
+			"id": "dragon_armor",
+			"path": "items/sets/dragon/armor"
+		},
+		{
+			"id": "dragon_pants",
+			"path": "items/sets/dragon/pants"
+		},
+		{
+			"id": "dragon_gloves",
+			"path": "items/sets/dragon/gloves"
+		},
+		{
+			"id": "dragon_boots",
+			"path": "items/sets/dragon/boots"
+		},
+		{
+			"id": "legendary_helm",
+			"path": "items/sets/legendary/helm"
+		},
+		{
+			"id": "legendary_armor",
+			"path": "items/sets/legendary/armor"
+		},
+		{
+			"id": "legendary_pants",
+			"path": "items/sets/legendary/pants"
+		},
+		{
+			"id": "legendary_gloves",
+			"path": "items/sets/legendary/gloves"
+		},
+		{
+			"id": "legendary_boots",
+			"path": "items/sets/legendary/boots"
+		},
+		{
+			"id": "wings_of_soul",
+			"path": "items/wings/wings_of_soul"
+		},
+		{
+			"id": "wings_of_dragon",
+			"path": "items/wings/wings_of_dragon"
+		},
+		{
+			"id": "monster_01",
+			"path": "monsters/monster01"
+		}
+	],
+	"textures": [
+		{
+			"id": "chrome",
+			"path": "textures/chromes/shiny01.ozj"
+		},
+		{
+			"id": "chrome2",
+			"path": "textures/chromes/chrome02.ozj"
+		},
+		{
+			"id": "chrome3",
+			"path": "textures/chromes/chrome03.ozj"
+		},
+		{
+			"id": "chrome6",
+			"path": "textures/chromes/chrome06.ozj"
+		},
+		{
+			"id": "chrome7",
+			"path": "textures/chromes/chrome07.ozj"
+		},
+		{
+			"id": "chrome8",
+			"path": "textures/chromes/chrome08.ozj"
+		},
+		{
+			"id": "chrome9",
+			"path": "textures/chromes/2.ozj"
+		},
+		{
+			"id": "chrome_flame",
+			"path": "textures/chromes/flame_chrome.ozj"
+		},
+		{
+			"id": "chrome_flame2",
+			"path": "textures/chromes/flame_chrom2.ozj"
+		},
+		{
+			"id": "chasellight",
+			"path": "textures/effects/chasellight.ozj"
+		},
+		{
+			"id": "impack03",
+			"path": "textures/effects/impack03.ozj"
+		},
+		{
+			"id": "clud64",
+			"path": "textures/effects/clud64.ozj",
+			"wrap": "clamp"
+		},
+		{
+			"id": "flower01",
+			"path": "textures/effects/flower1.ozt"
+		},
+		{
+			"id": "flower02",
+			"path": "textures/effects/flower2.ozt"
+		},
+		{
+			"id": "flower03",
+			"path": "textures/effects/flower3.ozt"
+		},
+		{
+			"id": "flareblue",
+			"path": "textures/effects/flareblue.ozj"
+		},
+		{
+			"id": "flare02",
+			"path": "textures/effects/flare02.ozj",
+			"wrap": "repeat"
+		},
+		{
+			"id": "swordeff",
+			"path": "textures/effects/swordeff.ozj",
+			"wrap": "repeat"
+		},
+		{
+			"id": "poundingball",
+			"path": "textures/effects/poundingball.ozj",
+			"wrap": "clamp"
+		},
+		{
+			"id": "smoke01",
+			"path": "textures/effects/smoke01.ozj"
+		},
+		{
+			"id": "smoke05",
+			"path": "textures/effects/smoke05.ozt"
+		},
+		{
+			"id": "truefire_red",
+			"path": "textures/effects/fantaf.ozj"
+		},
+		{
+			"id": "bubble01",
+			"path": "textures/effects/drop01.ozj"
+		},
+		{
+			"id": "thunder01",
+			"path": "textures/effects/jointthunder01.ozj"
+		},
+		{
+			"id": "dark_wizard_skin_lq",
+			"path": "textures/skins/skin_barbarian_01.ozj"
+		},
+		{
+			"id": "dark_wizard_skin_hq",
+			"path": "textures/skins/hqskinclass101.ozj"
+		},
+		{
+			"id": "soul_master_skin_lq",
+			"path": "textures/skins/level_man022.ozj"
+		},
+		{
+			"id": "soul_master_skin_hq",
+			"path": "textures/skins/hqlevel_man022.ozj"
+		},
+		{
+			"id": "grand_master_skin_lq",
+			"path": "textures/skins/skinclass302.ozj"
+		},
+		{
+			"id": "grand_master_skin_hq",
+			"path": "textures/skins/hqskin_class301.ozj"
+		},
+		{
+			"id": "soul_wizard_skin_hq",
+			"path": "textures/skins/hqskinclass401.ozj"
+		},
+		{
+			"id": "dark_knight_skin_lq",
+			"path": "textures/skins/skin_wizard_01.ozj"
+		},
+		{
+			"id": "dark_knight_skin_hq",
+			"path": "textures/skins/hqskinclass102.ozj"
+		},
+		{
+			"id": "blade_knight_skin_lq",
+			"path": "textures/skins/level_man01.ozj"
+		},
+		{
+			"id": "blade_knight_skin_hq",
+			"path": "textures/skins/hqskinclass202.ozj"
+		},
+		{
+			"id": "blade_master_skin_lq",
+			"path": "textures/skins/skinclass301.ozj"
+		},
+		{
+			"id": "blade_master_skin_hq",
+			"path": "textures/skins/hqskin_class302.ozj"
+		},
+		{
+			"id": "dragon_knight_skin_hq",
+			"path": "textures/skins/hqskinclass402.ozj"
+		},
+		{
+			"id": "elf_skin_lq",
+			"path": "textures/skins/skin_archer_01.ozj"
+		},
+		{
+			"id": "elf_skin_hq",
+			"path": "textures/skins/hqskinclass103.ozj"
+		},
+		{
+			"id": "muse_elf_skin_lq",
+			"path": "textures/skins/level_man033.ozj"
+		},
+		{
+			"id": "muse_elf_skin_hq",
+			"path": "textures/skins/hqlevel_man033.ozj"
+		},
+		{
+			"id": "high_elf_skin_lq",
+			"path": "textures/skins/skinclass303.ozj"
+		},
+		{
+			"id": "high_elf_skin_hq",
+			"path": "textures/skins/hqskin_class303.ozj"
+		},
+		{
+			"id": "noble_elf_skin_lq",
+			"path": "textures/skins/skinclass303_4thcolor.ozj"
+		},
+		{
+			"id": "noble_elf_skin_hq",
+			"path": "textures/skins/hqskinclass403.ozj"
+		},
+		{
+			"id": "magic_gladiator_skin_lq",
+			"path": "textures/skins/skin_special_01.ozj"
+		},
+		{
+			"id": "magic_gladiator_skin_hq",
+			"path": "textures/skins/hqskin_special_01.ozj"
+		},
+		{
+			"id": "duel_master_skin_lq",
+			"path": "textures/skins/skinclass304.ozj"
+		},
+		{
+			"id": "duel_master_skin_hq",
+			"path": "textures/skins/hqskin_class304.ozj"
+		},
+		{
+			"id": "magic_knight_skin_hq",
+			"path": "textures/skins/hqskinclass404.ozj"
+		},
+		{
+			"id": "dark_lord_skin_lq",
+			"path": "textures/skins/level_man02.ozj"
+		},
+		{
+			"id": "dark_lord_skin_hq",
+			"path": "textures/skins/hqlevel_man02.ozj"
+		},
+		{
+			"id": "dark_lord_hair",
+			"path": "textures/hairs/hair_r.ozj"
+		},
+		{
+			"id": "lord_emperor_skin_lq",
+			"path": "textures/skins/skinclass305.ozj"
+		},
+		{
+			"id": "lord_emperor_skin_hq",
+			"path": "textures/skins/hqskin_class305.ozj"
+		},
+		{
+			"id": "empire_lord_skin_hq",
+			"path": "textures/skins/hqskinclass405.ozj"
+		},
+		{
+			"id": "empire_lord_hair",
+			"path": "textures/hairs/hqhair_r.ozj"
+		},
+		{
+			"id": "summoner_skin_lq",
+			"path": "textures/skins/skin_class603.ozj"
+		},
+		{
+			"id": "dimension_summoner_skin_hq",
+			"path": "textures/skins/hqskinclass406.ozj"
+		},
+		{
+			"id": "dimension_summoner_hair",
+			"path": "textures/hairs/skinclass406_hair.ozt"
+		},
+		{
+			"id": "dimension_summoner_hair_hq",
+			"path": "textures/hairs/hqhair406.ozt"
+		},
+		{
+			"id": "rage_fighter_skin_lq",
+			"path": "textures/skins/skin_class107.ozj"
+		},
+		{
+			"id": "fist_master_skin_lq",
+			"path": "textures/skins/skin_class207.ozj"
+		},
+		{
+			"id": "fist_blazer_skin_hq",
+			"path": "textures/skins/hqskinclass407.ozj"
+		},
+		{
+			"id": "fist_blazer_hair",
+			"path": "textures/hairs/tknight_hair.ozt"
+		},
+		{
+			"id": "fist_blazer_hair_hq",
+			"path": "textures/hairs/hqhair407.ozt"
+		},
+		{
+			"id": "grow_lancer_skin_lq",
+			"path": "textures/skins/skin_class108.ozj"
+		},
+		{
+			"id": "grow_lancer_hair",
+			"path": "textures/hairs/hair_class108.ozt"
+		},
+		{
+			"id": "mirage_lancer_skin_lq",
+			"path": "textures/skins/skin_class308.ozj"
+		},
+		{
+			"id": "shinning_lancer_skin_hq",
+			"path": "textures/skins/hqskinclass408.ozj"
+		},
+		{
+			"id": "shinning_lancer_hair",
+			"path": "textures/hairs/hqhair108.ozt"
+		},
+		{
+			"id": "rune_mage_skin_hq",
+			"path": "textures/skins/hqskinclass109.ozj"
+		},
+		{
+			"id": "grand_rune_master_skin_hq",
+			"path": "textures/skins/hqskinclass309.ozj"
+		},
+		{
+			"id": "majestic_rune_wizard_skin_hq",
+			"path": "textures/skins/hqskinclass409.ozj"
+		},
+		{
+			"id": "slayer_skin_hq",
+			"path": "textures/skins/hqskinclass110.ozj"
+		},
+		{
+			"id": "master_slayer_skin_hq",
+			"path": "textures/skins/hqskinclass310.ozj"
+		},
+		{
+			"id": "slaughterer_skin_hq",
+			"path": "textures/skins/hqskinclass410.ozj"
+		},
+		{
+			"id": "gun_crasher_skin_hq",
+			"path": "textures/skins/hqskinclass111.ozj"
+		},
+		{
+			"id": "master_gun_breaker_skin_hq",
+			"path": "textures/skins/hqskinclass311.ozj"
+		},
+		{
+			"id": "heist_gun_breaker_skin_hq",
+			"path": "textures/skins/hqskinclass411.ozj"
+		},
+		{
+			"id": "white_wizard_skin_hq",
+			"path": "textures/skins/hqskinclass112.ozj"
+		},
+		{
+			"id": "shine_wizard_skin_hq",
+			"path": "textures/skins/hqskinclass312.ozj"
+		},
+		{
+			"id": "shine_master_skin_hq",
+			"path": "textures/skins/hqskinclass412.ozj"
+		},
+		{
+			"id": "mage_skin_hq",
+			"path": "textures/skins/hqskinclass113.ozj"
+		},
+		{
+			"id": "arch_mage_skin_hq",
+			"path": "textures/skins/hqskinclass313.ozj"
+		},
+		{
+			"id": "mystic_mage_skin_hq",
+			"path": "textures/skins/hqskinclass413.ozj"
+		},
+		{
+			"id": "illusion_knight_skin_hq",
+			"path": "textures/skins/hqskinclass114.ozj"
+		},
+		{
+			"id": "illusion_knight_skin_hq_alt",
+			"path": "textures/skins/hqskin2class114.ozj"
+		},
+		{
+			"id": "illusion_master_skin_hq",
+			"path": "textures/skins/hqskinclass314.ozj"
+		},
+		{
+			"id": "illusion_master_skin_hq_alt",
+			"path": "textures/skins/hqskin2class314.ozj"
+		},
+		{
+			"id": "mystic_knight_skin_hq",
+			"path": "textures/skins/hqskinclass414.ozj"
+		},
+		{
+			"id": "mystic_knight_skin_hq_alt",
+			"path": "textures/skins/hqskin2class414.ozj"
+		}
+	]
+}

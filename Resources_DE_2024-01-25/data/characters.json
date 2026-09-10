@@ -1,0 +1,1130 @@
+[
+	{
+		"id": 0,
+		"sex": "male",
+		"subclass": [
+			{
+				"id": "dark_wizard",
+				"name": "Dark Wizard",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "dark_wizard_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "dark_wizard_skin_hq"
+					}
+				],
+				"body": {
+					"head": "dark_wizard_body_head",
+					"chest": "dark_wizard_body_chest",
+					"lower": "dark_wizard_body_lower",
+					"arms": "dark_wizard_body_arms",
+					"legs": "dark_wizard_body_legs"
+				}
+			},
+			{
+				"id": "soul_master",
+				"name": "Soul Master",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "soul_master_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "soul_master_skin_hq"
+					}
+				],
+				"body": {
+					"head": "soul_master_body_head",
+					"chest": "soul_master_body_chest",
+					"lower": "soul_master_body_lower",
+					"arms": "soul_master_body_arms",
+					"legs": "soul_master_body_legs"
+				}
+			},
+			{
+				"id": "grand_master",
+				"name": "Grand Master",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "grand_master_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "grand_master_skin_hq"
+					}
+				],
+				"body": {
+					"head": "grand_master_body_head",
+					"chest": "grand_master_body_chest",
+					"lower": "grand_master_body_lower",
+					"arms": "grand_master_body_arms",
+					"legs": "grand_master_body_legs"
+				}
+			},
+			{
+				"id": "soul_wizard",
+				"name": "Soul Wizard",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "grand_master_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "soul_wizard_skin_hq"
+					}
+				],
+				"body": {
+					"head": "soul_wizard_body_head",
+					"chest": "soul_wizard_body_chest",
+					"lower": "soul_wizard_body_lower",
+					"arms": "soul_wizard_body_arms",
+					"legs": "soul_wizard_body_legs"
+				}
+			}
+		]
+	},
+	{
+		"id": 1,
+		"sex": "male",
+		"subclass": [
+			{
+				"id": "dark_knight",
+				"name": "Dark Knight",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "dark_knight_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "dark_knight_skin_hq"
+					}
+				],
+				"body": {
+					"head": "dark_knight_body_head",
+					"chest": "dark_knight_body_chest",
+					"lower": "dark_knight_body_lower",
+					"arms": "dark_knight_body_arms",
+					"legs": "dark_knight_body_legs"
+				}
+			},
+			{
+				"id": "blade_knight",
+				"name": "Blade Knight",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "blade_knight_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "blade_knight_skin_hq"
+					}
+				],
+				"body": {
+					"head": "blade_knight_body_head",
+					"chest": "blade_knight_body_chest",
+					"lower": "blade_knight_body_lower",
+					"arms": "blade_knight_body_arms",
+					"legs": "blade_knight_body_legs"
+				}
+			},
+			{
+				"id": "blade_master",
+				"name": "Blade Master",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "blade_master_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "blade_master_skin_hq"
+					}
+				],
+				"body": {
+					"head": "blade_master_body_head",
+					"chest": "blade_master_body_chest",
+					"lower": "blade_master_body_lower",
+					"arms": "blade_master_body_arms",
+					"legs": "blade_master_body_legs"
+				}
+			},
+			{
+				"id": "dragon_knight",
+				"name": "Dragon Knight",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "blade_master_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "dragon_knight_skin_hq"
+					}
+				],
+				"body": {
+					"head": "dragon_knight_body_head",
+					"chest": "dragon_knight_body_chest",
+					"lower": "dragon_knight_body_lower",
+					"arms": "dragon_knight_body_arms",
+					"legs": "dragon_knight_body_legs"
+				}
+			}
+		]
+	},
+	{
+		"id": 2,
+		"sex": "female",
+		"subclass": [
+			{
+				"id": "elf",
+				"name": "Elf",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "elf_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "elf_skin_hq"
+					}
+				],
+				"body": {
+					"head": "elf_body_head",
+					"chest": "elf_body_chest",
+					"lower": "elf_body_lower",
+					"arms": "elf_body_arms",
+					"legs": "elf_body_legs"
+				}
+			},
+			{
+				"id": "muse_elf",
+				"name": "Muse Elf",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "muse_elf_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "muse_elf_skin_hq"
+					}
+				],
+				"body": {
+					"head": "muse_elf_body_head",
+					"chest": "muse_elf_body_chest",
+					"lower": "muse_elf_body_lower",
+					"arms": "muse_elf_body_arms",
+					"legs": "muse_elf_body_legs"
+				}
+			},
+			{
+				"id": "high_elf",
+				"name": "High Elf",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "high_elf_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "high_elf_skin_hq"
+					}
+				],
+				"body": {
+					"head": "high_elf_body_head",
+					"chest": "high_elf_body_chest",
+					"lower": "high_elf_body_lower",
+					"arms": "high_elf_body_arms",
+					"legs": "high_elf_body_legs"
+				}
+			},
+			{
+				"id": "noble_elf",
+				"name": "Noble Elf",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "noble_elf_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "noble_elf_skin_hq"
+					}
+				],
+				"body": {
+					"head": "noble_elf_body_head",
+					"chest": "noble_elf_body_chest",
+					"lower": "noble_elf_body_lower",
+					"arms": "noble_elf_body_arms",
+					"legs": "noble_elf_body_legs"
+				}
+			}
+		]
+	},
+	{
+		"id": 3,
+		"sex": "male",
+		"subclass": [
+			{
+				"id": "magic_gladiator",
+				"name": "Magic Gladiator",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "magic_gladiator_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "magic_gladiator_skin_hq"
+					}
+				],
+				"body": {
+					"head": "magic_gladiator_body_head",
+					"chest": "magic_gladiator_body_chest",
+					"lower": "magic_gladiator_body_lower",
+					"arms": "magic_gladiator_body_arms",
+					"legs": "magic_gladiator_body_legs"
+				}
+			},
+			{
+				"id": "duel_master",
+				"name": "Duel Master",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "duel_master_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "duel_master_skin_hq"
+					}
+				],
+				"body": {
+					"head": "duel_master_body_head",
+					"chest": "duel_master_body_chest",
+					"lower": "duel_master_body_lower",
+					"arms": "duel_master_body_arms",
+					"legs": "duel_master_body_legs"
+				}
+			},
+			{
+				"id": "magic_knight",
+				"name": "Magic Knight",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "duel_master_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "magic_knight_skin_hq"
+					}
+				],
+				"body": {
+					"head": "magic_knight_body_head",
+					"chest": "magic_knight_body_chest",
+					"lower": "magic_knight_body_lower",
+					"arms": "magic_knight_body_arms",
+					"legs": "magic_knight_body_legs"
+				}
+			}
+		]
+	},
+	{
+		"id": 4,
+		"sex": "male",
+		"subclass": [
+			{
+				"id": "dark_lord",
+				"name": "Dark Lord",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "dark_lord_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "dark_lord_skin_hq"
+					},
+					{
+						"id": "hair",
+						"texture": "dark_lord_hair"
+					},
+					{
+						"id": "hair_hq",
+						"texture": "empire_lord_hair"
+					}
+				],
+				"body": {
+					"head": "dark_lord_body_head",
+					"chest": "dark_lord_body_chest",
+					"lower": "dark_lord_body_lower",
+					"arms": "dark_lord_body_arms",
+					"legs": "dark_lord_body_legs"
+				}
+			},
+			{
+				"id": "lord_emperor",
+				"name": "Lord Emperor",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "lord_emperor_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "lord_emperor_skin_hq"
+					},
+					{
+						"id": "hair",
+						"texture": "dark_lord_hair"
+					},
+					{
+						"id": "hair_hq",
+						"texture": "empire_lord_hair"
+					}
+				],
+				"body": {
+					"head": "lord_emperor_body_head",
+					"chest": "lord_emperor_body_chest",
+					"lower": "lord_emperor_body_lower",
+					"arms": "lord_emperor_body_arms",
+					"legs": "lord_emperor_body_legs"
+				}
+			},
+			{
+				"id": "empire_lord",
+				"name": "Empire Lord",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "lord_emperor_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "empire_lord_skin_hq"
+					},
+					{
+						"id": "hair",
+						"texture": "empire_lord_hair"
+					},
+					{
+						"id": "hair_hq",
+						"texture": "empire_lord_hair"
+					}
+				],
+				"body": {
+					"head": "empire_lord_body_head",
+					"chest": "empire_lord_body_chest",
+					"lower": "empire_lord_body_lower",
+					"arms": "empire_lord_body_arms",
+					"legs": "empire_lord_body_legs"
+				}
+			}
+		]
+	},
+	{
+		"id": 5,
+		"sex": "female",
+		"subclass": [
+			{
+				"id": "summoner",
+				"name": "Summoner",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "summoner_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "summoner_skin_hq"
+					}
+				],
+				"body": {
+					"head": "summoner_body_head",
+					"chest": "summoner_body_chest",
+					"lower": "summoner_body_lower",
+					"arms": "summoner_body_arms",
+					"legs": "summoner_body_legs"
+				}
+			},
+			{
+				"id": "bloody_summoner",
+				"name": "Bloody Summoner",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "summoner_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "summoner_skin_hq"
+					}
+				],
+				"body": {
+					"head": "bloody_summoner_body_head",
+					"chest": "bloody_summoner_body_chest",
+					"lower": "bloody_summoner_body_lower",
+					"arms": "bloody_summoner_body_arms",
+					"legs": "bloody_summoner_body_legs"
+				}
+			},
+			{
+				"id": "dimension_master",
+				"name": "Dimension Master",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "summoner_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "summoner_skin_hq"
+					}
+				],
+				"body": {
+					"head": "dimension_master_body_head",
+					"chest": "dimension_master_body_chest",
+					"lower": "dimension_master_body_lower",
+					"arms": "dimension_master_body_arms",
+					"legs": "dimension_master_body_legs"
+				}
+			},
+			{
+				"id": "dimension_summoner",
+				"name": "Dimension Summoner",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "summoner_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "summoner_skin_hq"
+					},
+					{
+						"id": "hair",
+						"texture": "dimension_summoner_hair"
+					},
+					{
+						"id": "hair_hq",
+						"texture": "dimension_summoner_hair_hq"
+					}
+				],
+				"body": {
+					"head": "dimension_summoner_body_head",
+					"chest": "dimension_summoner_body_chest",
+					"lower": "dimension_summoner_body_lower",
+					"arms": "dimension_summoner_body_arms",
+					"legs": "dimension_summoner_body_legs"
+				}
+			}
+		]
+	},
+	{
+		"id": 6,
+		"sex": "male",
+		"subclass": [
+			{
+				"id": "rage_fighter",
+				"name": "Rage Fighter",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "rage_fighter_skin_lq"
+					}
+				],
+				"body": {
+					"head": "rage_fighter_body_head",
+					"chest": "rage_fighter_body_chest",
+					"lower": "rage_fighter_body_lower",
+					"arms": "rage_fighter_body_arms",
+					"legs": "rage_fighter_body_legs"
+				}
+			},
+			{
+				"id": "fist_master",
+				"name": "Fist Master",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "fist_master_skin_lq"
+					}
+				],
+				"body": {
+					"head": "fist_master_body_head",
+					"chest": "fist_master_body_chest",
+					"lower": "fist_master_body_lower",
+					"arms": "fist_master_body_arms",
+					"legs": "fist_master_body_legs"
+				}
+			},
+			{
+				"id": "fist_blazer",
+				"name": "Fist Blazer",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "fist_master_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "fist_blazer_skin_hq"
+					},
+					{
+						"id": "hair",
+						"texture": "fist_blazer_hair"
+					}
+				],
+				"body": {
+					"head": "fist_blazer_body_head",
+					"chest": "fist_blazer_body_chest",
+					"lower": "fist_blazer_body_lower",
+					"arms": "fist_blazer_body_arms",
+					"legs": "fist_blazer_body_legs"
+				}
+			}
+		]
+	},
+	{
+		"id": 7,
+		"sex": "female",
+		"subclass": [
+			{
+				"id": "grow_lancer",
+				"name": "Grow Lancer",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "grow_lancer_skin_lq"
+					},
+					{
+						"id": "hair",
+						"texture": "grow_lancer_hair"
+					}
+				],
+				"body": {
+					"head": "grow_lancer_body_head",
+					"chest": "grow_lancer_body_chest",
+					"lower": "grow_lancer_body_lower",
+					"arms": "grow_lancer_body_arms",
+					"legs": "grow_lancer_body_legs"
+				}
+			},
+			{
+				"id": "mirage_lancer",
+				"name": "Mirage Lancer",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "mirage_lancer_skin_lq"
+					},
+					{
+						"id": "hair",
+						"texture": "grow_lancer_hair"
+					}
+				],
+				"body": {
+					"head": "mirage_lancer_body_head",
+					"chest": "mirage_lancer_body_chest",
+					"lower": "mirage_lancer_body_lower",
+					"arms": "mirage_lancer_body_arms",
+					"legs": "mirage_lancer_body_legs"
+				}
+			},
+			{
+				"id": "shinning_lancer",
+				"name": "Shinning Lancer",
+				"attachments": [
+					{
+						"id": "skin",
+						"texture": "mirage_lancer_skin_lq"
+					},
+					{
+						"id": "skin_hq",
+						"texture": "shinning_lancer_skin_hq"
+					},
+					{
+						"id": "hair",
+						"texture": "shinning_lancer_hair"
+					}
+				],
+				"body": {
+					"head": "shinning_lancer_body_head",
+					"chest": "shinning_lancer_body_chest",
+					"lower": "shinning_lancer_body_lower",
+					"arms": "shinning_lancer_body_arms",
+					"legs": "shinning_lancer_body_legs"
+				}
+			}
+		]
+	},
+	{
+		"id": 8,
+		"sex": "female",
+		"subclass": [
+			{
+				"id": "rune_mage",
+				"name": "Rune Mage",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "rune_mage_skin_hq"
+					}
+				],
+				"body": {
+					"head": "rune_mage_body_head",
+					"chest": "rune_mage_body_chest",
+					"lower": "rune_mage_body_lower",
+					"arms": "rune_mage_body_arms",
+					"legs": "rune_mage_body_legs"
+				}
+			},
+			{
+				"id": "rune_spell_master",
+				"name": "Rune Spell Master",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "rune_mage_skin_hq"
+					}
+				],
+				"body": {
+					"head": "rune_spell_master_body_head",
+					"chest": "rune_spell_master_body_chest",
+					"lower": "rune_spell_master_body_lower",
+					"arms": "rune_spell_master_body_arms",
+					"legs": "rune_spell_master_body_legs"
+				}
+			},
+			{
+				"id": "grand_rune_master",
+				"name": "Grand Rune Master",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "grand_rune_master_skin_hq"
+					}
+				],
+				"body": {
+					"head": "grand_rune_master_body_head",
+					"chest": "grand_rune_master_body_chest",
+					"lower": "grand_rune_master_body_lower",
+					"arms": "grand_rune_master_body_arms",
+					"legs": "grand_rune_master_body_legs"
+				}
+			},
+			{
+				"id": "majestic_rune_wizard",
+				"name": "Majestic Rune Wizard",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "majestic_rune_wizard_skin_hq"
+					}
+				],
+				"body": {
+					"head": "majestic_rune_wizard_body_head",
+					"chest": "majestic_rune_wizard_body_chest",
+					"lower": "majestic_rune_wizard_body_lower",
+					"arms": "majestic_rune_wizard_body_arms",
+					"legs": "majestic_rune_wizard_body_legs"
+				}
+			}
+		]
+	},
+	{
+		"id": 9,
+		"sex": "female",
+		"subclass": [
+			{
+				"id": "slayer",
+				"name": "Slayer",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "slayer_skin_hq"
+					}
+				],
+				"body": {
+					"head": "slayer_body_head",
+					"chest": "slayer_body_chest",
+					"lower": "slayer_body_lower",
+					"arms": "slayer_body_arms",
+					"legs": "slayer_body_legs"
+				}
+			},
+			{
+				"id": "royal_slayer",
+				"name": "Royal Slayer",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "slayer_skin_hq"
+					}
+				],
+				"body": {
+					"head": "royal_slayer_body_head",
+					"chest": "royal_slayer_body_chest",
+					"lower": "royal_slayer_body_lower",
+					"arms": "royal_slayer_body_arms",
+					"legs": "royal_slayer_body_legs"
+				}
+			},
+			{
+				"id": "master_slayer",
+				"name": "Master Slayer",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "master_slayer_skin_hq"
+					}
+				],
+				"body": {
+					"head": "master_slayer_body_head",
+					"chest": "master_slayer_body_chest",
+					"lower": "master_slayer_body_lower",
+					"arms": "master_slayer_body_arms",
+					"legs": "master_slayer_body_legs"
+				}
+			},
+			{
+				"id": "slaughterer",
+				"name": "Slaughterer",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "slaughterer_skin_hq"
+					}
+				],
+				"body": {
+					"head": "slaughterer_body_head",
+					"chest": "slaughterer_body_chest",
+					"lower": "slaughterer_body_lower",
+					"arms": "slaughterer_body_arms",
+					"legs": "slaughterer_body_legs"
+				}
+			}
+		]
+	},
+	{
+		"id": 10,
+		"sex": "male",
+		"subclass": [
+			{
+				"id": "gun_crasher",
+				"name": "Gun Crasher",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "gun_crasher_skin_hq"
+					}
+				],
+				"body": {
+					"head": "gun_crasher_body_head",
+					"chest": "gun_crasher_body_chest",
+					"lower": "gun_crasher_body_lower",
+					"arms": "gun_crasher_body_arms",
+					"legs": "gun_crasher_body_legs"
+				}
+			},
+			{
+				"id": "gun_breaker",
+				"name": "Gun Breaker",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "gun_crasher_skin_hq"
+					}
+				],
+				"body": {
+					"head": "gun_breaker_body_head",
+					"chest": "gun_breaker_body_chest",
+					"lower": "gun_breaker_body_lower",
+					"arms": "gun_breaker_body_arms",
+					"legs": "gun_breaker_body_legs"
+				}
+			},
+			{
+				"id": "master_gun_breaker",
+				"name": "Master Gun Breaker",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "master_gun_breaker_skin_hq"
+					}
+				],
+				"body": {
+					"head": "master_gun_breaker_body_head",
+					"chest": "master_gun_breaker_body_chest",
+					"lower": "master_gun_breaker_body_lower",
+					"arms": "master_gun_breaker_body_arms",
+					"legs": "master_gun_breaker_body_legs"
+				}
+			},
+			{
+				"id": "heist_gun_breaker",
+				"name": "Heist Gun Breaker",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "heist_gun_breaker_skin_hq"
+					}
+				],
+				"body": {
+					"head": "heist_gun_breaker_body_head",
+					"chest": "heist_gun_breaker_body_chest",
+					"lower": "heist_gun_breaker_body_lower",
+					"arms": "heist_gun_breaker_body_arms",
+					"legs": "heist_gun_breaker_body_legs"
+				}
+			}
+		]
+	},
+	{
+		"id": 11,
+		"sex": "male",
+		"subclass": [
+			{
+				"id": "white_wizard",
+				"name": "White Wizard",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "white_wizard_skin_hq"
+					}
+				],
+				"body": {
+					"head": "white_wizard_body_head",
+					"chest": "white_wizard_body_chest",
+					"lower": "white_wizard_body_lower",
+					"arms": "white_wizard_body_arms",
+					"legs": "white_wizard_body_legs"
+				}
+			},
+			{
+				"id": "light_master",
+				"name": "Light Master",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "white_wizard_skin_hq"
+					}
+				],
+				"body": {
+					"head": "light_master_body_head",
+					"chest": "light_master_body_chest",
+					"lower": "light_master_body_lower",
+					"arms": "light_master_body_arms",
+					"legs": "light_master_body_legs"
+				}
+			},
+			{
+				"id": "shine_wizard",
+				"name": "Shine Wizard",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "shine_wizard_skin_hq"
+					}
+				],
+				"body": {
+					"head": "shine_wizard_body_head",
+					"chest": "shine_wizard_body_chest",
+					"lower": "shine_wizard_body_lower",
+					"arms": "shine_wizard_body_arms",
+					"legs": "shine_wizard_body_legs"
+				}
+			},
+			{
+				"id": "shine_master",
+				"name": "Shine Master",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "shine_master_skin_hq"
+					}
+				],
+				"body": {
+					"head": "shine_master_body_head",
+					"chest": "shine_master_body_chest",
+					"lower": "shine_master_body_lower",
+					"arms": "shine_master_body_arms",
+					"legs": "shine_master_body_legs"
+				}
+			}
+		]
+	},
+	{
+		"id": 12,
+		"sex": "female",
+		"subclass": [
+			{
+				"id": "mage",
+				"name": "Mage",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "mage_skin_hq"
+					}
+				],
+				"body": {
+					"head": "mage_body_head",
+					"chest": "mage_body_chest",
+					"lower": "mage_body_lower",
+					"arms": "mage_body_arms",
+					"legs": "mage_body_legs"
+				}
+			},
+			{
+				"id": "wo_mage",
+				"name": "Wo Mage",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "mage_skin_hq"
+					}
+				],
+				"body": {
+					"head": "wo_mage_body_head",
+					"chest": "wo_mage_body_chest",
+					"lower": "wo_mage_body_lower",
+					"arms": "wo_mage_body_arms",
+					"legs": "wo_mage_body_legs"
+				}
+			},
+			{
+				"id": "arch_mage",
+				"name": "Arch Mage",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "arch_mage_skin_hq"
+					}
+				],
+				"body": {
+					"head": "arch_mage_body_head",
+					"chest": "arch_mage_body_chest",
+					"lower": "arch_mage_body_lower",
+					"arms": "arch_mage_body_arms",
+					"legs": "arch_mage_body_legs"
+				}
+			},
+			{
+				"id": "mystic_mage",
+				"name": "Mystic Mage",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "mystic_mage_skin_hq"
+					}
+				],
+				"body": {
+					"head": "mystic_mage_body_head",
+					"chest": "mystic_mage_body_chest",
+					"lower": "mystic_mage_body_lower",
+					"arms": "mystic_mage_body_arms",
+					"legs": "mystic_mage_body_legs"
+				}
+			}
+		]
+	},
+	{
+		"id": 13,
+		"sex": "male",
+		"subclass": [
+			{
+				"id": "illusion_knight",
+				"name": "Illusion Knight",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "illusion_knight_skin_hq"
+					},
+					{
+						"id": "skin_hq_alt",
+						"texture": "illusion_knight_skin_hq_alt"
+					}
+				],
+				"body": {
+					"head": "illusion_knight_body_head",
+					"chest": "illusion_knight_body_chest",
+					"lower": "illusion_knight_body_lower",
+					"arms": "illusion_knight_body_arms",
+					"legs": "illusion_knight_body_legs"
+				}
+			},
+			{
+				"id": "mirage_knight",
+				"name": "Mirage Knight",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "illusion_knight_skin_hq"
+					},
+					{
+						"id": "skin_hq_alt",
+						"texture": "illusion_knight_skin_hq_alt"
+					}
+				],
+				"body": {
+					"head": "mirage_knight_body_head",
+					"chest": "mirage_knight_body_chest",
+					"lower": "mirage_knight_body_lower",
+					"arms": "mirage_knight_body_arms",
+					"legs": "mirage_knight_body_legs"
+				}
+			},
+			{
+				"id": "illusion_master",
+				"name": "Illusion Master",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "illusion_master_skin_hq"
+					},
+					{
+						"id": "skin_hq_alt",
+						"texture": "illusion_master_skin_hq_alt"
+					}
+				],
+				"body": {
+					"head": "illusion_master_body_head",
+					"chest": "illusion_master_body_chest",
+					"lower": "illusion_master_body_lower",
+					"arms": "illusion_master_body_arms",
+					"legs": "illusion_master_body_legs"
+				}
+			},
+			{
+				"id": "mystic_knight",
+				"name": "Mystic Knight",
+				"attachments": [
+					{
+						"id": "skin_hq",
+						"texture": "mystic_knight_skin_hq"
+					},
+					{
+						"id": "skin_hq_alt",
+						"texture": "mystic_knight_skin_hq_alt"
+					}
+				],
+				"body": {
+					"head": "mystic_knight_body_head",
+					"chest": "mystic_knight_body_chest",
+					"lower": "mystic_knight_body_lower",
+					"arms": "mystic_knight_body_arms",
+					"legs": "mystic_knight_body_legs"
+				}
+			}
+		]
+	}
+]
