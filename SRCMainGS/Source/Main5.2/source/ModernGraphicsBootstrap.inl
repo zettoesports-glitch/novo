@@ -38,28 +38,58 @@ bool IsModernGLDebugRequested()
     return value[0] == '1' || value[0] == 'y' || value[0] == 'Y' || value[0] == 't' || value[0] == 'T';
 }
 
-void APIENTRY ModernOpenGLDebugCallback(
-    GLenum source,
-    GLenum type,
-    GLuint id,
-    GLenum severity,
-    GLsizei length,
-    const GLchar* message,
-    const void* userParam)
+#ifdef MU_ENABLE_DILIGENT
+const char* DiligentSeverityName(Diligent::DEBUG_MESSAGE_SEVERITY severity)
 {
-    UNREFERENCED_PARAMETER(source);
-    UNREFERENCED_PARAMETER(type);
-    UNREFERENCED_PARAMETER(severity);
-    UNREFERENCED_PARAMETER(length);
-    UNREFERENCED_PARAMETER(userParam);
-
-    char output[1200];
-    wsprintfA(output,
-        "[ModernGraphics][GLDebug] id=%u message=%s\n",
-        static_cast<unsigned int>(id),
-        message != NULL ? message : "unavailable");
-    ModernGraphicsLog(output);
+    switch (severity)
+    {
+    case Diligent::DEBUG_MESSAGE_SEVERITY_INFO:
+        return "info";
+    case Diligent::DEBUG_MESSAGE_SEVERITY_WARNING:
+        return "warning";
+    case Diligent::DEBUG_MESSAGE_SEVERITY_ERROR:
+        return "error";
+    case Diligent::DEBUG_MESSAGE_SEVERITY_FATAL_ERROR:
+        return "fatal";
+    default:
+        return "unknown";
+    }
 }
+
+void DILIGENT_CALL_TYPE ModernDiligentMessageCallback(
+    Diligent::DEBUG_MESSAGE_SEVERITY severity,
+    const Diligent::Char* message,
+    const Diligent::Char* function,
+    const Diligent::Char* file,
+    int line)
+{
+    char prefix[96];
+    wsprintfA(prefix, "[ModernGraphics][Diligent][%s] ", DiligentSeverityName(severity));
+    ModernGraphicsLog(prefix);
+    ModernGraphicsLog(message != NULL ? message : "unavailable");
+
+    if (function != NULL && function[0] != '\0')
+    {
+        ModernGraphicsLog(" | function=");
+        ModernGraphicsLog(function);
+    }
+
+    if (file != NULL && file[0] != '\0')
+    {
+        ModernGraphicsLog(" | file=");
+        ModernGraphicsLog(file);
+    }
+
+    if (line > 0)
+    {
+        char lineText[32];
+        wsprintfA(lineText, ":%d", line);
+        ModernGraphicsLog(lineText);
+    }
+
+    ModernGraphicsLog("\n");
+}
+#endif
 
 const char* SafeGLString(GLenum name)
 {
@@ -90,7 +120,7 @@ void CModernGraphicsBootstrap::ResetState()
     m_gl46Capable = false;
     m_active = false;
     m_initializationAttempted = false;
-    m_debugCallbackEnabled = false;
+    m_validationEnabled = false;
     m_backend = ModernGraphicsBackend::Legacy;
     m_ownership = ModernGraphicsOwnership::None;
 }
@@ -180,27 +210,13 @@ bool CModernGraphicsBootstrap::InitializeOpenGL46(HWND hWnd, HDC hDC, HGLRC hGLR
         return false;
     }
 
-    if (IsModernGLDebugRequested())
-    {
-        if (GLEW_VERSION_4_3 || GLEW_KHR_debug)
-        {
-            glEnable(GL_DEBUG_OUTPUT);
-            glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-            glDebugMessageCallback(ModernOpenGLDebugCallback, NULL);
-            m_debugCallbackEnabled = true;
-            ModernGraphicsLog("[ModernGraphics] OpenGL debug callback enabled by MU_MODERN_GL_DEBUG.\n");
-        }
-        else
-        {
-            ModernGraphicsLog("[ModernGraphics] MU_MODERN_GL_DEBUG requested, but KHR_debug entry points are unavailable.\n");
-        }
-    }
-
 #ifndef MU_ENABLE_DILIGENT
     ModernGraphicsLog("[ModernGraphics] OpenGL 4.6 is available, but the pinned DiligentCore headers are not prepared. Legacy renderer remains active.\n");
     return false;
 #else
     Diligent::EngineGLCreateInfo engineCreateInfo;
+    m_validationEnabled = IsModernGLDebugRequested();
+    engineCreateInfo.EnableValidation = m_validationEnabled;
 
     // ENGINE_DLL=1 makes Diligent's public OpenGL header expose the explicit
     // Windows loader. This intentionally mirrors NextMU's backend-module model:
@@ -218,6 +234,16 @@ bool CModernGraphicsBootstrap::InitializeOpenGL46(HWND hWnd, HDC hDC, HGLRC hGLR
         ModernGraphicsLog("[ModernGraphics] Diligent OpenGL factory export returned null. Legacy renderer remains active.\n");
         return false;
     }
+
+    // Route Diligent diagnostics through the persistent Phase 2 logger instead
+    // of registering a competing raw glDebugMessageCallback. When validation is
+    // enabled, Diligent's OpenGL backend owns KHR_debug and forwards those
+    // messages through this factory callback.
+    factory->SetMessageCallback(ModernDiligentMessageCallback);
+    factory->SetBreakOnError(false);
+
+    if (m_validationEnabled)
+        ModernGraphicsLog("[ModernGraphics] Diligent validation/OpenGL debug routing enabled by MU_MODERN_GL_DEBUG.\n");
 
     // AttachToActiveGLContext is intentional. The MU client continues to own
     // HDC/HGLRC and SwapBuffers, so Diligent must not create a second context
@@ -255,13 +281,6 @@ void CModernGraphicsBootstrap::Shutdown()
     }
     m_device.Release();
 #endif
-
-    if (m_debugCallbackEnabled && wglGetCurrentContext() == m_hGLRC)
-    {
-        glDebugMessageCallback(NULL, NULL);
-        glDisable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        glDisable(GL_DEBUG_OUTPUT);
-    }
 
     if (hadRuntimeState)
         ModernGraphicsLog("[ModernGraphics] Shutdown completed before legacy WGL teardown.\n");
