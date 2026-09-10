@@ -1,1 +1,0 @@
-Temporary write-validation artifacts were created during connector testing. Remove them before finalizing Phase 2 source work.
