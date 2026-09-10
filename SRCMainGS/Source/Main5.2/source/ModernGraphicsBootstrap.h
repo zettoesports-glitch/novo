@@ -27,6 +27,19 @@
 #define ENGINE_DLL 1
 #endif
 
+// Main's Debug configuration defines DEBUG rather than _DEBUG. Mirror the
+// public Diligent debug configuration so its official DLL loader selects the
+// matching GraphicsEngineOpenGL_32d.dll and public debug contracts stay aligned
+// with the backend built by CMake. Release remains on the _32r backend.
+#if defined(DEBUG) && !defined(NDEBUG)
+#ifndef DILIGENT_DEVELOPMENT
+#define DILIGENT_DEVELOPMENT 1
+#endif
+#ifndef DILIGENT_DEBUG
+#define DILIGENT_DEBUG 1
+#endif
+#endif
+
 #include "../dependencies/DiligentCore/Common/interface/RefCntAutoPtr.hpp"
 #include "../dependencies/DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
 #include "../dependencies/DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
