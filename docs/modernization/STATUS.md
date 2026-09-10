@@ -1,16 +1,23 @@
 # Modernization Status
 
 ## Active target
-OpenGL 4.6 renderer modernization for Main 5.2.
 
-## Architectural constraint
-The renderer layer must remain extensible to Vulkan and DirectX 11, but those backends are not active implementation targets yet.
+Diligent integration for Main 5.2, using shared HLSL shaders and OpenGL 4.6 first. Vulkan and Direct3D 11 remain future active backends using the same contracts.
 
-## Current documentation commits
-- Renderer roadmap created.
-- NextMU integration notes created.
-- Implementation checklist created.
-- Documentation index created.
+## Completed
+
+- Phase 1 static source mapping against `13cfc7c3e5dab042e1c3e8f4184e18c26dd08eff`.
+- Initial call paths: Hero, remote players, BotBuffer, NPC/monsters, world objects, equipment and inventory preview.
+- Geometry, pose, instance, view, material and texture producer/consumer contracts.
+- Snapshot/lifetime requirements and legacy render-state mapping.
+- Roadmap aligned with the Diligent + HLSL decision.
+
+Evidence and scope: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERER_MAPPING.md).
+
+## Not yet validated
+
+No Diligent runtime integrated or enabled by this documentation change. No Windows build, GPU execution, shader compilation or visual-parity test performed. All item/map/script/cloth variants are not claimed complete.
 
 ## Next action
-Perform source-level discovery and then implement the first safe OpenGL 4.6 BMD/object render slice.
+
+Pin dependency/shader revisions, then phase 2: validate a Windows OpenGL 4.6 context, profile, Diligent attachment or ownership, resize and single presentation. Implement the documented CPU/GPU contracts before the two-instance BMD proof.

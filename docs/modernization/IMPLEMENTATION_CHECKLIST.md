@@ -1,12 +1,20 @@
 # Implementation Checklist
 
+Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERER_MAPPING.md). Checked discovery items mean source inspection, not runtime validation.
+
 ## Discovery
-- [ ] Locate legacy BMD/model render entry points
-- [ ] Locate all existing modern renderer files
-- [ ] Locate GLSL/HLSL shader sources already committed
-- [ ] Locate NextMU/reference renderer and shader material
-- [ ] Trace local-player render path end-to-end
-- [ ] Trace remote-player/bot/NPC render path end-to-end
+- [x] Locate legacy BMD/model render entry points
+- [x] Locate existing BMD shader/VBO experiment (CShaderGL, Mesh_t, RenderVertexBuffer)
+- [x] Locate GLSL/HLSL shader sources already committed
+- [x] Locate NextMU/reference renderer and shader material
+- [x] Trace initial local-player render path end-to-end (static)
+- [x] Trace initial remote-player/BotBuffer/NPC render paths (static)
+
+## Documented contracts
+- [x] Initial producer/consumer map for geometry, pose, view, instance and material
+- [x] Snapshot ownership rules for shared BMD state and temporary inventory objects
+- [x] Diligent + shared HLSL architecture decision recorded
+- [ ] Implement and verify concrete CPU/GPU layouts and pose conversion
 
 ## Renderer core
 - [ ] Backend enum/factory
@@ -19,16 +27,16 @@
 
 ## OpenGL 4.6
 - [ ] Context/capability validation
-- [ ] VAO/VBO/EBO lifecycle
-- [ ] Shader compile/link diagnostics
-- [ ] Uniform/UBO path
+- [ ] Diligent buffer/texture lifecycle and transitions
+- [ ] Diligent HLSL shader compilation diagnostics
+- [ ] Diligent constant-buffer path
 - [ ] Texture/sampler binding
 - [ ] Depth/blend/cull state handling
 - [ ] Draw submission
 - [ ] Debug callback/logging
 
 ## BMD migration
-- [ ] Map legacy mesh structures
+- [x] Map legacy mesh fields and initial conversion rules (static)
 - [ ] Define modern GPU vertex layout
 - [ ] Persistent geometry upload
 - [ ] Material bridge

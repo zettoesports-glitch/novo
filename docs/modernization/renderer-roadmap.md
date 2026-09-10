@@ -9,10 +9,16 @@ Modernize the Main 5.2 rendering pipeline with OpenGL 4.6 as the first active ba
 - Main 5.2 currently contains `Main.sln`, `dependencies`, and `source`.
 - Renderer modernization work must be integrated inside the existing Main source tree rather than assuming a separate `resource` directory under Main5.2.
 
+## Phase 1 discovery
+
+The static Main-to-renderer mapping is documented in [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERER_MAPPING.md). It identifies initial call paths, data producers, snapshot ownership, materials and the Diligent integration boundary. Runtime and GPU validation remain pending.
+
 ## Architecture target
 
 ### Backend-neutral layer
-Introduce a renderer-facing abstraction used by game systems:
+Use Diligent as the graphics abstraction, with shared HLSL shaders and a Main-facing adapter for existing game data. OpenGL is the first production backend; Vulkan and Direct3D 11 use the same Diligent resource and draw contracts.
+
+Expose game-facing contracts for:
 - Renderer backend selection enum
 - Renderer device/interface
 - Buffer abstraction
@@ -25,22 +31,21 @@ Introduce a renderer-facing abstraction used by game systems:
 
 The game should not directly depend on OpenGL calls after a render path has been migrated.
 
-### OpenGL 4.6 backend
+### Diligent / OpenGL 4.6 integration
 Implement first:
-- Context validation and capability logging
-- VAO/VBO/EBO lifecycle
-- Shader compilation and program linking
-- Uniform and UBO management
-- Texture/sampler binding
-- Blend/depth/cull state cache
-- Indexed and non-indexed draw paths
-- GPU error/debug logging
+- Pin Diligent and submodule revisions, build architecture and runtime dependencies.
+- Establish explicit OpenGL 4.6 context creation and capability validation; selecting the GL backend alone does not guarantee 4.6.
+- Define host window, render target, resize and presentation ownership.
+- Create buffers/textures through Diligent; compile HLSL through its shader interface.
+- Define constant buffers, pipeline state objects and shader resource bindings.
+- Submit indexed/non-indexed draws and resource transitions through Diligent.
+- Log shader/resource failures with source, entity and pass identifiers.
 
-### Future backend slots
-Prepare factories and interfaces for:
+### Future backend integration
+Prepare typed factories, conditional builds and explicit availability checks for:
 - OpenGL 4.6 — active implementation
-- Vulkan — placeholder only
-- DirectX 11 — placeholder only
+- Vulkan — shared contracts, activation and validation pending
+- DirectX 11 — shared contracts, activation and validation pending
 
 Do not mix Vulkan/DX11 implementation into the first migration phase.
 
@@ -59,7 +64,7 @@ Do not mix Vulkan/DX11 implementation into the first migration phase.
 12. Migrate terrain, effects, particles, UI and special passes separately.
 
 ## Compatibility strategy
-During the transition, renderer selection must be explicit per render path. The legacy renderer remains available as a fallback until a migrated path has visual and behavioral parity.
+During the transition, renderer selection must be explicit per render path. A temporary legacy path requires a validated context/profile and explicit state boundaries. Legacy calls cannot execute inside a Core-only context or a Vulkan/D3D11 renderer. Validate a host-owned OpenGL 4.6 compatibility context with Diligent attachment, or use an isolated Core harness until coexistence is proven. Define who presents the frame exactly once.
 
 The modern renderer must never reuse object-instance state from another entity. Per-object matrices, material state, animation state, lighting and texture bindings must be supplied explicitly for every draw.
 
@@ -85,7 +90,7 @@ Common data blocks should include, where applicable:
 - texture flags
 - render flags
 
-Shader source should remain backend-agnostic at the contract level even though GLSL is the first implementation.
+Use shared HLSL source through Diligent. Document stage inputs, macros, constant-buffer layouts, resource names and coordinate/color conventions per permutation. Preserve the distinction between 2024 Resources and later NextMU source.
 
 ## BMD modernization
 The BMD path is the critical bridge between legacy game data and modern rendering.
@@ -119,13 +124,12 @@ A render path is considered migrated only when:
 - No new crash appears during map change or resource destruction.
 
 ## Next implementation slice
-The next code slice should focus on source-level discovery and the BMD/model path:
-1. Locate exact BMD render entry points.
-2. Locate modern renderer files already present in the branch.
-3. Trace one complete local-character draw from caller to mesh submission.
-4. Trace one remote player/bot/NPC path for comparison.
-5. Define the first stable `RenderObjectData` / `RenderMaterialData` contract.
-6. Move only the verified-safe object path to the OpenGL 4.6 abstraction.
+Use the completed static phase-1 map as input:
+1. Pin Diligent and shader versions.
+2. Validate the Windows OpenGL 4.6 context/profile and presentation model in a narrow prototype.
+3. Implement and verify the documented CPU/GPU contracts and pose conversion.
+4. Render one BMD with two independent instances.
+5. Compare Hero, remote player/BotBuffer and inventory-preview behavior before expanding coverage.
 
 ## Rule for the project
 OpenGL 4.6 is the only backend that should receive production implementation during this phase. Vulkan and DirectX 11 must remain architectural extension points until the OpenGL renderer is complete and stable.
