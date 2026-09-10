@@ -13,31 +13,65 @@ Diligent integration for Main 5.2, using shared HLSL shaders and OpenGL 4.6 firs
 - Roadmap aligned with the Diligent + HLSL decision.
 - Phase 2 ownership contract documented: legacy Main owns HWND/HDC/HGLRC and presentation; Diligent attaches to the active GL context.
 - Real Main lifecycle located: `CreateOpenglWindow()`, `CWINHANDLE::WndProc`, `MainScene()` / `LoadingScene()` and `KillGLWindow()`.
-- Phase 2 source bridge implemented behind `MU_ENABLE_DILIGENT`: context attach discovery, resize forwarding and pre-destroy shutdown without adding another present path.
+- Phase 2 source bridge implemented: context attach discovery, resize forwarding and pre-destroy shutdown without adding another present path.
 - OpenGL 4.6 capability and vendor/renderer/version/GLSL/profile diagnostics implemented in `CModernGraphicsBootstrap`.
 - DiligentCore pinned to official `v2.5.6` commit `b036337d68be2353c9950a85929acf796b9a6d50`; reference shader/resource snapshot pinned separately in `DILIGENT_PIN.md`.
+- Diligent backend integration changed to the official Win32 explicit-DLL model rather than statically linking the OpenGL engine into Main.
+- Release/Debug backend names are aligned with the official loader: `GraphicsEngineOpenGL_32r.dll` and `GraphicsEngineOpenGL_32d.dll`.
+- Main Debug's existing `DEBUG` macro is bridged to Diligent's debug public definitions so the correct backend suffix is selected.
+- Reproducible dependency/build script added at `SRCMainGS/Source/Main5.2/setup_diligent_opengl46.ps1`.
+- Generated Diligent checkout/build folders are excluded through `SRCMainGS/Source/Main5.2/.gitignore`.
+- Dependency-absent, unsupported-GL and backend-DLL-load failures retain the legacy renderer path.
 
 Evidence and scope: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERER_MAPPING.md).
 Phase 2 contract: [PHASE2_OPENGL46_BOOTSTRAP.md](PHASE2_OPENGL46_BOOTSTRAP.md).
 Runtime lifecycle map: [PHASE2_RUNTIME_DISCOVERY.md](PHASE2_RUNTIME_DISCOVERY.md).
-Dependency pin: [DILIGENT_PIN.md](DILIGENT_PIN.md).
+Dependency pin/setup model: [DILIGENT_PIN.md](DILIGENT_PIN.md).
 
-## Phase 2 in progress
+## Phase 2 repository state
 
-The source-side lifecycle wiring is now present, but the runtime gate is still open because the pinned Diligent dependency has not yet been added to the Win32 project configuration.
+The Phase 2 bootstrap is now represented in source and build infrastructure. The repository contains the lifecycle bridge, capability checks, explicit backend loader, exact dependency pin and reproducible setup/build script.
 
-Remaining Phase 2 work:
+This means the previous repository-side dependency wiring gap has been closed without adding a hard Diligent `.lib` dependency to `Main.vcxproj`.
 
-- make DiligentCore v2.5.6 headers/libraries available to `Main.vcxproj` Win32;
-- enable `MU_ENABLE_DILIGENT` in a dedicated test configuration;
-- build/run on Windows and capture the OpenGL 4.6/Diligent attach diagnostics;
-- validate resize, exactly-one-present and shutdown lifetime behavior;
-- verify that the legacy renderer still renders correctly during coexistence.
+## Phase 2 still in progress — validation boundary
 
-## Not yet validated
+Phase 2 is **not runtime-certified**. This environment has not run Visual Studio/MSBuild Win32 or a GPU-backed Main instance.
 
-No Diligent runtime has yet been proven by a Windows build/GPU run from this branch. No visual-parity test has been performed. The lifecycle wiring is source-complete for the bootstrap but not runtime-certified. All item/map/script/cloth variants remain outside this Phase 2 gate.
+Remaining validation work:
+
+- execute `setup_diligent_opengl46.ps1` on Windows and verify the exact pinned checkout/submodules configure successfully;
+- produce the expected OpenGL backend DLL for the configuration under test;
+- compile `Main.sln` Win32/x86 with the Diligent headers detected;
+- launch the client on a system exposing OpenGL >= 4.6;
+- confirm the DLL/factory loads and `AttachToActiveGLContext` succeeds;
+- validate resize stability;
+- prove there is still exactly one presentation owner (`SwapBuffers` legacy path);
+- validate clean shutdown/lifetime ordering;
+- verify legacy scenes render without regression.
+
+The current `WH_CALLWNDPROC` integration remains intentionally a temporary coexistence bridge. It is source-complete for the bootstrap, but after the runtime gate it should be reassessed and normally replaced by direct calls in the already-mapped lifecycle owners if no compatibility reason requires retaining it.
+
+## Not yet implemented
+
+The following work is downstream of the Phase 2 bootstrap/runtime gate and must not be confused with bootstrap completion:
+
+- concrete CPU/GPU vertex and constant-buffer layouts;
+- Diligent buffer/texture resource lifecycle;
+- shared HLSL production shader compilation path;
+- Skeleton Texture upload/addressing in Main;
+- material/state binding and draw submission;
+- two-independent-instance BMD proof;
+- Hero/remote/Bot/NPC/monster modern-render parity;
+- terrain/effects/UI migration;
+- Vulkan and Direct3D 11 activation.
 
 ## Next action
 
-Wire the pinned Diligent v2.5.6 dependency into the Win32 Main project and run the Phase 2 validation gate. After that, implement concrete CPU/GPU layouts, constant buffers, pose conversion and the two-instance BMD proof before expanding modern rendering to Hero/remote/Bot/NPC/monster.
+On a Windows Visual Studio developer environment, run from `SRCMainGS/Source/Main5.2`:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\setup_diligent_opengl46.ps1 -BuildMain
+```
+
+Then launch `Client_2/Main.exe` and capture the `[ModernGraphics]` diagnostics. Once the Phase 2 runtime gate passes, start the concrete CPU/GPU data contracts and the two-instance BMD proof.
