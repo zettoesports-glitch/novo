@@ -5,6 +5,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
 
 $main52Root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoRoot = (Resolve-Path (Join-Path $main52Root '..\..\..')).Path
@@ -41,7 +42,7 @@ if (-not $ValidateOnly) {
     try {
         if ($EnableGLDebug) {
             $env:MU_MODERN_GL_DEBUG = '1'
-            Write-Host '[Phase2 Runtime] MU_MODERN_GL_DEBUG=1 enabled for this client run.'
+            Write-Host '[Phase2 Runtime] MU_MODERN_GL_DEBUG=1 enables Diligent validation and routes its OpenGL/KHR_debug messages to ModernGraphics.log.'
         }
         else {
             Remove-Item Env:MU_MODERN_GL_DEBUG -ErrorAction SilentlyContinue
@@ -75,7 +76,7 @@ if ($RequireResize) {
 }
 
 if ($EnableGLDebug) {
-    Assert-LogContains $logText '[ModernGraphics] OpenGL debug callback enabled by MU_MODERN_GL_DEBUG.' 'OpenGL debug callback enabled'
+    Assert-LogContains $logText '[ModernGraphics] Diligent validation/OpenGL debug routing enabled by MU_MODERN_GL_DEBUG.' 'Diligent validation/OpenGL debug routing enabled'
 }
 
 if ($logText -match 'Legacy renderer remains active') {
