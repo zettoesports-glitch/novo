@@ -207,8 +207,8 @@ CShaderGL* CShaderGL::Instance()
 // The legacy lifecycle lives in large Winmain.cpp/WINHANDLE.cpp units. During
 // the bootstrap phase we observe messages on the main UI thread instead of
 // duplicating or replacing the legacy window/context/presentation code. This
-// keeps the original SwapBuffers path authoritative and guarantees that
-// Diligent is released before WM_DESTROY reaches KillGLWindow().
+// keeps the original SwapBuffers path authoritative and releases Diligent before
+// every currently known message path that can tear down the WGL context.
 namespace
 {
 HHOOK g_ModernGraphicsWindowHook = NULL;
@@ -253,6 +253,7 @@ LRESULT CALLBACK ModernGraphicsCallWndProc(int code, WPARAM wParam, LPARAM lPara
 		case WM_CLOSE:
 		case WM_DESTROY:
 		case WM_NCDESTROY:
+		case WM_USER_MEMORYHACK:
 			if (GetModernGraphics().IsAttachedToWindow(message->hwnd))
 				GetModernGraphics().Shutdown();
 			break;
