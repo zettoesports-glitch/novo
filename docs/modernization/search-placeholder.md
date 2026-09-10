@@ -1,1 +1,0 @@
-This placeholder should be removed; it was created while validating repository write access.
