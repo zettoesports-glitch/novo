@@ -56,6 +56,10 @@ if (-not $ValidateOnly) {
         Write-Host '[Phase2 Runtime] Let the client reach a rendered scene, resize the window at least once if -RequireResize was used, then close the client normally.'
         $process = Start-Process -FilePath $mainExe -WorkingDirectory $clientRoot -PassThru -Wait
         Write-Host "[Phase2 Runtime] Main.exe exited with code $($process.ExitCode)."
+
+        if ($process.ExitCode -ne 0) {
+            throw "Phase 2 runtime check failed: Main.exe did not close normally (exit code $($process.ExitCode))."
+        }
     }
     finally {
         if ($null -eq $previousDebugSetting) {
@@ -75,6 +79,7 @@ $logText = Get-Content $logPath -Raw
 
 Assert-LogContains $logText '[ModernGraphics] Phase 2 OpenGL 4.6 attach attempt started.' 'bootstrap attach attempt reached'
 Assert-LogContains $logText '[ModernGraphics] OpenGL vendor=' 'OpenGL diagnostics captured'
+Assert-LogContains $logText 'profile=compatibility' 'OpenGL compatibility profile confirmed for legacy coexistence'
 Assert-LogContains $logText '[ModernGraphics] Diligent attached to the existing OpenGL 4.6 context; legacy SwapBuffers remains authoritative.' 'Diligent attached to the existing WGL context'
 Assert-LogContains $logText '[ModernGraphics] Shutdown completed before legacy WGL teardown.' 'Diligent shutdown completed before WGL teardown'
 
