@@ -1,0 +1,1 @@
+Temporary connector-write validation note. Remove after Phase 2 source integration is complete.
