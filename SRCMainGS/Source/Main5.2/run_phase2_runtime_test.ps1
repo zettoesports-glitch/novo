@@ -29,11 +29,15 @@ function Assert-LogContains([string]$Text, [string]$Pattern, [string]$Label) {
     Write-Host "[Phase2 Runtime] PASS: $Label"
 }
 
-Assert-Exists $mainExe 'Main.exe'
-Assert-Exists $releaseBackend 'GraphicsEngineOpenGL_32r.dll'
-Assert-Exists $debugBackend 'GraphicsEngineOpenGL_32d.dll'
-
+# -ValidateOnly is intentionally a parser/evidence validation mode. It must be
+# usable by CI with synthetic evidence without coupling the parser test to the
+# presence or layout of runtime binaries. The normal runtime path below still
+# requires Main.exe and both Diligent OpenGL backend DLLs before launching.
 if (-not $ValidateOnly) {
+    Assert-Exists $mainExe 'Main.exe'
+    Assert-Exists $releaseBackend 'GraphicsEngineOpenGL_32r.dll'
+    Assert-Exists $debugBackend 'GraphicsEngineOpenGL_32d.dll'
+
     if (Test-Path $logPath) {
         Remove-Item $logPath -Force
     }
@@ -62,6 +66,9 @@ if (-not $ValidateOnly) {
         }
     }
 }
+else {
+    Write-Host '[Phase2 Runtime] ValidateOnly: validating existing/synthetic ModernGraphics.log evidence without launching Main.exe or requiring runtime binaries.'
+}
 
 Assert-Exists $logPath 'ModernGraphics.log'
 $logText = Get-Content $logPath -Raw
@@ -84,5 +91,10 @@ if ($logText -match 'Legacy renderer remains active') {
 }
 
 Write-Host ''
-Write-Host '[Phase2 Runtime] GPU runtime gate passed for the checks requested by this script.'
+if ($ValidateOnly) {
+    Write-Host '[Phase2 Runtime] Evidence parser validation passed for the checks requested by this script.'
+}
+else {
+    Write-Host '[Phase2 Runtime] GPU runtime gate passed for the checks requested by this script.'
+}
 Write-Host "[Phase2 Runtime] Evidence log: $logPath"
