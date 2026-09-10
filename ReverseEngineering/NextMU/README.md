@@ -2,6 +2,14 @@
 
 Análise estática clean-room dos executáveis NextMU x86/x64 e do pacote `Resources_DE_2024-01-25.zip`, separada da pasta `reversa opengl4.6`.
 
+## Mapeamento OpenGL 4.6 / Resource
+
+O mapeamento detalhado do pipeline gráfico, shaders, GPU skinning, Skeleton Texture, materiais, terrain, particles, attachments, animações e arquitetura alvo está em:
+
+- [`OPENGL46_RESOURCE_MAPPING.md`](./OPENGL46_RESOURCE_MAPPING.md)
+
+Esse documento usa o pacote real `Resources_DE_2024-01-25` como evidência primária e separa claramente itens confirmados, inferidos e pendentes.
+
 ## Resultado principal
 
 O NextMU possui suporte real a múltiplos backends através da Diligent Engine:
