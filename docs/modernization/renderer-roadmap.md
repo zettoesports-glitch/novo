@@ -13,6 +13,10 @@ Modernize the Main 5.2 rendering pipeline with OpenGL 4.6 as the first active ba
 
 The static Main-to-renderer mapping is documented in [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERER_MAPPING.md). It identifies initial call paths, data producers, snapshot ownership, materials and the Diligent integration boundary. Runtime and GPU validation remain pending.
 
+## Phase 2 runtime bootstrap
+
+Phase 2 is defined in [PHASE2_OPENGL46_BOOTSTRAP.md](PHASE2_OPENGL46_BOOTSTRAP.md). It establishes the runtime boundary for Diligent/OpenGL 4.6: native-window ownership, context/profile requirements, resize ownership, exactly one presentation per frame, capability diagnostics and coexistence rules with the legacy renderer. The implementation must bind these contracts to the real Main window/context/present code before any BMD path is migrated.
+
 ## Architecture target
 
 ### Backend-neutral layer
@@ -50,12 +54,12 @@ Prepare typed factories, conditional builds and explicit availability checks for
 Do not mix Vulkan/DX11 implementation into the first migration phase.
 
 ## Migration order
-1. Inventory the legacy renderer entry points and all direct OpenGL state changes.
-2. Identify BMD/model mesh upload and draw paths.
-3. Identify texture/material/light/fog contracts used by legacy rendering.
-4. Document shader inputs and outputs from the NextMU/reference material available in the repository.
-5. Build the backend-neutral renderer layer.
-6. Implement the OpenGL 4.6 backend.
+1. Inventory the legacy renderer entry points and all direct OpenGL state changes. **Completed in Phase 1.**
+2. Identify BMD/model mesh upload and draw paths. **Completed statically in Phase 1.**
+3. Identify texture/material/light/fog contracts used by legacy rendering. **Completed initially in Phase 1.**
+4. Document shader inputs and outputs from the NextMU/reference material available in the repository. **Completed initially in Phase 1.**
+5. Establish Diligent/OpenGL 4.6 runtime bootstrap and ownership. **Phase 2 active.**
+6. Implement concrete CPU/GPU contracts and pose conversion.
 7. Bridge BMD mesh data into persistent GPU resources.
 8. Introduce modern object/material/frame parameter blocks.
 9. Migrate the safest render path first.
@@ -126,10 +130,11 @@ A render path is considered migrated only when:
 ## Next implementation slice
 Use the completed static phase-1 map as input:
 1. Pin Diligent and shader versions.
-2. Validate the Windows OpenGL 4.6 context/profile and presentation model in a narrow prototype.
-3. Implement and verify the documented CPU/GPU contracts and pose conversion.
-4. Render one BMD with two independent instances.
-5. Compare Hero, remote player/BotBuffer and inventory-preview behavior before expanding coverage.
+2. Locate and wire the real Windows window/context/resize/present integration points.
+3. Validate the Windows OpenGL 4.6 context/profile and presentation model in a narrow prototype.
+4. Implement and verify the documented CPU/GPU contracts and pose conversion.
+5. Render one BMD with two independent instances.
+6. Compare Hero, remote player/BotBuffer and inventory-preview behavior before expanding coverage.
 
 ## Rule for the project
 OpenGL 4.6 is the only backend that should receive production implementation during this phase. Vulkan and DirectX 11 must remain architectural extension points until the OpenGL renderer is complete and stable.
