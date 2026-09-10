@@ -22,6 +22,7 @@ Diligent integration for Main 5.2, using shared HLSL shaders and OpenGL 4.6 firs
 - Reproducible dependency/build script added at `SRCMainGS/Source/Main5.2/setup_diligent_opengl46.ps1`.
 - Generated Diligent checkout/build folders are excluded through `SRCMainGS/Source/Main5.2/.gitignore`.
 - Dependency-absent, unsupported-GL and backend-DLL-load failures retain the legacy renderer path.
+- Windows/x86 compile gate added at `.github/workflows/phase2-win32-build.yml`; it prepares the pinned Diligent backend and builds Main Debug/x86 when GitHub Actions executes it.
 
 Evidence and scope: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERER_MAPPING.md).
 Phase 2 contract: [PHASE2_OPENGL46_BOOTSTRAP.md](PHASE2_OPENGL46_BOOTSTRAP.md).
@@ -30,17 +31,18 @@ Dependency pin/setup model: [DILIGENT_PIN.md](DILIGENT_PIN.md).
 
 ## Phase 2 repository state
 
-The Phase 2 bootstrap is now represented in source and build infrastructure. The repository contains the lifecycle bridge, capability checks, explicit backend loader, exact dependency pin and reproducible setup/build script.
+The Phase 2 bootstrap is represented in source and build infrastructure. The repository contains the lifecycle bridge, capability checks, explicit backend loader, exact dependency pin, reproducible setup/build script and a Windows/x86 CI compile gate.
 
 This means the previous repository-side dependency wiring gap has been closed without adding a hard Diligent `.lib` dependency to `Main.vcxproj`.
 
 ## Phase 2 still in progress — validation boundary
 
-Phase 2 is **not runtime-certified**. This environment has not run Visual Studio/MSBuild Win32 or a GPU-backed Main instance.
+Phase 2 is **not runtime-certified**. This environment has not run a GPU-backed Main instance. At the time of this status update, the newly added GitHub Actions workflow has not yet produced a recorded workflow run, so CI compilation is also not marked as passed.
 
 Remaining validation work:
 
-- execute `setup_diligent_opengl46.ps1` on Windows and verify the exact pinned checkout/submodules configure successfully;
+- obtain a successful Windows/x86 CI or local build using `setup_diligent_opengl46.ps1`;
+- verify the exact pinned checkout/submodules configure successfully;
 - produce the expected OpenGL backend DLL for the configuration under test;
 - compile `Main.sln` Win32/x86 with the Diligent headers detected;
 - launch the client on a system exposing OpenGL >= 4.6;
@@ -68,7 +70,7 @@ The following work is downstream of the Phase 2 bootstrap/runtime gate and must 
 
 ## Next action
 
-On a Windows Visual Studio developer environment, run from `SRCMainGS/Source/Main5.2`:
+Prefer the repository CI gate if GitHub Actions is enabled. For local Windows validation, run from `SRCMainGS/Source/Main5.2` in a Visual Studio developer environment:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\setup_diligent_opengl46.ps1 -BuildMain
