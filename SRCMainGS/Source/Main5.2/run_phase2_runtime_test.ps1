@@ -81,6 +81,7 @@ Assert-LogContains $logText '[ModernGraphics] Phase 2 OpenGL 4.6 attach attempt 
 Assert-LogContains $logText '[ModernGraphics] OpenGL vendor=' 'OpenGL diagnostics captured'
 Assert-LogContains $logText 'profile=compatibility' 'OpenGL compatibility profile confirmed for legacy coexistence'
 Assert-LogContains $logText '[ModernGraphics] Diligent attached to the existing OpenGL 4.6 context; legacy SwapBuffers remains authoritative.' 'Diligent attached to the existing WGL context'
+Assert-LogContains $logText '[ModernGraphics] Teardown barrier armed for the attached WGL context.' 'reattach barrier armed before WGL teardown'
 Assert-LogContains $logText '[ModernGraphics] Shutdown completed before legacy WGL teardown.' 'Diligent shutdown completed before WGL teardown'
 
 if ($RequireResize) {
