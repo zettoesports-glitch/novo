@@ -4,11 +4,12 @@ Análise estática clean-room dos executáveis NextMU x86/x64 e do pacote `Resou
 
 ## Mapeamento OpenGL 4.6 / Resource
 
-O mapeamento detalhado do pipeline gráfico, shaders, GPU skinning, Skeleton Texture, materiais, terrain, particles, attachments, animações e arquitetura alvo está em:
+Documentação consolidada do estudo:
 
-- [`OPENGL46_RESOURCE_MAPPING.md`](./OPENGL46_RESOURCE_MAPPING.md)
+- [`OPENGL46_RESOURCE_MAPPING.md`](./OPENGL46_RESOURCE_MAPPING.md) — mapa principal da arquitetura, GPU skinning, materiais, terrain, animação e plano de implementação.
+- [`SHADER_PIPELINE_DETAILS.md`](./SHADER_PIPELINE_DETAILS.md) — detalhes confirmados das permutations, projected shadow, cascaded shadow, wave, ztest, chrome1..8, particles, joints, bbox e resource registry.
 
-Esse documento usa o pacote real `Resources_DE_2024-01-25` como evidência primária e separa claramente itens confirmados, inferidos e pendentes.
+Esses documentos usam o pacote real `Resources_DE_2024-01-25` como evidência primária e separam itens confirmados, inferidos e pendentes.
 
 ## Resultado principal
 
