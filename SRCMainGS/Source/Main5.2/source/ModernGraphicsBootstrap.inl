@@ -132,6 +132,16 @@ const char* SafeGLString(GLenum name)
     const GLubyte* value = glGetString(name);
     return value != NULL ? reinterpret_cast<const char*>(value) : "unavailable";
 }
+
+bool IsCompatibilityProfileActive(int glMajor, int glMinor)
+{
+    if (glMajor < 3 || (glMajor == 3 && glMinor < 2))
+        return false;
+
+    GLint profileMask = 0;
+    glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profileMask);
+    return (profileMask & GL_CONTEXT_COMPATIBILITY_PROFILE_BIT) != 0;
+}
 }
 
 CModernGraphicsBootstrap::CModernGraphicsBootstrap()
@@ -243,6 +253,16 @@ bool CModernGraphicsBootstrap::InitializeOpenGL46(HWND hWnd, HDC hDC, HGLRC hGLR
             m_glMajor,
             m_glMinor);
         ModernGraphicsLog(message);
+        return false;
+    }
+
+    // Coexistence still exercises legacy fixed-function/client-array paths.
+    // A core-only context is therefore not safe even if it reports OpenGL 4.6.
+    // Enforce the same compatibility-profile requirement used by the runtime
+    // evidence gate before Diligent is allowed to attach.
+    if (!IsCompatibilityProfileActive(m_glMajor, m_glMinor))
+    {
+        ModernGraphicsLog("[ModernGraphics] OpenGL 4.6 attach skipped: compatibility profile is required for legacy coexistence. Legacy renderer remains active.\n");
         return false;
     }
 
