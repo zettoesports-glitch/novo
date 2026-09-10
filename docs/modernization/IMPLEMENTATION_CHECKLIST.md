@@ -34,8 +34,10 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [x] Add official Diligent explicit backend-DLL loading (`GraphicsEngineOpenGL_32r/32d.dll`)
 - [x] Preserve dependency-absent and DLL-load-failure legacy fallback
 - [x] Align Main Debug configuration with the Diligent debug backend selection
+- [x] Add GitHub Actions Windows/x86 compile gate (`.github/workflows/phase2-win32-build.yml`)
 - [ ] Execute pinned Diligent setup successfully on Windows
 - [ ] Compile `Main.sln` Win32/x86 with the pinned Diligent headers enabled
+- [ ] Observe a successful Phase 2 Windows/x86 CI run
 - [ ] Diligent buffer/texture lifecycle and transitions
 - [ ] Diligent HLSL shader compilation diagnostics
 - [ ] Diligent constant-buffer path
