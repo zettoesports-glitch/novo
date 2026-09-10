@@ -15,8 +15,8 @@ Diligent integration for Main 5.2, using shared HLSL shaders and OpenGL 4.6 firs
 - Real Main lifecycle located: `CreateOpenglWindow()`, `CWINHANDLE::WndProc`, `MainScene()` / `LoadingScene()` and `KillGLWindow()`.
 - Phase 2 source bridge implemented: context attach discovery, resize forwarding and pre-destroy shutdown without adding another present path.
 - OpenGL 4.6 capability and vendor/renderer/version/GLSL/profile diagnostics implemented in `CModernGraphicsBootstrap`.
-- Persistent runtime evidence is now written to `Client_2/ModernGraphics.log` in addition to `OutputDebugStringA`.
-- Optional OpenGL debug callback can be enabled for the runtime gate with `MU_MODERN_GL_DEBUG=1`.
+- Persistent runtime evidence is written to `Client_2/ModernGraphics.log` in addition to `OutputDebugStringA`.
+- `MU_MODERN_GL_DEBUG=1` enables Diligent validation; the Diligent factory message callback persists Diligent/OpenGL diagnostic messages without installing a competing raw `glDebugMessageCallback` in Main.
 - DiligentCore pinned to official `v2.5.6` commit `b036337d68be2353c9950a85929acf796b9a6d50`; reference shader/resource snapshot pinned separately in `DILIGENT_PIN.md`.
 - Diligent backend integration uses the official Win32 explicit-DLL model rather than statically linking the OpenGL engine into Main.
 - Release/Debug backend names are aligned with the official loader: `GraphicsEngineOpenGL_32r.dll` and `GraphicsEngineOpenGL_32d.dll`.
@@ -25,7 +25,7 @@ Diligent integration for Main 5.2, using shared HLSL shaders and OpenGL 4.6 firs
 - Reproducible local GPU validation script exists at `SRCMainGS/Source/Main5.2/run_phase2_runtime_test.ps1`.
 - Generated Diligent checkout/build folders are excluded through `SRCMainGS/Source/Main5.2/.gitignore`; runtime evidence `Client_2/ModernGraphics.log` is ignored at repository root.
 - Dependency-absent, unsupported-GL and backend-DLL-load failures retain the legacy renderer path.
-- Windows/x86 compile gate exists at `.github/workflows/phase2-win32-build.yml`.
+- Windows/x86 compile gate exists at `.github/workflows/phase2-win32-build.yml` and also validates the runtime-evidence script with synthetic log data after both builds.
 - GitHub Actions run `34533022717` successfully prepared the exact pinned Diligent checkout/submodules, built both `GraphicsEngineOpenGL_32r.dll` and `GraphicsEngineOpenGL_32d.dll`, compiled `Main.sln` as Release/x86 with C++17 and produced `Client_2/Main.exe` with 0 build errors.
 - GitHub Actions run `34533868904` successfully compiled `Main.sln` as Debug/x86 after the Main-only C++17 normalization, with 0 build errors.
 - Release/x86 and Debug/x86 are therefore both independently build-proven.
@@ -37,9 +37,9 @@ Dependency pin/setup model: [DILIGENT_PIN.md](DILIGENT_PIN.md).
 
 ## Phase 2 repository state
 
-The Phase 2 bootstrap is represented in source and build infrastructure. The repository contains the lifecycle bridge, capability checks, explicit backend loader, exact dependency pin, reproducible setup/build script, persistent runtime diagnostics, a reproducible GPU validation script and a Windows/x86 CI compile gate.
+The Phase 2 bootstrap is represented in source and build infrastructure. The repository contains the lifecycle bridge, capability checks, explicit backend loader, exact dependency pin, reproducible setup/build script, persistent runtime diagnostics, Diligent-owned validation/debug routing, a reproducible GPU validation script and a Windows/x86 CI compile gate.
 
-Release/x86 and Debug/x86 have each passed independently. The permanent combined Release+Debug x86 job is being revalidated against the latest runtime-diagnostics source changes in workflow run `34535389139`; it must finish successfully before that combined gate is marked closed.
+Release/x86 and Debug/x86 have each passed independently. The permanent combined Release+Debug x86 job is being revalidated against the final Phase 2 bootstrap/debug-routing source in workflow run `34536286797`; it must finish successfully before that combined gate is marked closed.
 
 ## Phase 2 still in progress — GPU runtime boundary
 
@@ -49,13 +49,14 @@ Build validation state:
 
 - Release/x86: **passed** in run `34533022717` (`Main.exe`, `_32r.dll`, `_32d.dll` produced; 0 errors).
 - Debug/x86: **passed** in run `34533868904` after Main's Debug configuration was normalized to C++17; 0 errors.
-- Combined permanent Release+Debug x86 gate: **running** as run `34535389139` against the latest Phase 2 source.
+- Combined permanent Release+Debug x86 + runtime-script validation gate: **running** as run `34536286797` against the final Phase 2 source.
 
 Remaining GPU runtime work:
 
 - launch the client on a Windows system exposing OpenGL >= 4.6;
 - confirm the expected backend DLL/factory loads and `AttachToActiveGLContext` succeeds;
 - capture vendor/renderer/version/GLSL/profile/backend evidence in `Client_2/ModernGraphics.log`;
+- with `MU_MODERN_GL_DEBUG=1`, confirm Diligent validation/OpenGL debug routing activates without callback ownership conflicts;
 - validate resize stability;
 - prove there is still exactly one presentation owner (`SwapBuffers` legacy path);
 - validate clean shutdown/lifetime ordering;
@@ -67,7 +68,7 @@ The local validation command from `SRCMainGS/Source/Main5.2` is:
 powershell -ExecutionPolicy Bypass -File .\run_phase2_runtime_test.ps1 -EnableGLDebug -RequireResize
 ```
 
-The script starts the client, waits for a normal close, then validates the required attach/diagnostic/resize/shutdown log markers and rejects any modern-backend fallback recorded in the log.
+The script starts the client, waits for a normal close, then validates the required attach/diagnostic/debug-routing/resize/shutdown log markers and rejects any modern-backend fallback recorded in the log.
 
 The current `WH_CALLWNDPROC` integration remains intentionally a temporary coexistence bridge. After the GPU runtime gate it should be reassessed and normally replaced by direct calls in the already-mapped lifecycle owners if no compatibility reason requires retaining it.
 
@@ -87,6 +88,6 @@ The following work is downstream of the Phase 2 bootstrap/runtime gate and must 
 
 ## Next action
 
-1. Close the latest combined Release+Debug x86 workflow gate if run `34535389139` succeeds; fix any compiler regression first if it does not.
+1. Close workflow run `34536286797` if the final source compiles in both x86 configurations and the synthetic runtime-evidence validation passes; fix any regression first if it does not.
 2. Execute the local GPU runtime gate with `run_phase2_runtime_test.ps1` on the target Windows/OpenGL 4.6 machine and retain `Client_2/ModernGraphics.log` as evidence.
 3. Only after that GPU gate passes should Phase 2 be called runtime-complete and work move into concrete CPU/GPU contracts, pose conversion, Skeleton Texture and the first two-instance modern BMD proof.
