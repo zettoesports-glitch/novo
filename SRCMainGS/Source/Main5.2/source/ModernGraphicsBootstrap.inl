@@ -4,6 +4,42 @@
 
 namespace
 {
+struct ModernGraphicsLogPath
+{
+    ModernGraphicsLogPath()
+    {
+        value[0] = '\0';
+
+        DWORD length = GetModuleFileNameA(NULL, value, MAX_PATH);
+        if (length > 0 && length < MAX_PATH)
+        {
+            while (length > 0 && value[length - 1] != '\\' && value[length - 1] != '/')
+                --length;
+
+            static const char kLogName[] = "ModernGraphics.log";
+            if (length > 0 && length + sizeof(kLogName) <= MAX_PATH)
+            {
+                value[length] = '\0';
+                lstrcatA(value, kLogName);
+                return;
+            }
+        }
+
+        lstrcpynA(value, "ModernGraphics.log", MAX_PATH);
+    }
+
+    char value[MAX_PATH];
+};
+
+const char* GetModernGraphicsLogPath()
+{
+    // Resolve once against the executable path so launchers or alternate
+    // working directories cannot move the Phase 2 evidence log away from
+    // Client_2/Main.exe.
+    static ModernGraphicsLogPath path;
+    return path.value;
+}
+
 void ModernGraphicsLog(const char* message)
 {
     if (message == NULL)
@@ -12,7 +48,7 @@ void ModernGraphicsLog(const char* message)
     OutputDebugStringA(message);
 
     HANDLE file = CreateFileA(
-        "ModernGraphics.log",
+        GetModernGraphicsLogPath(),
         FILE_APPEND_DATA,
         FILE_SHARE_READ | FILE_SHARE_WRITE,
         NULL,
