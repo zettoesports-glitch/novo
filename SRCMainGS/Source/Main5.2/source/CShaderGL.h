@@ -48,3 +48,5 @@ private:
 #include "ModernSkeletonPose.h"
 #include "ModernSkeletonTexture.h"
 #include "ModernBMDPipeline.h"
+#include "ModernOpenGLDefaultFramebuffer.h"
+#include "ModernLegacyGLState.h"
