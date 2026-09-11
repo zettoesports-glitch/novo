@@ -78,7 +78,8 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [ ] Activate the core from the first migrated production draw after a PSO/SRB exists
 
 ## First modern draw
-- [ ] Create Diligent vertex/index buffers from one BMD mesh
+- [x] Implement validated BMD conversion and immutable vertex/index upload/cache API
+- [ ] Exercise vertex/index creation on a real Diligent device from the first production BMD path
 - [ ] Add shared HLSL production shader compilation diagnostics
 - [ ] Create/update Frame/Instance/Material constant buffers
 - [ ] Bind texture/sampler resources through SRB
@@ -90,7 +91,9 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 ## BMD migration
 - [x] Map legacy mesh fields and initial conversion rules (static)
 - [x] Define initial 40-byte modern BMD vertex layout
-- [ ] Persistent geometry upload
+- [x] Implement persistent geometry upload/cache by asset generation
+- [x] Run portable CPU geometry regression tests (seams, bones, malformed data, uint32 expansion)
+- [ ] Validate actual geometry upload and reuse on the target GPU
 - [ ] Material bridge
 - [ ] Pose conversion / Skeleton Texture upload and addressing
 - [ ] Per-object transform/animation state

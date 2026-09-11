@@ -2,6 +2,7 @@
 
 #include "ModernGraphicsBootstrap.h"
 #include "ModernRendererTypes.h"
+#include "ModernBMDGeometry.h"
 
 #include <cstdint>
 #include <map>
@@ -121,6 +122,41 @@ private:
     std::map<std::uint64_t, Diligent::RefCntAutoPtr<Diligent::IShaderResourceBinding> > m_resourceBindings;
 };
 
+
+struct ModernBMDMeshKey
+{
+    std::uint64_t AssetId;
+    std::uint32_t AssetGeneration;
+    std::uint32_t MeshIndex;
+    bool operator<(const ModernBMDMeshKey& other) const
+    {
+        return std::tie(AssetId, AssetGeneration, MeshIndex) <
+               std::tie(other.AssetId, other.AssetGeneration, other.MeshIndex);
+    }
+};
+
+struct ModernBMDMeshResource
+{
+    Diligent::RefCntAutoPtr<Diligent::IBuffer> VertexBuffer;
+    Diligent::RefCntAutoPtr<Diligent::IBuffer> IndexBuffer;
+    std::uint32_t NumIndices = 0;
+};
+
+// Immutable asset geometry shared across entity instances. Keys must change
+// when an asset is reloaded; returned pointers expire on RemoveAsset/Clear.
+class CModernBMDMeshCache
+{
+public:
+    bool Upload(Diligent::IRenderDevice* device, const ModernBMDMeshKey& key,
+                const ModernBMDGeometry& geometry);
+    const ModernBMDMeshResource* Get(const ModernBMDMeshKey& key) const;
+    void RemoveAsset(std::uint64_t assetId);
+    void Clear();
+private:
+    Diligent::IRenderDevice* m_device = nullptr; // Borrowed; core clears before device teardown.
+    std::map<ModernBMDMeshKey, ModernBMDMeshResource> m_meshes;
+};
+
 struct ModernIndexedDrawSubmission
 {
     Diligent::IPipelineState* Pipeline;
@@ -151,6 +187,7 @@ public:
 #ifdef MU_ENABLE_DILIGENT
     IModernRendererBackendAdapter* GetBackendAdapter();
     CModernShaderManager& GetShaderManager();
+    CModernBMDMeshCache& GetBMDMeshCache();
     CModernTextureSamplerManager& GetTextureSamplerManager();
     CModernPipelineResourceCache& GetPipelineResourceCache();
     bool SubmitIndexed(const ModernIndexedDrawSubmission& submission);
@@ -165,6 +202,7 @@ private:
     CDiligentOpenGL46Adapter m_openGL46Adapter;
     IModernRendererBackendAdapter* m_adapter;
     CModernShaderManager m_shaderManager;
+    CModernBMDMeshCache m_bmdMeshCache;
     CModernTextureSamplerManager m_textureSamplerManager;
     CModernPipelineResourceCache m_pipelineResourceCache;
 #endif

@@ -17,6 +17,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  test-bmd-geometry:
+    name: Phase 3 BMD geometry CPU tests (x86)
+    runs-on: windows-2022
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Configure geometry tests
+        run: cmake -S SRCMainGS/Source/Main5.2/tests -B build-bmd-tests -A Win32
+      - name: Build geometry tests
+        run: cmake --build build-bmd-tests --config Release
+      - name: Run geometry tests
+        run: ctest --test-dir build-bmd-tests -C Release --output-on-failure
+
   build-main-x86:
     name: Main Release + Debug x86 + Diligent OpenGL
     # Both Main configurations are required to stay buildable. Debug is

@@ -59,6 +59,12 @@ Runtime activation remains intentionally gated: Phase 3 does not yet redirect a 
 - Pose/Skeleton Texture conversion and addressing.
 - Two-independent-instance BMD proof before broad player/NPC migration.
 
+## Phase 3 continuation — BMD geometry
+
+The source now has a validated CPU BMD converter, a real `BMD::BuildModernMesh` entry point and an immutable vertex/index cache keyed by asset revision. The bootstrap releases the core caches before the attached Diligent context/device. Portable geometry tests passed locally and were added to the Windows x86 workflow. Details and the caller contract are in [PHASE3_RENDERER_CORE.md](PHASE3_RENDERER_CORE.md).
+
+This is an asset-preparation building block. No production BMD draw has been redirected, and PSO/SRB, explicit render-target/view binding, pose upload and target-GPU parity remain pending. Windows compilation of this continuation must be checked separately.
+
 ## Next action
 
 1. Run/inspect the Windows/x86 compile gate for the Phase 3 source changes.

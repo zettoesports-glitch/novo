@@ -1,3 +1,5 @@
+#include "ModernRendererCore.inl"
+
 #ifdef MU_ENABLE_DILIGENT
 #include "../dependencies/DiligentCore/Graphics/GraphicsEngineOpenGL/interface/EngineFactoryOpenGL.h"
 #endif
@@ -348,6 +350,10 @@ void CModernGraphicsBootstrap::Shutdown()
     // capability/profile/backend attempts must not emit a misleading
     // "shutdown before WGL teardown" success marker during static destruction.
     const bool hadActiveRuntimeState = m_active;
+
+    // Release PSO/SRB, mesh and texture caches while the attached device and WGL
+    // context are still alive. Adapters borrow these pointers; detach them now.
+    GetModernRendererCore().Shutdown();
 
 #ifdef MU_ENABLE_DILIGENT
     if (m_immediateContext)

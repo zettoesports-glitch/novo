@@ -291,6 +291,77 @@ inline void CModernPipelineResourceCache::Clear()
     m_pipelines.clear();
 }
 
+
+inline bool CModernBMDMeshCache::Upload(Diligent::IRenderDevice* device,
+                                        const ModernBMDMeshKey& key,
+                                        const ModernBMDGeometry& geometry)
+{
+    if (device == nullptr)
+        return false;
+    // Do not mix resources belonging to different render devices.
+    if (m_device != nullptr && m_device != device)
+        return false;
+    if (Get(key) != nullptr)
+        return true; // Same immutable asset revision: no per-frame re-upload.
+    if (geometry.Vertices.empty() || geometry.Indices.empty() ||
+        geometry.Indices.size() % 3 != 0 ||
+        geometry.Indices.size() > (std::numeric_limits<std::uint32_t>::max)())
+        return false;
+    for (const auto index : geometry.Indices)
+        if (index >= geometry.Vertices.size())
+            return false;
+
+    ModernBMDMeshResource resource;
+    Diligent::BufferDesc desc;
+    desc.Name = "Modern BMD immutable vertices";
+    desc.Size = static_cast<Diligent::Uint64>(geometry.Vertices.size()) * sizeof(ModernBMDVertex);
+    desc.BindFlags = Diligent::BIND_VERTEX_BUFFER;
+    desc.Usage = Diligent::USAGE_IMMUTABLE;
+    Diligent::BufferData data;
+    data.pData = geometry.Vertices.data();
+    data.DataSize = desc.Size;
+    device->CreateBuffer(desc, &data, &resource.VertexBuffer);
+    if (!resource.VertexBuffer)
+        return false;
+
+    desc.Name = "Modern BMD immutable indices";
+    desc.Size = static_cast<Diligent::Uint64>(geometry.Indices.size()) * sizeof(std::uint32_t);
+    desc.BindFlags = Diligent::BIND_INDEX_BUFFER;
+    data.pData = geometry.Indices.data();
+    data.DataSize = desc.Size;
+    device->CreateBuffer(desc, &data, &resource.IndexBuffer);
+    if (!resource.IndexBuffer)
+        return false; // Local vertex buffer is released; no partial cache entry.
+
+    resource.NumIndices = static_cast<std::uint32_t>(geometry.Indices.size());
+    m_meshes.emplace(key, resource);
+    m_device = device;
+    return true;
+}
+
+inline const ModernBMDMeshResource* CModernBMDMeshCache::Get(const ModernBMDMeshKey& key) const
+{
+    const auto it = m_meshes.find(key);
+    return it == m_meshes.end() ? nullptr : &it->second;
+}
+
+inline void CModernBMDMeshCache::RemoveAsset(std::uint64_t assetId)
+{
+    for (auto it = m_meshes.begin(); it != m_meshes.end(); )
+    {
+        if (it->first.AssetId == assetId)
+            it = m_meshes.erase(it);
+        else
+            ++it;
+    }
+}
+
+inline void CModernBMDMeshCache::Clear()
+{
+    m_meshes.clear();
+    m_device = nullptr;
+}
+
 inline ModernIndexedDrawSubmission::ModernIndexedDrawSubmission()
     : Pipeline(nullptr), Resources(nullptr), VertexBuffer(nullptr), IndexBuffer(nullptr),
       VertexBufferOffset(0), IndexBufferOffset(0), NumIndices(0), IndexType(Diligent::VT_UINT16),
@@ -351,6 +422,7 @@ inline void CModernRendererCore::Shutdown()
 {
 #ifdef MU_ENABLE_DILIGENT
     m_pipelineResourceCache.Clear();
+    m_bmdMeshCache.Clear();
     m_textureSamplerManager.Clear();
     m_shaderManager.Clear();
     if (m_adapter != nullptr)
@@ -381,6 +453,7 @@ inline std::uint32_t CModernRendererCore::GetHeight() const { return m_height; }
 #ifdef MU_ENABLE_DILIGENT
 inline IModernRendererBackendAdapter* CModernRendererCore::GetBackendAdapter() { return m_adapter; }
 inline CModernShaderManager& CModernRendererCore::GetShaderManager() { return m_shaderManager; }
+inline CModernBMDMeshCache& CModernRendererCore::GetBMDMeshCache() { return m_bmdMeshCache; }
 inline CModernTextureSamplerManager& CModernRendererCore::GetTextureSamplerManager() { return m_textureSamplerManager; }
 inline CModernPipelineResourceCache& CModernRendererCore::GetPipelineResourceCache() { return m_pipelineResourceCache; }
 

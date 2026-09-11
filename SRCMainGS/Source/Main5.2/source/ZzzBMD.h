@@ -2,6 +2,7 @@
 #define __ZZZBMD_H__
 
 #include "TextureScript.h"
+#include "ModernBMDGeometry.h"
 
 #define MAX_BONES    200
 #define MAX_MESH     50
@@ -259,6 +260,16 @@ public:
 	bool Save2(char* DirName, char* FileName);
 	void Release();
 	void CreateBoundingBox();
+	// CPU asset conversion only; does not alter the legacy renderer or upload pose.
+	bool BuildModernMesh(int meshIndex, ModernBMDGeometry& output, ModernBMDGeometryError& error) const
+	{
+		if (!Meshs || meshIndex < 0 || meshIndex >= NumMeshs)
+		{
+			error = ModernBMDGeometryError::InvalidCounts;
+			return false;
+		}
+		return BuildModernBMDGeometry(Meshs[meshIndex], NumBones, output, error);
+	}
 	void CreateVertexBuffer(int i, Mesh_t& mesh);
 	void RenderVertexBuffer(int i, Mesh_t* m, int vertex_index, vec3_t* vertices, vec2_t* textCoords, vec4_t* colors);
 
