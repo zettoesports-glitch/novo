@@ -32,7 +32,8 @@ Diligent integration for Main 5.2, using shared HLSL shaders and OpenGL 4.6 firs
 - GitHub Actions run `34533868904` successfully compiled `Main.sln` as Debug/x86 after the Main-only C++17 normalization, with 0 build errors.
 - Combined baseline run `34538658227` passed PowerShell preflight, pinned Diligent preparation, Release/x86, Debug/x86 and synthetic runtime-evidence validation.
 - Lifecycle/runtime-gate audit run `34540959623` passed after covering `WM_USER_MEMORYHACK` and hardening the real GPU evidence checks.
-- Latest source-affecting Phase 2 gate `34542334616`, at commit `e6c0a678ecbb870262d62ed362902ce999adb06c`, passed pinned Diligent preparation, Release/x86, Debug/x86, output verification and synthetic runtime-evidence validation after enforcing the OpenGL compatibility profile in the bootstrap.
+- Compatibility-profile source gate `34542334616` passed after enforcing the OpenGL compatibility profile in the bootstrap.
+- Latest source-affecting Phase 2 gate `34549868789`, at commit `69e0fe800cd6d5e787165673f611bb9018a8917e`, passed PowerShell preflight, pinned Diligent OpenGL backend preparation, Release/x86 build/output verification, Debug/x86 build/output verification and runtime-evidence parser validation after the teardown-generation and failed-bootstrap-state hardening.
 
 Evidence and scope: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERER_MAPPING.md).
 Phase 2 contract: [PHASE2_OPENGL46_BOOTSTRAP.md](PHASE2_OPENGL46_BOOTSTRAP.md).
@@ -43,7 +44,7 @@ Dependency pin/setup model: [DILIGENT_PIN.md](DILIGENT_PIN.md).
 
 The Phase 2 bootstrap is represented in source and build infrastructure. The repository contains the lifecycle bridge, OpenGL 4.6 + compatibility-profile checks, explicit backend loader, exact dependency pin, reproducible setup/build script, persistent runtime diagnostics, Diligent-owned validation/debug routing, a reproducible GPU validation script and a Windows/x86 CI compile/evidence gate.
 
-The latest source-affecting Release+Debug x86 gate passed in workflow run `34542334616` at commit `e6c0a678ecbb870262d62ed362902ce999adb06c`. Repository-side source/build/synthetic-evidence work for the Phase 2 bootstrap is therefore closed.
+The latest source-affecting Release+Debug x86 gate passed in workflow run `34549868789` at commit `69e0fe800cd6d5e787165673f611bb9018a8917e`. The job passed the PowerShell preflight, pinned Diligent backend preparation, Release and Debug x86 builds, output verification and runtime-evidence parser validation. Repository-side source/build/synthetic-evidence work for the Phase 2 bootstrap is therefore closed.
 
 The final teardown audit also confirmed that the `KillGLWindow()` calls inside `CreateOpenglWindow()` are initialization-failure paths that occur before a successful modern attach can exist. The currently known post-attach teardown paths remain covered by the lifecycle bridge.
 
@@ -53,11 +54,11 @@ Phase 2 is **not runtime-certified**. GitHub Actions proves compilation, generat
 
 Build validation state:
 
-- Release/x86: **passed**, including latest source gate `34542334616`.
-- Debug/x86: **passed**, including latest source gate `34542334616`.
-- Pinned Diligent OpenGL backend preparation/output verification: **passed** in `34542334616`.
-- PowerShell syntax preflight: **passed** in `34542334616`.
-- Synthetic compatibility-profile runtime-evidence parser validation: **passed** in `34542334616`.
+- Release/x86: **passed**, including latest source gate `34549868789`.
+- Debug/x86: **passed**, including latest source gate `34549868789`.
+- Pinned Diligent OpenGL backend preparation/output verification: **passed** in `34549868789`.
+- PowerShell syntax preflight: **passed** in `34549868789`.
+- Synthetic compatibility-profile runtime-evidence parser validation: **passed** in `34549868789`.
 
 Remaining GPU runtime work:
 
