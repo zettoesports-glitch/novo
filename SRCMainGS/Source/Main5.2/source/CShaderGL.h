@@ -47,6 +47,7 @@ private:
 #include "ModernRendererCore.inl"
 #include "ModernSkeletonPose.h"
 #include "ModernSkeletonTexture.h"
+#include "ModernBMDRenderContext.h"
 #include "ModernBMDPipeline.h"
 #include "ModernOpenGLDefaultFramebuffer.h"
 #include "ModernLegacyGLState.h"
