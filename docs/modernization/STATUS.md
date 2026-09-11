@@ -22,7 +22,7 @@ Prior Phase 2 Windows gates successfully built the pinned Release/Debug OpenGL b
 
 Phase 2 is **not runtime-certified**. The real interactive Windows/OpenGL 4.6 compatibility-profile test is still required to prove backend load/attach, debug routing, resize stability, single presentation ownership, clean shutdown/lifetime and visual legacy regression behavior on the target GPU.
 
-The user explicitly authorized repository-side Phase 3 work to proceed while this GPU test is unavailable. That authorization does not mark the Phase 2 GPU checkbox as passed.
+Repository-side Phase 3 work is allowed to proceed while this GPU test is unavailable. That does not mark the Phase 2 GPU checkbox as passed.
 
 The existing validation command remains:
 
@@ -32,40 +32,50 @@ powershell -ExecutionPolicy Bypass -File .\run_phase2_runtime_test.ps1 -EnableGL
 
 ## Phase 3 renderer core — repository implementation present
 
-Phase 3 core infrastructure is now represented in source. See [PHASE3_RENDERER_CORE.md](PHASE3_RENDERER_CORE.md).
+Phase 3 has moved beyond the generic renderer core and now contains the first BMD production-pipeline building blocks. See [PHASE3_RENDERER_CORE.md](PHASE3_RENDERER_CORE.md).
 
-Implemented repository-side contracts:
+Implemented repository-side contracts now include:
 
-- `ModernRendererTypes.h` defines backend-neutral render view/pass identity plus Frame/Instance/Material constant structures.
-- The initial BMD GPU vertex contract is locked to 40 bytes with compile-time offset/size checks: Position, Normal, UV, PositionBone, NormalBone and OriginalVertexId.
-- `IModernRendererBackendAdapter` defines the renderer/backend boundary.
-- `CDiligentOpenGL46Adapter` consumes the Phase 2 Diligent device/context. Vulkan and Direct3D 11 are explicit future selections and are not silently activated.
-- `CModernGPUBuffer` and `CModernConstantBuffer` provide resource/update wrappers.
-- `CModernShaderManager` provides cached shared-HLSL shader creation.
-- `CModernTextureSamplerManager` provides texture-SRV and sampler lifecycle/cache.
-- `CModernPipelineResourceCache` provides PSO/SRB cache ownership.
-- `ModernIndexedDrawSubmission` plus `CModernRendererCore::SubmitIndexed()` define the indexed draw boundary and preserve the raw-GL -> Diligent cache invalidation contract.
-- The core is compiled through the existing `CShaderGL.h` path without adding another Visual Studio project source item or presentation owner.
+- backend-neutral Frame/Instance/Material constants and the locked 40-byte `ModernBMDVertex` ABI;
+- explicit Diligent backend adapter boundary with OpenGL 4.6 active and Vulkan/D3D11 reserved;
+- generic GPU/constant-buffer wrappers, shared-HLSL shader cache, texture/sampler ownership, PSO/SRB cache and indexed submission boundary;
+- validated CPU BMD conversion plus immutable vertex/index GPU mesh cache keyed by asset revision;
+- first shared-HLSL textured BMD pipeline with Frame/Instance/Material constant buffers, explicit input layout, depth/blend/cull PSO state, Skeleton Texture SRV and diffuse texture/sampler binding;
+- NextMU-style Skeleton Texture atlas upload path using two `float4` texels per bone and per-pose addressing;
+- legacy `BoneMatrix[200][3][4]` to quaternion + translation/BoneScale packing, with finite-data, singular/reflected-basis and allocation failure rejection;
+- verified row-major bone convention: legacy `VectorRotate` consumes matrix rows, matching the current matrix-to-quaternion conversion and shared-HLSL rotation path;
+- explicit pose-space safety: the first modern BMD shader accepts only poses whose `BodyScale/BodyOrigin` remain separate per-instance data. Poses with the body transform already baked into `BoneMatrix` are rejected for legacy fallback, preventing double application.
 
-Runtime activation remains intentionally gated: Phase 3 does not yet redirect a production BMD draw, upload a Skeleton Texture, or replace any Hero/player/Bot/NPC/monster render path. The legacy renderer therefore remains authoritative.
+The production shader still applies skinning first and then `BodyScale/BodyOrigin`, matching the ordinary legacy `Transform(..., Translate=true)` path when the snapshot was produced without the body transform baked into the bone matrices.
 
-## Phase 3 validation still pending
+## Phase 3 validation boundary — still pending
 
-- First production HLSL PSO/SRB/input-layout creation.
-- First persistent BMD vertex/index upload.
-- First production indexed modern draw and raw-GL/Diligent coexistence check.
-- Pose/Skeleton Texture conversion and addressing.
-- Two-independent-instance BMD proof before broad player/NPC migration.
+The modern components above are source/build contracts, not proof of a live migrated model. The legacy renderer remains authoritative because no Hero/player/BotBuffer/NPC/monster production draw has been redirected yet.
 
-## Phase 3 continuation — BMD geometry
+Still required before calling the first BMD migration complete:
 
-The source now has a validated CPU BMD converter, a real `BMD::BuildModernMesh` entry point and an immutable vertex/index cache keyed by asset revision. The bootstrap releases the core caches before the attached Diligent context/device. Portable geometry tests passed locally and were added to the Windows x86 workflow. Details and the caller contract are in [PHASE3_RENDERER_CORE.md](PHASE3_RENDERER_CORE.md).
+- exercise the BMD vertex/index cache and Skeleton Texture atlas on the real attached Diligent device from a production model path;
+- bind explicit render targets/viewport and execute the first indexed `CModernRendererCore::SubmitIndexed()` draw;
+- verify raw-GL -> Diligent -> legacy-GL state coexistence around that draw;
+- prove two independent live instances of the same BMD do not share pose/instance state;
+- compare the local Hero against the legacy renderer before expanding to remote player, BotBuffer, NPC or monster paths;
+- run the deferred target-GPU Phase 2 certification.
 
-This is an asset-preparation building block. No production BMD draw has been redirected, and PSO/SRB, explicit render-target/view binding, pose upload and target-GPU parity remain pending. Windows CI passed on code commit `925bbb5956ac05eece159c1a7b0652b2d41dfbda`: Main Release/Debug x86, pinned Diligent backend builds, geometry tests and the synthetic lifecycle parser. [Build evidence](https://github.com/zettoesports-glitch/novo/actions/runs/34615937928). This does not certify target-GPU execution.
+## Verified legacy transform convention
+
+The audit of the actual Main math/animation path established the boundary used by the modern pose contract:
+
+- `VectorRotate(in, matrix, out)` evaluates `Dot(in, matrix[row])`, so the 3x3 bone basis is consumed row-major and must not be transposed during quaternion conversion.
+- `R_ConcatTransforms` composes the same 3x4 affine representation used by `BMD::Animation`.
+- `BMD::Transform` applies `BoneScale` during the bone transform and, when `Translate=true`, applies `BodyScale` and then adds `BodyOrigin`.
+- `Calc_RenderObject` passes `!Translate` to `BMD::Animation`; therefore some legacy call paths can produce matrices where the body transform is already baked. Those matrices are intentionally not accepted by the first modern pose path yet.
+
+This removes the matrix-transpose ambiguity and turns the body-transform distinction into an explicit fallback gate instead of an implicit assumption.
 
 ## Next action
 
-1. Preserve the passing Windows/x86 Release/Debug and CPU geometry gates as the next pipeline changes are introduced.
-2. Build the first BMD model pipeline on the new core: persistent vertex/index buffers, HLSL VS/PS, input layout, PSO/SRB, Frame/Instance/Material constant buffers and texture/sampler binding.
-3. Keep the legacy draw as fallback and do not expand to remote players/BotBuffer/NPC/monster until the two-independent-instance proof is stable.
-4. When access to the target GPU is available, execute the deferred Phase 2 runtime certification before calling the OpenGL coexistence boundary runtime-complete.
+1. Preserve the current Windows/x86 Release/Debug, geometry and skeleton-pose regression gates.
+2. Wire one deliberately selected production BMD path into the existing geometry cache + Skeleton Texture atlas + `CModernBMDPipeline`, with explicit render targets/viewport and legacy fallback on every unsupported/failed condition.
+3. Start with a path whose pose is known to use `BodyTransformSeparate`; do not normalize body-baked poses silently.
+4. Prove two independent instances, then validate local Hero parity before enabling remote player/BotBuffer/NPC/monster migration.
+5. When target-GPU access is available, execute the deferred Phase 2 runtime certification before calling the OpenGL coexistence boundary runtime-complete.
