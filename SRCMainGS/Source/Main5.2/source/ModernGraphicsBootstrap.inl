@@ -133,6 +133,36 @@ const char* SafeGLString(GLenum name)
     return value != NULL ? reinterpret_cast<const char*>(value) : "unavailable";
 }
 
+bool QueryOpenGLVersion(int& major, int& minor)
+{
+    major = 0;
+    minor = 0;
+
+    // GL_VERSION exists on every OpenGL version supported by this legacy Main.
+    // Parse it first so unsupported/old contexts do not receive a
+    // GL_MAJOR_VERSION/GL_MINOR_VERSION query that would leave GL_INVALID_ENUM
+    // pending in the legacy renderer's error state.
+    const char* version = SafeGLString(GL_VERSION);
+    if (sscanf(version, "%d.%d", &major, &minor) != 2)
+        return false;
+
+    if (major >= 3)
+    {
+        GLint queriedMajor = 0;
+        GLint queriedMinor = 0;
+        glGetIntegerv(GL_MAJOR_VERSION, &queriedMajor);
+        glGetIntegerv(GL_MINOR_VERSION, &queriedMinor);
+
+        if (queriedMajor > 0)
+        {
+            major = queriedMajor;
+            minor = queriedMinor;
+        }
+    }
+
+    return true;
+}
+
 bool IsCompatibilityProfileActive(int glMajor, int glMinor)
 {
     if (glMajor < 3 || (glMajor == 3 && glMinor < 2))
@@ -225,21 +255,10 @@ bool CModernGraphicsBootstrap::InitializeOpenGL46(HWND hWnd, HDC hDC, HGLRC hGLR
         return false;
     }
 
-    glGetIntegerv(GL_MAJOR_VERSION, &m_glMajor);
-    glGetIntegerv(GL_MINOR_VERSION, &m_glMinor);
-
-    // Legacy WGL contexts may not expose GL_MAJOR_VERSION/GL_MINOR_VERSION on
-    // old drivers. Parsing GL_VERSION keeps the failure diagnostic useful.
-    if (m_glMajor == 0)
+    if (!QueryOpenGLVersion(m_glMajor, m_glMinor))
     {
-        const char* version = SafeGLString(GL_VERSION);
-        int parsedMajor = 0;
-        int parsedMinor = 0;
-        if (sscanf(version, "%d.%d", &parsedMajor, &parsedMinor) == 2)
-        {
-            m_glMajor = parsedMajor;
-            m_glMinor = parsedMinor;
-        }
+        ModernGraphicsLog("[ModernGraphics] OpenGL version could not be parsed. Legacy renderer remains active.\n");
+        return false;
     }
 
     LogOpenGLDiagnostics();
@@ -258,8 +277,6 @@ bool CModernGraphicsBootstrap::InitializeOpenGL46(HWND hWnd, HDC hDC, HGLRC hGLR
 
     // Coexistence still exercises legacy fixed-function/client-array paths.
     // A core-only context is therefore not safe even if it reports OpenGL 4.6.
-    // Enforce the same compatibility-profile requirement used by the runtime
-    // evidence gate before Diligent is allowed to attach.
     if (!IsCompatibilityProfileActive(m_glMajor, m_glMinor))
     {
         ModernGraphicsLog("[ModernGraphics] OpenGL 4.6 attach skipped: compatibility profile is required for legacy coexistence. Legacy renderer remains active.\n");
@@ -274,9 +291,7 @@ bool CModernGraphicsBootstrap::InitializeOpenGL46(HWND hWnd, HDC hDC, HGLRC hGLR
     m_validationEnabled = IsModernGLDebugRequested();
     engineCreateInfo.EnableValidation = m_validationEnabled;
 
-    // ENGINE_DLL=1 makes Diligent's public OpenGL header expose the explicit
-    // Windows loader. This intentionally mirrors NextMU's backend-module model:
-    // Release loads GraphicsEngineOpenGL_32r.dll and Debug loads _32d.dll.
+    // ENGINE_DLL=1 exposes Diligent's explicit Windows backend loader.
     const auto loadFactory = Diligent::LoadGraphicsEngineOpenGL();
     if (loadFactory == nullptr)
     {
@@ -291,19 +306,14 @@ bool CModernGraphicsBootstrap::InitializeOpenGL46(HWND hWnd, HDC hDC, HGLRC hGLR
         return false;
     }
 
-    // Route Diligent diagnostics through the persistent Phase 2 logger instead
-    // of registering a competing raw glDebugMessageCallback. When validation is
-    // enabled, Diligent's OpenGL backend owns KHR_debug and forwards those
-    // messages through this factory callback.
     factory->SetMessageCallback(ModernDiligentMessageCallback);
     factory->SetBreakOnError(false);
 
     if (m_validationEnabled)
         ModernGraphicsLog("[ModernGraphics] Diligent validation/OpenGL debug routing enabled by MU_MODERN_GL_DEBUG.\n");
 
-    // AttachToActiveGLContext is intentional. The MU client continues to own
-    // HDC/HGLRC and SwapBuffers, so Diligent must not create a second context
-    // or swap chain during the coexistence phase.
+    // The MU client continues to own HDC/HGLRC and SwapBuffers. Diligent must
+    // attach only; it must not create a competing context or swap chain.
     factory->AttachToActiveGLContext(
         engineCreateInfo,
         &m_device,
@@ -327,7 +337,10 @@ bool CModernGraphicsBootstrap::InitializeOpenGL46(HWND hWnd, HDC hDC, HGLRC hGLR
 
 void CModernGraphicsBootstrap::Shutdown()
 {
-    const bool hadRuntimeState = m_initializationAttempted || m_active;
+    // Only a successful attachment constitutes modern runtime state. Failed
+    // capability/profile/backend attempts must not emit a misleading
+    // "shutdown before WGL teardown" success marker during static destruction.
+    const bool hadActiveRuntimeState = m_active;
 
 #ifdef MU_ENABLE_DILIGENT
     if (m_immediateContext)
@@ -338,7 +351,7 @@ void CModernGraphicsBootstrap::Shutdown()
     m_device.Release();
 #endif
 
-    if (hadRuntimeState)
+    if (hadActiveRuntimeState)
         ModernGraphicsLog("[ModernGraphics] Shutdown completed before legacy WGL teardown.\n");
 
     ResetState();
