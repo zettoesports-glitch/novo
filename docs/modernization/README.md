@@ -14,4 +14,6 @@ Working documentation for the `modernization` branch.
 
 Runtime helper: `SRCMainGS/Source/Main5.2/run_phase2_runtime_test.ps1` launches/validates the Phase 2 GPU gate and checks the persistent `Client_2/ModernGraphics.log` evidence. The parser validates lifecycle ordering and complete context-recreation cycles; it does not count legacy `SwapBuffers` calls per frame.
 
+Successful `Phase 2 Win32 Build` runs now publish a `phase2-win32-gpu-runtime-<sha>` artifact containing the built `Main.exe`, Release/Debug x86 Diligent OpenGL backend DLLs and the runtime validation script. This artifact is intended to make the remaining target-GPU certification reproducible without requiring a fresh local compile.
+
 Architecture: **Diligent + shared HLSL**. First production backend: **OpenGL 4.6**. Vulkan and Direct3D 11 share the contracts; activation and validation remain pending.
