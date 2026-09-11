@@ -25,19 +25,26 @@ The earlier runtime parser could accept required markers without proving a valid
 
 The gate now validates complete ordered cycles:
 
-`attach attempt -> GL diagnostics -> optional debug routing -> Diligent attach -> teardown barrier -> shutdown`
+`attach attempt -> GL diagnostics -> compatibility profile -> optional debug routing -> Diligent attach -> teardown barrier -> shutdown`
 
-It rejects incomplete or reordered cycles.
+It rejects incomplete or reordered cycles. Each successful lifecycle must independently prove `profile=compatibility`; a valid first lifecycle cannot hide a later core-profile lifecycle.
 
 ### 2. Recreated WGL contexts
 
-The source bridge intentionally allows a genuinely different `HWND/HGLRC` pair to start a fresh modern lifecycle after the previous lifecycle has shut down.
+The source bridge intentionally allows a genuinely recreated WGL lifecycle after the previous lifecycle has shut down.
 
 The first hardened parser incorrectly required exactly one attachment in the entire process lifetime. That contradicted the source design and could reject a valid fullscreen/window/context recreation.
 
 The parser now accepts one or more **complete** lifecycle cycles and requires the previous shutdown to finish before the next attach attempt begins. A new attach attempt while a teardown barrier is active is rejected.
 
-The source-level bridge remains responsible for the identity rule that prevents reattaching to the same tracked dying `HWND/HGLRC` pair.
+The source bridge was also hardened for Windows handle reuse:
+
+- while the dying WGL context is still current, the tracked `HWND/HGLRC` remains blocked;
+- after an actual WGL release/unbind is observed, the teardown generation is cleared;
+- a newly created live pair may start the next lifecycle even if Windows later recycles the same numeric handle values;
+- a failed/inactive initialization attempt is reset when its tracked window enters teardown, so stale attempted-state cannot block a later valid recreated context.
+
+This makes the lifecycle generation boundary stronger than comparing raw handle values alone.
 
 ### 3. Resize evidence
 
@@ -69,9 +76,32 @@ The permanent Windows/x86 workflow now tests:
 - valid complete lifecycle recreation;
 - rejection of shutdown-before-teardown evidence;
 - rejection of an attach attempt during teardown;
-- rejection of an incomplete recreated lifecycle.
+- rejection of an incomplete recreated lifecycle;
+- rejection of recreated lifecycle evidence whose later cycle is not compatibility profile.
 
 The workflow still performs pinned Diligent preparation, Release/x86 build, Debug/x86 build and output verification before parser validation.
+
+### 6. Legacy OpenGL fallback must not inject GL errors
+
+The bootstrap originally queried `GL_MAJOR_VERSION` / `GL_MINOR_VERSION` before knowing whether the host context supported those enums. On an old OpenGL context that can create `GL_INVALID_ENUM` and contaminate the legacy renderer even though modern initialization correctly falls back.
+
+The audited implementation now:
+
+- parses the universally available `GL_VERSION` string first;
+- queries `GL_MAJOR_VERSION` / `GL_MINOR_VERSION` only when the parsed context is OpenGL 3.x or newer;
+- queries `GL_SHADING_LANGUAGE_VERSION` only for OpenGL 2.0 or newer;
+- avoids reporting a successful modern shutdown after a capability/profile/backend attempt that never actually attached.
+
+An unsupported host therefore falls back without the modern bootstrap deliberately leaving unsupported-enum GL errors behind.
+
+### 7. Failed initialization state and teardown generations
+
+A failed modern attempt still records the `HWND/HGLRC` pair so the bridge does not retry on every message. That state must not survive destruction of the tracked window.
+
+The teardown bridge now resets attempted-but-inactive state for the tracked window. Successful attachments additionally arm the teardown barrier and release Diligent before legacy WGL destruction. This covers both sides:
+
+- no repeated attach spam on the same live unsupported context;
+- no stale failed-attempt identity after that context/window is destroyed.
 
 ## Source/bootstrap audit result
 
@@ -80,10 +110,13 @@ No additional repository-side blocker was found in the Phase 2 bootstrap after t
 - Main remains owner of `HWND`, `HDC`, `HGLRC` and legacy presentation;
 - Diligent attaches to the active compatibility-profile WGL context;
 - OpenGL < 4.6 and core-only contexts fall back safely;
+- legacy OpenGL fallback avoids unsupported version/GLSL diagnostic queries;
 - Diligent backend load/factory failure falls back safely;
+- failed initialization tracking is cleared with the tracked window teardown;
 - known post-attach WGL teardown messages are covered by the temporary bridge;
+- the teardown generation handles both different context pairs and possible numeric handle recycling after a real WGL release;
 - attachment-state guards prevent fallback attempts from masquerading as active modern state;
-- resize and teardown are gated on a real active attachment;
+- resize and teardown are gated on a real active attachment where appropriate;
 - Diligent state invalidation is available at raw-GL -> Diligent boundaries;
 - persistent diagnostics and optional Diligent validation routing are implemented;
 - generated dependencies/runtime evidence remain excluded from source control.
@@ -104,6 +137,6 @@ The current hosted Windows CI cannot substitute for that interactive GPU/WGL run
 
 ## Post-GPU action
 
-After the real GPU gate passes, reassess the temporary `WH_CALLWNDPROC` bridge. The preferred end state is direct calls in the already-mapped lifecycle owners when runtime evidence shows that doing so is safe.
+After the real GPU gate passes, reassess the temporary `WH_CALLWNDPROC` bridge. Static inspection shows that the preferred direct owners are already identifiable: attach after the real WGL context is initialized, resize in the window lifecycle, and shutdown before `KillGLWindow()` releases the context. Moving to those direct owners should happen only after runtime evidence proves the coexistence behavior that the temporary bridge is currently protecting.
 
 Only after that Phase 2 boundary should the project activate the next implementation slice: concrete CPU/GPU contracts, Diligent resources, shared-HLSL model pipeline, pose conversion/Skeleton Texture and the first two-independent-instance BMD proof.
