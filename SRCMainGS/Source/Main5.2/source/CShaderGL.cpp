@@ -196,9 +196,8 @@ CShaderGL* CShaderGL::Instance()
 #endif // SHADER_VERSION_TEST
 
 // Phase 2 bootstrap implementation is compiled through this translation unit
-// because CShaderGL.cpp is already part of Main.vcxproj. Once Diligent is
-// vendored in dependencies and the project file is updated, this implementation
-// can move to its own .cpp without changing the public contract.
+// because CShaderGL.cpp is already part of Main.vcxproj. The implementation can
+// move to its own project entry later without changing the public contract.
 #include "ModernGraphicsBootstrap.inl"
 
 #ifdef MU_ENABLE_DILIGENT
@@ -207,8 +206,8 @@ CShaderGL* CShaderGL::Instance()
 // The legacy lifecycle lives in large Winmain.cpp/WINHANDLE.cpp units. During
 // the bootstrap phase we observe messages on the main UI thread instead of
 // duplicating or replacing the legacy window/context/presentation code. This
-// keeps the original SwapBuffers path authoritative and releases Diligent before
-// every currently known message path that can tear down the WGL context.
+// keeps the original SwapBuffers paths authoritative and releases Diligent
+// before every currently known message path that can tear down the WGL context.
 namespace
 {
 HHOOK g_ModernGraphicsWindowHook = NULL;
@@ -216,10 +215,27 @@ HWND g_ModernGraphicsLastWindow = NULL;
 HGLRC g_ModernGraphicsLastContext = NULL;
 bool g_ModernGraphicsTeardownStarted = false;
 
+void ResetModernGraphicsTeardownBarrier()
+{
+	g_ModernGraphicsTeardownStarted = false;
+	g_ModernGraphicsLastWindow = NULL;
+	g_ModernGraphicsLastContext = NULL;
+}
+
 void TryAttachModernGraphics(HWND hWnd)
 {
 	HGLRC currentContext = wglGetCurrentContext();
 	HDC currentDC = wglGetCurrentDC();
+
+	// Once KillGLWindow has actually released/unbound the old WGL context, the
+	// teardown generation is over. Clear the identity barrier here so Windows is
+	// free to reuse the same numeric HWND/HGLRC values for a genuinely new
+	// window/context without being mistaken for the dying generation.
+	if (g_ModernGraphicsTeardownStarted && currentContext == NULL)
+	{
+		ResetModernGraphicsTeardownBarrier();
+		ModernGraphicsLog("[ModernGraphics] Teardown barrier cleared after WGL context release.\n");
+	}
 
 	if (currentContext == NULL || currentDC == NULL)
 		return;
@@ -227,18 +243,16 @@ void TryAttachModernGraphics(HWND hWnd)
 	if (WindowFromDC(currentDC) != hWnd)
 		return;
 
-	// Once a teardown message has shut the modern device down, do not let a
-	// later Win32 message reattach Diligent to the same legacy WGL context while
-	// that context is still being destroyed. A genuinely recreated window/context
-	// pair clears the barrier and may start a fresh attach attempt.
+	// Before a real WGL release is observed, the exact pair remains blocked. A
+	// different live pair represents an already-created new generation and may
+	// start a fresh attach attempt immediately.
 	if (g_ModernGraphicsTeardownStarted)
 	{
 		if (g_ModernGraphicsLastWindow == hWnd && g_ModernGraphicsLastContext == currentContext)
 			return;
 
-		g_ModernGraphicsTeardownStarted = false;
-		g_ModernGraphicsLastWindow = NULL;
-		g_ModernGraphicsLastContext = NULL;
+		ResetModernGraphicsTeardownBarrier();
+		ModernGraphicsLog("[ModernGraphics] Teardown barrier cleared for a recreated WGL context.\n");
 	}
 
 	CModernGraphicsBootstrap& graphics = GetModernGraphics();
