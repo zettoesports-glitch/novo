@@ -71,9 +71,17 @@ O lifecycle real foi mapeado e conectado por uma ponte temporária `WH_CALLWNDPR
 
 - detecta o contexto WGL real depois que ele está current;
 - chama `InitializeOpenGL46(...)` uma única vez por `HWND/HGLRC`;
-- encaminha `WM_SIZE` para `OnResize(...)`;
+- encaminha `WM_SIZE` para `OnResize(...)` somente quando o attach moderno está realmente ativo;
 - chama `Shutdown()` antes dos caminhos `WM_CLOSE`, `WM_DESTROY`, `WM_NCDESTROY` e `WM_USER_MEMORYHACK` capazes de alcançar teardown pós-attach;
+- arma uma barreira por `HWND/HGLRC` durante teardown para impedir reattach ao mesmo contexto WGL enquanto ele está sendo destruído;
+- não trata uma tentativa que caiu em fallback legado como attachment ativo;
 - não substitui `WndProc`, não cria outro contexto e não apresenta frames.
+
+O hardening de teardown foi dividido em três pontos auditáveis:
+
+- `cf20045e70c888a14b2b3197663e095e51b60768`: cobertura de `WM_USER_MEMORYHACK` antes do `KillGLWindow()` excepcional;
+- `c564ef479b3727f1d50beb3760c1af047f138ad5`: barreira contra reattach ao mesmo `HWND/HGLRC` depois que o shutdown moderno começou;
+- `ad6d6e213433fe5fdcb694d96ecd3745131e98c2`: resize/teardown só são encaminhados quando `CModernGraphicsBootstrap::IsActive()` confirma um attach moderno real.
 
 A auditoria também verificou os `KillGLWindow()` existentes dentro de `CreateOpenglWindow()`. Eles são caminhos de limpeza de falha durante a criação do contexto, antes de um attach moderno bem-sucedido, portanto não representam um teardown moderno descoberto.
 
@@ -105,6 +113,8 @@ Detalhes e ressalvas em `DILIGENT_PIN.md`.
 - Ownership Diligent do contexto é `Attached`, nunca `Owned`, quando a inicialização é bem-sucedida.
 - Ao alternar de comandos raw OpenGL para comandos Diligent, `BeginModernPass()` invalida o cache de estado Diligent via `IDeviceContext::InvalidateState()`.
 - OpenGL core-only não é aceitável para coexistência com os caminhos fixed-function/client-array atuais; o bootstrap exige compatibility profile antes do attach.
+- Eventos de resize/teardown modernos só são processados após `IsActive()` confirmar attachment real.
+- Depois que teardown é armado, mensagens posteriores não podem reanexar Diligent ao mesmo `HWND/HGLRC` moribundo.
 - OpenGL 4.6 é o único backend moderno ativo nesta fase. Vulkan e Direct3D 11 são extension points.
 
 ## Contexto atual da Main
@@ -128,7 +138,8 @@ Na tentativa de attach são registrados:
 - mensagens da camada de validação Diligent;
 - mensagens OpenGL/KHR_debug produzidas pelo callback que o próprio backend Diligent instala quando validation está habilitada;
 - sucesso/falha do attach Diligent;
-- resize observado;
+- resize observado somente após attachment ativo;
+- barreira de teardown armada antes da destruição WGL;
 - shutdown antes do teardown WGL;
 - confirmação de que o `SwapBuffers` legado permanece autoritativo.
 
@@ -148,9 +159,9 @@ Provas acumuladas:
 - Debug/x86 run `34533868904`: Main Debug/x86 linkada com 0 erros após a normalização C++17 limitada ao projeto Main.
 - Combined baseline run `34538658227`: Release + Debug + outputs + parser de evidência sintética aprovados.
 - Lifecycle/runtime-gate audit run `34540959623`: aprovado após `WM_USER_MEMORYHACK` e hardening do gate de runtime.
-- **Latest source-affecting gate `34542334616`**, commit `e6c0a678ecbb870262d62ed362902ce999adb06c`: Diligent pinned setup, Release/x86, Debug/x86, verificações de outputs e `run_phase2_runtime_test.ps1 -ValidateOnly` com profile compatibility foram concluídos com **success**.
+- Compatibility-profile source gate `34542334616`, commit `e6c0a678ecbb870262d62ed362902ce999adb06c`: Diligent pinned setup, Release/x86, Debug/x86, verificações de outputs e `run_phase2_runtime_test.ps1 -ValidateOnly` com profile compatibility concluídos com **success**.
 
-Esse último gate prova que a exigência de compatibility profile compila nas duas configurações reais da Main e não quebrou o setup Diligent nem o parser do gate de runtime.
+O gate mais recente para a barreira anti-reattach e o `IsActive()` lifecycle guard é registrado em `STATUS.md` / `IMPLEMENTATION_CHECKLIST.md` quando concluído; a exigência de runtime GPU real permanece independente desse CI.
 
 ## Gate GPU reproduzível
 
@@ -171,7 +182,7 @@ O script:
 - inicia `Main.exe` com `Client_2` como working directory;
 - opcionalmente ativa `MU_MODERN_GL_DEBUG=1`, que liga validation/KHR_debug pelo próprio Diligent;
 - espera o fechamento normal do cliente e exige exit code 0;
-- valida attach, diagnóstico OpenGL, `profile=compatibility`, roteamento de validation/debug, resize opcional, shutdown e ausência de fallback moderno no `ModernGraphics.log` ao lado do executável.
+- valida attach, diagnóstico OpenGL, `profile=compatibility`, roteamento de validation/debug, resize opcional, barreira de teardown, shutdown e ausência de fallback moderno no `ModernGraphics.log` ao lado do executável.
 
 Também aceita `-ValidateOnly` para validar um log já capturado sem relançar o cliente e sem exigir os binários de runtime. O workflow Windows executa esse modo contra evidência sintética depois dos builds para testar o script sem fingir que isso equivale a uma execução GPU real.
 
@@ -187,12 +198,14 @@ Também aceita `-ValidateOnly` para validar um log já capturado sem relançar o
 - loader modular do backend OpenGL;
 - setup reproduzível Win32/OpenGL/HLSL;
 - fallback legado quando dependência, DLL, versão ou profile não estiver disponível;
-- builds Release/x86 e Debug/x86 aprovados no latest source gate `34542334616`;
+- builds Release/x86 e Debug/x86 aprovados nos gates Windows anteriores;
 - diagnósticos persistentes implementados;
 - validation e OpenGL/KHR_debug roteados pelo callback oficial do Diligent, sem callback GL concorrente na Main;
 - gate GPU local transformado em procedimento/script reproduzível;
-- validação sintática/funcional do modo `-ValidateOnly` integrada e aprovada no workflow permanente;
-- auditoria dos caminhos conhecidos de `KillGLWindow()` concluída sem teardown pós-attach descoberto fora da cobertura da ponte.
+- validação sintática/funcional do modo `-ValidateOnly` integrada ao workflow permanente;
+- auditoria dos caminhos conhecidos de `KillGLWindow()` concluída sem teardown pós-attach descoberto fora da cobertura da ponte;
+- barreira anti-reattach adicionada para o mesmo `HWND/HGLRC` durante teardown;
+- resize e teardown modernos condicionados a attachment realmente ativo.
 
 ### Ainda não validado em runtime GPU
 
@@ -200,8 +213,9 @@ A Fase 2 só será considerada **runtime-concluída** após execução real da M
 
 - criação/anexação do backend OpenGL;
 - versão efetiva >= 4.6 e compatibility profile;
-- resize sem crash;
+- resize sem crash e somente após attachment ativo;
 - exatamente uma apresentação por frame;
+- teardown sem reattach ao mesmo contexto moribundo;
 - shutdown sem erro de lifetime/contexto;
 - logs reais de vendor, renderer, version, profile e backend;
 - validation/KHR_debug sem conflito de callback;
