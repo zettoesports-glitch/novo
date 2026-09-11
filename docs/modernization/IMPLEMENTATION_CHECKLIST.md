@@ -20,6 +20,7 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [x] Implement pose conversion / Skeleton Texture contract in Main source
 - [x] Verify legacy row-major `vec34_t`/quaternion convention against `VectorRotate`/`QuaternionMatrix`
 - [x] Make body-transform pose space explicit and reject body-baked matrices from the first modern shader path
+- [x] Define scoped per-instance BMD render context so asset-shared BMD state cannot own entity pose identity
 
 ## OpenGL 4.6 — Phase 2 bootstrap
 - [x] Define Win32/WGL ownership: Main owns `HWND/HDC/HGLRC`; Diligent attaches only
@@ -77,6 +78,9 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [x] Keep renderer-core code independent of raw OpenGL calls
 - [x] Compile the core through the existing Main build path without adding another project/presentation owner
 - [x] Validate Phase 3 core + geometry changes in Windows/x86 Release and Debug CI/build ([925bbb5 evidence](https://github.com/zettoesports-glitch/novo/actions/runs/34615937928))
+- [x] Implement non-presenting default-framebuffer bridge for the attached WGL path
+- [x] Implement raw-GL state save/restore scope for modern/legacy coexistence
+- [x] Implement non-owning Diligent wrapper cache for Main-owned legacy GL textures
 - [ ] Activate the core from the first migrated production draw
 
 ## First modern draw
@@ -87,9 +91,12 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [x] Bind Skeleton Texture + diffuse texture/sampler resources through SRB
 - [x] Define depth/blend/cull PSO state
 - [x] Define Diligent input layout matching `ModernBMDVertex`
-- [ ] Bind explicit production render targets and viewport for the attached-no-swapchain path
+- [x] Implement explicit render-target/viewport fields and default-framebuffer bridge required by `SubmitIndexed()`
+- [x] Implement GL-state coexistence scope required around a modern draw
+- [ ] Propagate a scoped real-entity context from the first selected producer into the BMD boundary
+- [ ] Bind the explicit production render target/viewport from that live BMD path
 - [ ] Issue first indexed production draw through `CModernRendererCore::SubmitIndexed()`
-- [ ] Validate both raw-GL -> Diligent and Diligent -> legacy-GL state coexistence around the first production modern draw
+- [ ] Validate both raw-GL -> Diligent and Diligent -> legacy-GL state coexistence around that live production draw
 
 ## BMD migration
 - [x] Map legacy mesh fields and initial conversion rules (static)
@@ -102,7 +109,8 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [x] Implement Skeleton Texture atlas upload/addressing contract (2 float4 texels per bone)
 - [x] Validate independent CPU pose snapshots and reject non-finite/degenerate/reflected rotation data
 - [x] Guard against double `BodyScale/BodyOrigin` by rejecting `BodyTransformBaked` snapshots from the first modern pipeline
-- [ ] Route per-object transform/animation state into a production modern draw
+- [x] Implement RAII instance-context isolation and regression test nested/sibling restoration
+- [ ] Wire per-object transform/animation context into a production modern draw
 - [ ] Two independent live instances of the same BMD without state leakage
 - [ ] Local Hero parity
 - [ ] Remote player parity
