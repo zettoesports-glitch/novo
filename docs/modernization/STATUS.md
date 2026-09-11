@@ -43,23 +43,35 @@ Implemented repository-side contracts now include:
 - first shared-HLSL textured BMD pipeline with Frame/Instance/Material constant buffers, explicit input layout, depth/blend/cull PSO state, Skeleton Texture SRV and diffuse texture/sampler binding;
 - NextMU-style Skeleton Texture atlas upload path using two `float4` texels per bone and per-pose addressing;
 - legacy `BoneMatrix[200][3][4]` to quaternion + translation/BoneScale packing, with finite-data, singular/reflected-basis and allocation failure rejection;
-- verified row-major bone convention: legacy `VectorRotate` consumes matrix rows, matching the current matrix-to-quaternion conversion and shared-HLSL rotation path;
-- explicit pose-space safety: the first modern BMD shader accepts only poses whose `BodyScale/BodyOrigin` remain separate per-instance data. Poses with the body transform already baked into `BoneMatrix` are rejected for legacy fallback, preventing double application.
+- verified row-major bone convention and explicit `BodyTransformSeparate` safety gate;
+- attached-WGL default-framebuffer proxy, explicit render-target/viewport submission contract, raw-GL state save/restore scope and non-owning legacy GL texture wrapper;
+- scoped per-instance BMD render context carrying instance slot+generation, asset revision, view/pass, Skeleton slot and migration gate, with nested/sibling restoration regression coverage.
 
-The production shader still applies skinning first and then `BodyScale/BodyOrigin`, matching the ordinary legacy `Transform(..., Translate=true)` path when the snapshot was produced without the body transform baked into the bone matrices.
+The production shader applies skinning first and then `BodyScale/BodyOrigin`, matching the ordinary legacy `Transform(..., Translate=true)` path when the snapshot was produced without the body transform baked into the bone matrices.
 
-## Phase 3 validation boundary — still pending
+## Phase 3 production activation boundary — still pending
 
-The modern components above are source/build contracts, not proof of a live migrated model. The legacy renderer remains authoritative because no Hero/player/BotBuffer/NPC/monster production draw has been redirected yet.
+A fresh source audit confirms that `BMD::RenderMesh()` in `ZzzBMD.cpp` still has no `Modern*` call. The modern pipeline, atlas, target bridge, texture interop and state guard therefore exist as reusable infrastructure but are not yet traversed by a live Hero/player/BotBuffer/NPC/monster BMD draw.
 
-Still required before calling the first BMD migration complete:
+This is now the real repository-side frontier. The previous checklist wording that made render-target/state infrastructure look absent was stale and has been corrected.
 
-- exercise the BMD vertex/index cache and Skeleton Texture atlas on the real attached Diligent device from a production model path;
-- bind explicit render targets/viewport and execute the first indexed `CModernRendererCore::SubmitIndexed()` draw;
-- verify raw-GL -> Diligent -> legacy-GL state coexistence around that draw;
+The first live migration still requires:
+
+- install `CModernBMDRenderContextScope` at one deliberately selected high-level producer and carry the entity identity to the shared BMD boundary;
+- exercise BMD vertex/index cache and Skeleton Texture atlas on the attached Diligent device;
+- resolve/wrap the effective legacy diffuse texture and accept only the first supported textured material state;
+- initialize/reuse the first `CModernBMDPipeline`, bind explicit default-framebuffer targets/viewport and execute `CModernRendererCore::SubmitIndexed()` inside the GL state guard;
+- fall back to the untouched legacy draw on every unsupported or failed condition, with no double draw;
 - prove two independent live instances of the same BMD do not share pose/instance state;
-- compare the local Hero against the legacy renderer before expanding to remote player, BotBuffer, NPC or monster paths;
-- run the deferred target-GPU Phase 2 certification.
+- compare local Hero visual parity before expanding to remote player, BotBuffer, NPC or monster paths.
+
+## Current validation evidence
+
+Portable C++17 validation for the new scoped BMD context passes with warnings treated as errors. The repository regression suite now registers `ModernBMDRenderContextTests` alongside geometry and skeleton-pose tests.
+
+The Windows/x86 workflow for commit `cb3040c093529695b6767a87d79a961ae7b6c071` (Main type-check of the scoped context) was still running at the last audit; no pass is inferred until GitHub reports a completed successful conclusion. Documentation-only commits after that point do not change the compiled source.
+
+The deferred target-GPU Phase 2 certification remains independent of CI compile/test success.
 
 ## Verified legacy transform convention
 
@@ -74,8 +86,8 @@ This removes the matrix-transpose ambiguity and turns the body-transform distinc
 
 ## Next action
 
-1. Preserve the current Windows/x86 Release/Debug, geometry and skeleton-pose regression gates.
-2. Wire one deliberately selected production BMD path into the existing geometry cache + Skeleton Texture atlas + `CModernBMDPipeline`, with explicit render targets/viewport and legacy fallback on every unsupported/failed condition.
-3. Start with a path whose pose is known to use `BodyTransformSeparate`; do not normalize body-baked poses silently.
-4. Prove two independent instances, then validate local Hero parity before enabling remote player/BotBuffer/NPC/monster migration.
-5. When target-GPU access is available, execute the deferred Phase 2 runtime certification before calling the OpenGL coexistence boundary runtime-complete.
+1. Keep the Windows/x86 Release/Debug, geometry, skeleton-pose and instance-context regression gates green.
+2. Wire one narrow `BodyTransformSeparate` producer into `CModernBMDRenderContextScope`; do not use `KIND_PLAYER` alone as a Hero discriminator.
+3. Activate the first supported textured BMD draw through geometry cache + Skeleton Texture + legacy texture wrapper + explicit framebuffer/viewport + `SubmitIndexed()` + GL state scope.
+4. Prove two independent instances and then local Hero parity before widening migration coverage.
+5. Run the deferred interactive Windows/OpenGL 4.6 Phase 2 GPU certification when target-GPU access is available.
