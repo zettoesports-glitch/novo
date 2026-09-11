@@ -29,20 +29,21 @@ function Assert-LogContains([string]$Text, [string]$Pattern, [string]$Label) {
     Write-Host "[Phase2 Runtime] PASS: $Label"
 }
 
-function Get-LogIndex([string]$Text, [string]$Pattern, [string]$Label) {
-    $index = $Text.IndexOf($Pattern, [System.StringComparison]::Ordinal)
-    if ($index -lt 0) {
-        throw "Phase 2 runtime check failed: $Label. Expected log entry: $Pattern"
-    }
-    return $index
-}
+function Get-LogIndices([string]$Text, [string]$Pattern) {
+    $indices = @()
+    $offset = 0
 
-function Assert-LogOccursOnce([string]$Text, [string]$Pattern, [string]$Label) {
-    $count = [regex]::Matches($Text, [regex]::Escape($Pattern)).Count
-    if ($count -ne 1) {
-        throw "Phase 2 runtime check failed: $Label. Expected exactly one occurrence of '$Pattern', found $count."
+    while ($offset -lt $Text.Length) {
+        $index = $Text.IndexOf($Pattern, $offset, [System.StringComparison]::Ordinal)
+        if ($index -lt 0) {
+            break
+        }
+
+        $indices += $index
+        $offset = $index + $Pattern.Length
     }
-    Write-Host "[Phase2 Runtime] PASS: $Label"
+
+    return @($indices)
 }
 
 function Assert-LogBefore(
@@ -54,7 +55,6 @@ function Assert-LogBefore(
     if ($EarlierIndex -ge $LaterIndex) {
         throw "Phase 2 runtime check failed: expected '$EarlierLabel' before '$LaterLabel'."
     }
-    Write-Host "[Phase2 Runtime] PASS: ${EarlierLabel} precedes ${LaterLabel}"
 }
 
 # -ValidateOnly is intentionally a parser/evidence validation mode. It must be
@@ -120,51 +120,91 @@ Assert-LogContains $logText $attachedMarker 'Diligent attached to the existing W
 Assert-LogContains $logText $teardownMarker 'reattach barrier armed before WGL teardown'
 Assert-LogContains $logText $shutdownMarker 'Diligent shutdown completed before WGL teardown'
 
-# A successful Phase 2 session must have one attachment and one teardown/shutdown
-# sequence. Merely finding the strings is insufficient: stale evidence or a
-# reattach race could otherwise make a broken lifecycle look healthy.
-Assert-LogOccursOnce $logText $attachedMarker 'exactly one successful Diligent attachment recorded'
-Assert-LogOccursOnce $logText $teardownMarker 'exactly one teardown barrier recorded'
-Assert-LogOccursOnce $logText $shutdownMarker 'exactly one modern shutdown recorded'
-
-$attachAttemptIndex = Get-LogIndex $logText $attachAttemptMarker 'bootstrap attach attempt reached'
-$diagnosticsIndex = Get-LogIndex $logText $diagnosticsMarker 'OpenGL diagnostics captured'
-$attachedIndex = Get-LogIndex $logText $attachedMarker 'Diligent attachment recorded'
-$teardownIndex = Get-LogIndex $logText $teardownMarker 'teardown barrier recorded'
-$shutdownIndex = Get-LogIndex $logText $shutdownMarker 'shutdown recorded'
-
-Assert-LogBefore $attachAttemptIndex 'attach attempt' $diagnosticsIndex 'OpenGL diagnostics'
-Assert-LogBefore $diagnosticsIndex 'OpenGL diagnostics' $attachedIndex 'Diligent attachment'
-Assert-LogBefore $attachedIndex 'Diligent attachment' $teardownIndex 'teardown barrier'
-Assert-LogBefore $teardownIndex 'teardown barrier' $shutdownIndex 'modern shutdown'
-
-if ($RequireResize) {
-    Assert-LogContains $logText $resizeMarker 'resize lifecycle reached modern bootstrap'
-    $resizeIndex = Get-LogIndex $logText $resizeMarker 'resize lifecycle reached modern bootstrap'
-    Assert-LogBefore $attachedIndex 'Diligent attachment' $resizeIndex 'resize observation'
-    Assert-LogBefore $resizeIndex 'resize observation' $teardownIndex 'teardown barrier'
-}
-
-if ($EnableGLDebug) {
-    Assert-LogContains $logText $debugMarker 'Diligent validation/OpenGL debug routing enabled'
-    $debugIndex = Get-LogIndex $logText $debugMarker 'Diligent validation/OpenGL debug routing enabled'
-    Assert-LogBefore $diagnosticsIndex 'OpenGL diagnostics' $debugIndex 'debug routing enablement'
-    Assert-LogBefore $debugIndex 'debug routing enablement' $attachedIndex 'Diligent attachment'
-}
-
 if ($logText -match 'Legacy renderer remains active') {
     throw 'Phase 2 runtime log contains a modern-backend fallback. Inspect ModernGraphics.log before continuing.'
 }
 
-# Once the teardown barrier is armed, the same session must never attempt to
-# attach again. This makes the anti-reattach requirement observable instead of
-# relying only on source inspection.
-$postTeardownText = $logText.Substring($teardownIndex + $teardownMarker.Length)
-if ($postTeardownText -match [regex]::Escape($attachAttemptMarker) -or
-    $postTeardownText -match [regex]::Escape($attachedMarker)) {
-    throw 'Phase 2 runtime check failed: a modern attach/attach-attempt was recorded after the teardown barrier.'
+$attempts = Get-LogIndices $logText $attachAttemptMarker
+$diagnostics = Get-LogIndices $logText $diagnosticsMarker
+$attachments = Get-LogIndices $logText $attachedMarker
+$teardowns = Get-LogIndices $logText $teardownMarker
+$shutdowns = Get-LogIndices $logText $shutdownMarker
+$debugEnables = Get-LogIndices $logText $debugMarker
+$resizes = Get-LogIndices $logText $resizeMarker
+
+$lifecycleCount = $attachments.Count
+if ($lifecycleCount -lt 1) {
+    throw 'Phase 2 runtime check failed: no successful modern lifecycle was recorded.'
 }
-Write-Host '[Phase2 Runtime] PASS: no modern reattach occurred after the teardown barrier'
+
+# Each successful attachment must form one complete lifecycle. A legitimate
+# HWND/HGLRC recreation may therefore produce more than one complete cycle in a
+# single Main.exe run. What is forbidden is a partial/reordered cycle or a new
+# attach attempt while the previous teardown is still in progress.
+$requiredCounts = @{
+    'attach attempts' = $attempts.Count
+    'OpenGL diagnostics' = $diagnostics.Count
+    'attachments' = $attachments.Count
+    'teardown barriers' = $teardowns.Count
+    'shutdowns' = $shutdowns.Count
+}
+
+foreach ($entry in $requiredCounts.GetEnumerator()) {
+    if ($entry.Value -ne $lifecycleCount) {
+        throw "Phase 2 runtime check failed: lifecycle count mismatch for $($entry.Key). Expected $lifecycleCount, found $($entry.Value)."
+    }
+}
+
+if ($EnableGLDebug -and $debugEnables.Count -ne $lifecycleCount) {
+    throw "Phase 2 runtime check failed: expected Diligent validation/debug routing for each lifecycle ($lifecycleCount), found $($debugEnables.Count)."
+}
+
+for ($i = 0; $i -lt $lifecycleCount; ++$i) {
+    $number = $i + 1
+    Assert-LogBefore $attempts[$i] "lifecycle $number attach attempt" $diagnostics[$i] "lifecycle $number OpenGL diagnostics"
+
+    if ($EnableGLDebug) {
+        Assert-LogBefore $diagnostics[$i] "lifecycle $number OpenGL diagnostics" $debugEnables[$i] "lifecycle $number debug routing enablement"
+        Assert-LogBefore $debugEnables[$i] "lifecycle $number debug routing enablement" $attachments[$i] "lifecycle $number Diligent attachment"
+    }
+    else {
+        Assert-LogBefore $diagnostics[$i] "lifecycle $number OpenGL diagnostics" $attachments[$i] "lifecycle $number Diligent attachment"
+    }
+
+    Assert-LogBefore $attachments[$i] "lifecycle $number Diligent attachment" $teardowns[$i] "lifecycle $number teardown barrier"
+    Assert-LogBefore $teardowns[$i] "lifecycle $number teardown barrier" $shutdowns[$i] "lifecycle $number modern shutdown"
+
+    if ($i + 1 -lt $lifecycleCount) {
+        Assert-LogBefore $shutdowns[$i] "lifecycle $number modern shutdown" $attempts[$i + 1] "lifecycle $($number + 1) attach attempt"
+    }
+}
+
+if ($RequireResize) {
+    if ($resizes.Count -lt 1) {
+        throw 'Phase 2 runtime check failed: -RequireResize was used but no modern resize observation was recorded.'
+    }
+
+    foreach ($resizeIndex in $resizes) {
+        $belongsToActiveLifecycle = $false
+        for ($i = 0; $i -lt $lifecycleCount; ++$i) {
+            if ($resizeIndex -gt $attachments[$i] -and $resizeIndex -lt $teardowns[$i]) {
+                $belongsToActiveLifecycle = $true
+                break
+            }
+        }
+
+        if (-not $belongsToActiveLifecycle) {
+            throw 'Phase 2 runtime check failed: a resize marker was recorded outside an active modern attachment lifecycle.'
+        }
+    }
+
+    Write-Host "[Phase2 Runtime] PASS: $($resizes.Count) resize observation(s) occurred only during active modern lifecycle(s)"
+}
+
+Write-Host "[Phase2 Runtime] PASS: $lifecycleCount complete modern lifecycle(s) recorded in valid order"
+Write-Host '[Phase2 Runtime] PASS: no attach attempt occurred between a teardown barrier and its matching shutdown'
+Write-Host '[Phase2 Runtime] NOTE: source-level HWND/HGLRC identity guards prevent same-context reattach; a later complete lifecycle is allowed for a genuinely recreated window/context pair.'
+Write-Host '[Phase2 Runtime] NOTE: presentation ownership is proven by source architecture (no Diligent swap chain/present); this log parser does not count SwapBuffers calls per frame.'
 
 Write-Host ''
 if ($ValidateOnly) {
