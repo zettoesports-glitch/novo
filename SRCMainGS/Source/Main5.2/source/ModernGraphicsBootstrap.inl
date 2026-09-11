@@ -215,13 +215,20 @@ void CModernGraphicsBootstrap::LogOpenGLDiagnostics() const
             profile = "core";
     }
 
+    // GLSL was introduced with OpenGL 2.0. Querying
+    // GL_SHADING_LANGUAGE_VERSION on a 1.x context can raise GL_INVALID_ENUM,
+    // which would leak a bootstrap error into the legacy fallback renderer.
+    const char* glslVersion = m_glMajor >= 2
+        ? SafeGLString(GL_SHADING_LANGUAGE_VERSION)
+        : "unavailable";
+
     char message[768];
     wsprintfA(message,
         "[ModernGraphics] OpenGL vendor=%s | renderer=%s | version=%s | GLSL=%s | parsed=%d.%d | profile=%s.\n",
         SafeGLString(GL_VENDOR),
         SafeGLString(GL_RENDERER),
         SafeGLString(GL_VERSION),
-        SafeGLString(GL_SHADING_LANGUAGE_VERSION),
+        glslVersion,
         m_glMajor,
         m_glMinor,
         profile);
