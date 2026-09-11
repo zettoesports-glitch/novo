@@ -57,6 +57,9 @@ struct alignas(16) ModernInstanceConstants
     float BodyLightAlpha[4];
     float BodyOriginScale[4];
     float UVOffsetNormalScale[4];
+    // x = first skeleton texel for this pose, y = skeleton texture width,
+    // z = bone count, w = reserved. The shader uses two float4 texels per bone.
+    std::uint32_t Skeleton[4];
 };
 
 struct alignas(16) ModernMaterialConstants
@@ -70,6 +73,7 @@ struct alignas(16) ModernMaterialConstants
 static_assert((sizeof(ModernFrameConstants) % 16) == 0, "Frame constants must be 16-byte aligned");
 static_assert((sizeof(ModernInstanceConstants) % 16) == 0, "Instance constants must be 16-byte aligned");
 static_assert((sizeof(ModernMaterialConstants) % 16) == 0, "Material constants must be 16-byte aligned");
+static_assert(sizeof(ModernInstanceConstants) == 128, "Instance constants must match the shared-HLSL layout");
 
 struct ModernDrawIdentity
 {
