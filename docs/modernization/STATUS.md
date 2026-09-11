@@ -2,106 +2,66 @@
 
 ## Active target
 
-Diligent integration for Main 5.2, using shared HLSL shaders and OpenGL 4.6 first. Vulkan and Direct3D 11 remain future active backends using the same contracts.
+Diligent integration for Main 5.2, using shared HLSL shaders and OpenGL 4.6 first. Vulkan and Direct3D 11 remain future active backends using the same game-side contracts.
 
-## Completed
+## Phase 1 — complete
 
-- Phase 1 static source mapping against `13cfc7c3e5dab042e1c3e8f4184e18c26dd08eff`.
-- Initial call paths: Hero, remote players, BotBuffer, NPC/monsters, world objects, equipment and inventory preview.
-- Geometry, pose, instance, view, material and texture producer/consumer contracts.
-- Snapshot/lifetime requirements and legacy render-state mapping.
-- Roadmap aligned with the Diligent + HLSL decision.
-- Phase 2 ownership contract documented: legacy Main owns HWND/HDC/HGLRC and presentation; Diligent attaches to the active GL context.
-- Real Main lifecycle located: `CreateOpenglWindow()`, `CWINHANDLE::WndProc`, `MainScene()` / `LoadingScene()` and `KillGLWindow()`.
-- Phase 2 source bridge implemented: context attach discovery, resize forwarding and pre-destroy shutdown without adding another present path.
-- OpenGL 4.6 capability and vendor/renderer/version/GLSL/profile diagnostics implemented in `CModernGraphicsBootstrap`.
-- OpenGL compatibility profile is now enforced before Diligent attach; a core-only context is rejected and the legacy renderer remains active.
-- Persistent runtime evidence is written to `Client_2/ModernGraphics.log` beside `Main.exe`, independent of the launcher's working directory, in addition to `OutputDebugStringA`.
-- `MU_MODERN_GL_DEBUG=1` enables Diligent validation; the Diligent factory message callback persists Diligent/OpenGL diagnostic messages without installing a competing raw `glDebugMessageCallback` in Main.
-- DiligentCore pinned to official `v2.5.6` commit `b036337d68be2353c9950a85929acf796b9a6d50`; reference shader/resource snapshot pinned separately in `DILIGENT_PIN.md`.
-- Diligent backend integration uses the official Win32 explicit-DLL model rather than statically linking the OpenGL engine into Main.
-- Release/Debug backend names are aligned with the official loader: `GraphicsEngineOpenGL_32r.dll` and `GraphicsEngineOpenGL_32d.dll`.
-- Main Debug's existing `DEBUG` macro is bridged to Diligent's debug public definitions so the correct backend suffix is selected.
-- Reproducible dependency/build script exists at `SRCMainGS/Source/Main5.2/setup_diligent_opengl46.ps1`.
-- Reproducible local GPU validation script exists at `SRCMainGS/Source/Main5.2/run_phase2_runtime_test.ps1`.
-- `-ValidateOnly` validates synthetic/existing evidence without requiring runtime binaries; the real launch path still verifies `Main.exe` and both backend DLLs.
-- Generated Diligent checkout/build folders are excluded through `SRCMainGS/Source/Main5.2/.gitignore`; runtime evidence `Client_2/ModernGraphics.log` is ignored at repository root.
-- Dependency-absent, unsupported-GL, core-only-profile and backend-DLL-load failures retain the legacy renderer path.
-- Windows/x86 compile gate exists at `.github/workflows/phase2-win32-build.yml`; it performs an early PowerShell syntax preflight and validates the runtime-evidence parser with synthetic log data after both builds.
-- GitHub Actions run `34533022717` successfully prepared the exact pinned Diligent checkout/submodules, built both `GraphicsEngineOpenGL_32r.dll` and `GraphicsEngineOpenGL_32d.dll`, compiled `Main.sln` as Release/x86 with C++17 and produced `Client_2/Main.exe` with 0 build errors.
-- GitHub Actions run `34533868904` successfully compiled `Main.sln` as Debug/x86 after the Main-only C++17 normalization, with 0 build errors.
-- Combined baseline run `34538658227` passed PowerShell preflight, pinned Diligent preparation, Release/x86, Debug/x86 and synthetic runtime-evidence validation.
-- Lifecycle/runtime-gate audit run `34540959623` passed after covering `WM_USER_MEMORYHACK` and hardening the real GPU evidence checks.
-- Compatibility-profile source gate `34542334616` passed after enforcing the OpenGL compatibility profile in the bootstrap.
-- Latest source-affecting Phase 2 gate `34549868789`, at commit `69e0fe800cd6d5e787165673f611bb9018a8917e`, passed PowerShell preflight, pinned Diligent OpenGL backend preparation, Release/x86 build/output verification, Debug/x86 build/output verification and runtime-evidence parser validation after the teardown-generation and failed-bootstrap-state hardening.
-- Runtime-bundle gate `34586762262`, at commit `3bc4c7208567a5042534637ef7a65e9c4203d1b7`, passed the same Release/Debug/parser checks and successfully published `phase2-win32-gpu-runtime-3bc4c7208567a5042534637ef7a65e9c4203d1b7` for the target-GPU certification step.
-
-Evidence and scope: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERER_MAPPING.md).
-Phase 2 contract: [PHASE2_OPENGL46_BOOTSTRAP.md](PHASE2_OPENGL46_BOOTSTRAP.md).
-Runtime lifecycle map: [PHASE2_RUNTIME_DISCOVERY.md](PHASE2_RUNTIME_DISCOVERY.md).
-Dependency pin/setup model: [DILIGENT_PIN.md](DILIGENT_PIN.md).
+Static discovery/mapping is complete for the initial Hero, remote player, BotBuffer, NPC/monster, world-object, equipment and inventory-preview render paths. Geometry, pose, instance, view, material, texture, snapshot/lifetime and legacy render-state contracts were recorded in [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERER_MAPPING.md).
 
 ## Phase 2 repository/build state — complete
 
-The Phase 2 bootstrap is represented in source and build infrastructure. The repository contains the lifecycle bridge, OpenGL 4.6 + compatibility-profile checks, explicit backend loader, exact dependency pin, reproducible setup/build script, persistent runtime diagnostics, Diligent-owned validation/debug routing, a reproducible GPU validation script and a Windows/x86 CI compile/evidence gate.
+The repository contains the OpenGL 4.6 coexistence bootstrap, real Main lifecycle bridge, compatibility-profile checks, persistent `ModernGraphics.log` diagnostics, explicit Diligent OpenGL backend-DLL loading, pinned DiligentCore setup, validation/debug routing, local GPU validation script and Windows/x86 CI build/evidence gate.
 
-The latest source-affecting Release+Debug x86 gate passed in workflow run `34549868789` at commit `69e0fe800cd6d5e787165673f611bb9018a8917e`. The job passed the PowerShell preflight, pinned Diligent backend preparation, Release and Debug x86 builds, output verification and runtime-evidence parser validation. Repository-side source/build/synthetic-evidence work for the Phase 2 bootstrap is therefore closed.
+Ownership remains unchanged: legacy Main owns `HWND/HDC/HGLRC` and the only presentation path; Diligent attaches to the active WGL context and does not create another swap chain or `Present`/`SwapBuffers` owner.
 
-A subsequent packaging-only gate, workflow run `34586762262`, also passed and publishes the runtime artifact `phase2-win32-gpu-runtime-3bc4c7208567a5042534637ef7a65e9c4203d1b7` containing `Main.exe`, both x86 Diligent OpenGL backend DLLs and the validation script. This removes the need for a fresh local compile before the target-GPU gate.
+DiligentCore is pinned to official `v2.5.6` commit `b036337d68be2353c9950a85929acf796b9a6d50`. Release/Win32 uses C++17 directly in `Main.vcxproj`; Debug/Win32 is effectively normalized to C++17 by the Main-scoped `Directory.Build.targets`, leaving DiligentCore project language settings untouched.
 
-The final teardown audit also confirmed that the `KillGLWindow()` calls inside `CreateOpenglWindow()` are initialization-failure paths that occur before a successful modern attach can exist. The currently known post-attach teardown paths remain covered by the lifecycle bridge.
+Prior Phase 2 Windows gates successfully built the pinned Release/Debug OpenGL backend DLLs and Main Release/Debug x86 configurations, validated the lifecycle evidence parser, and published a target-GPU runtime bundle. Detailed bootstrap/runtime evidence remains in [PHASE2_OPENGL46_BOOTSTRAP.md](PHASE2_OPENGL46_BOOTSTRAP.md), [PHASE2_RUNTIME_DISCOVERY.md](PHASE2_RUNTIME_DISCOVERY.md) and [PHASE2_COMPLETENESS_AUDIT.md](PHASE2_COMPLETENESS_AUDIT.md).
 
-## Phase 2 still in progress — GPU runtime boundary
+## Phase 2 GPU runtime boundary — still pending
 
-Phase 2 is **not runtime-certified**. GitHub Actions proves compilation, generated outputs and evidence-parser behavior, but it does not launch the MU client in the real interactive GPU/window environment required to validate WGL/Diligent coexistence.
+Phase 2 is **not runtime-certified**. The real interactive Windows/OpenGL 4.6 compatibility-profile test is still required to prove backend load/attach, debug routing, resize stability, single presentation ownership, clean shutdown/lifetime and visual legacy regression behavior on the target GPU.
 
-Build validation state:
+The user explicitly authorized repository-side Phase 3 work to proceed while this GPU test is unavailable. That authorization does not mark the Phase 2 GPU checkbox as passed.
 
-- Release/x86: **passed**, including source gate `34549868789` and packaging gate `34586762262`.
-- Debug/x86: **passed**, including source gate `34549868789` and packaging gate `34586762262`.
-- Pinned Diligent OpenGL backend preparation/output verification: **passed**.
-- PowerShell syntax preflight: **passed**.
-- Synthetic compatibility-profile runtime-evidence parser validation: **passed**.
-- Runtime GPU bundle publication: **passed** in `34586762262`.
-
-Remaining GPU runtime work:
-
-- launch the client on a Windows system exposing OpenGL >= 4.6 compatibility profile;
-- confirm the expected backend DLL/factory loads and `AttachToActiveGLContext` succeeds;
-- capture vendor/renderer/version/GLSL/profile/backend evidence in `Client_2/ModernGraphics.log`;
-- with `MU_MODERN_GL_DEBUG=1`, confirm Diligent validation/OpenGL debug routing activates without callback ownership conflicts;
-- validate resize stability;
-- prove there is still exactly one presentation owner (`SwapBuffers` legacy path);
-- validate clean shutdown/lifetime ordering;
-- verify legacy scenes render without regression.
-
-The local validation command from `SRCMainGS/Source/Main5.2` is:
+The existing validation command remains:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\run_phase2_runtime_test.ps1 -EnableGLDebug -RequireResize
 ```
 
-The script starts the client, waits for a normal close, then validates the required attach/diagnostic/debug-routing/resize/shutdown log markers and rejects any modern-backend fallback recorded in the log.
+## Phase 3 renderer core — repository implementation present
 
-The current `WH_CALLWNDPROC` integration remains intentionally a temporary coexistence bridge. After the GPU runtime gate it should be reassessed and normally replaced by direct calls in the already-mapped lifecycle owners if no compatibility reason requires retaining it.
+Phase 3 core infrastructure is now represented in source. See [PHASE3_RENDERER_CORE.md](PHASE3_RENDERER_CORE.md).
 
-## Not yet implemented
+Implemented repository-side contracts:
 
-The following work is downstream of the Phase 2 bootstrap/runtime gate and must not be confused with bootstrap completion:
+- `ModernRendererTypes.h` defines backend-neutral render view/pass identity plus Frame/Instance/Material constant structures.
+- The initial BMD GPU vertex contract is locked to 40 bytes with compile-time offset/size checks: Position, Normal, UV, PositionBone, NormalBone and OriginalVertexId.
+- `IModernRendererBackendAdapter` defines the renderer/backend boundary.
+- `CDiligentOpenGL46Adapter` consumes the Phase 2 Diligent device/context. Vulkan and Direct3D 11 are explicit future selections and are not silently activated.
+- `CModernGPUBuffer` and `CModernConstantBuffer` provide resource/update wrappers.
+- `CModernShaderManager` provides cached shared-HLSL shader creation.
+- `CModernTextureSamplerManager` provides texture-SRV and sampler lifecycle/cache.
+- `CModernPipelineResourceCache` provides PSO/SRB cache ownership.
+- `ModernIndexedDrawSubmission` plus `CModernRendererCore::SubmitIndexed()` define the indexed draw boundary and preserve the raw-GL -> Diligent cache invalidation contract.
+- The core is compiled through the existing `CShaderGL.h` path without adding another Visual Studio project source item or presentation owner.
 
-- concrete CPU/GPU vertex and constant-buffer layouts;
-- Diligent buffer/texture resource lifecycle;
-- shared HLSL production shader compilation path;
-- Skeleton Texture upload/addressing in Main;
-- material/state binding and draw submission;
-- two-independent-instance BMD proof;
-- Hero/remote/Bot/NPC/monster modern-render parity;
-- terrain/effects/UI migration;
-- Vulkan and Direct3D 11 activation.
+Runtime activation remains intentionally gated: Phase 3 does not yet redirect a production BMD draw, upload a Skeleton Texture, or replace any Hero/player/Bot/NPC/monster render path. The legacy renderer therefore remains authoritative.
+
+## Phase 3 validation still pending
+
+- Windows/x86 Release compile after the new Phase 3 source changes.
+- Windows/x86 Debug compile after the new Phase 3 source changes.
+- First production HLSL PSO/SRB/input-layout creation.
+- First persistent BMD vertex/index upload.
+- First production indexed modern draw and raw-GL/Diligent coexistence check.
+- Pose/Skeleton Texture conversion and addressing.
+- Two-independent-instance BMD proof before broad player/NPC migration.
 
 ## Next action
 
-1. Download/use the latest successful `phase2-win32-gpu-runtime-<sha>` artifact, place its runtime binaries over the matching `Client_2` checkout, and execute the target Windows/OpenGL 4.6 compatibility-profile gate with `run_phase2_runtime_test.ps1 -EnableGLDebug -RequireResize`.
-2. Retain `Client_2/ModernGraphics.log` as evidence and confirm the scene visually during resize/normal shutdown.
-3. If the GPU gate passes, replace/reassess the temporary `WH_CALLWNDPROC` bridge using the already-mapped direct lifecycle owners.
-4. Only after that GPU gate should Phase 2 be called runtime-complete and work move into concrete CPU/GPU contracts, pose conversion, Skeleton Texture and the first two-instance modern BMD proof.
+1. Run/inspect the Windows/x86 compile gate for the Phase 3 source changes.
+2. Build the first BMD model pipeline on the new core: persistent vertex/index buffers, HLSL VS/PS, input layout, PSO/SRB, Frame/Instance/Material constant buffers and texture/sampler binding.
+3. Keep the legacy draw as fallback and do not expand to remote players/BotBuffer/NPC/monster until the two-independent-instance proof is stable.
+4. When access to the target GPU is available, execute the deferred Phase 2 runtime certification before calling the OpenGL coexistence boundary runtime-complete.
