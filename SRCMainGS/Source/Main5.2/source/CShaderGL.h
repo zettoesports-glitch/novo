@@ -40,9 +40,10 @@ private:
 #define gShaderGL				(CShaderGL::Instance())
 #endif // SHADER_VERSION_TEST
 
-// Phase 3 renderer core is header/inl based while the modern path is isolated.
-// Including it here keeps the existing Main.vcxproj untouched and makes the
-// compiler validate the backend-neutral core in the same translation units that
-// already build the Phase 2 graphics bridge. Runtime activation remains gated;
-// the legacy renderer is still authoritative until the first migrated draw.
+// Phase 3 renderer core/pipeline stay header based while the first migrated draw
+// is isolated. Including them through this existing build path makes both Main
+// x86 configurations type-check the Diligent contracts without creating another
+// project, GL context or presentation owner.
 #include "ModernRendererCore.inl"
+#include "ModernSkeletonPose.h"
+#include "ModernBMDPipeline.h"
