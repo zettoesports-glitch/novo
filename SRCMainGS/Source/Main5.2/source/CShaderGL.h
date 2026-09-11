@@ -46,4 +46,5 @@ private:
 // project, GL context or presentation owner.
 #include "ModernRendererCore.inl"
 #include "ModernSkeletonPose.h"
+#include "ModernSkeletonTexture.h"
 #include "ModernBMDPipeline.h"
