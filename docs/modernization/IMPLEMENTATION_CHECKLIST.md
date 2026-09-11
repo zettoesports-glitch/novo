@@ -2,7 +2,7 @@
 
 Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERER_MAPPING.md). Checked discovery items mean source inspection, not GPU runtime validation. Phase 2 runtime notes: [PHASE2_RUNTIME_DISCOVERY.md](PHASE2_RUNTIME_DISCOVERY.md). Corrective audit: [PHASE2_COMPLETENESS_AUDIT.md](PHASE2_COMPLETENESS_AUDIT.md). Phase 3 core: [PHASE3_RENDERER_CORE.md](PHASE3_RENDERER_CORE.md).
 
-> Runtime gate note: the real Phase 2 Windows/GPU test remains pending. The user explicitly authorized repository-side Phase 3 work to continue while that test is unavailable. Checked Phase 3 items therefore mean implemented source contracts, not target-GPU certification.
+> Runtime gate note: the real Phase 2 Windows/GPU test remains pending. Repository-side Phase 3 work is allowed to continue while that test is unavailable. Checked Phase 3 items therefore mean implemented source/build contracts, not target-GPU certification.
 
 ## Discovery
 - [x] Locate legacy BMD/model render entry points
@@ -17,7 +17,9 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [x] Snapshot ownership rules for shared BMD state and temporary inventory objects
 - [x] Diligent + shared HLSL architecture decision recorded
 - [x] Define concrete initial CPU/GPU vertex + constant-buffer layouts
-- [ ] Implement and verify pose conversion / Skeleton Texture contract in Main
+- [x] Implement pose conversion / Skeleton Texture contract in Main source
+- [x] Verify legacy row-major `vec34_t`/quaternion convention against `VectorRotate`/`QuaternionMatrix`
+- [x] Make body-transform pose space explicit and reject body-baked matrices from the first modern shader path
 
 ## OpenGL 4.6 — Phase 2 bootstrap
 - [x] Define Win32/WGL ownership: Main owns `HWND/HDC/HGLRC`; Diligent attaches only
@@ -75,16 +77,17 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [x] Keep renderer-core code independent of raw OpenGL calls
 - [x] Compile the core through the existing Main build path without adding another project/presentation owner
 - [x] Validate Phase 3 core + geometry changes in Windows/x86 Release and Debug CI/build ([925bbb5 evidence](https://github.com/zettoesports-glitch/novo/actions/runs/34615937928))
-- [ ] Activate the core from the first migrated production draw after a PSO/SRB exists
+- [ ] Activate the core from the first migrated production draw
 
 ## First modern draw
 - [x] Implement validated BMD conversion and immutable vertex/index upload/cache API
 - [ ] Exercise vertex/index creation on a real Diligent device from the first production BMD path
-- [ ] Add shared HLSL production shader compilation diagnostics
-- [ ] Create/update Frame/Instance/Material constant buffers
-- [ ] Bind texture/sampler resources through SRB
-- [ ] Define depth/blend/cull PSO state
-- [ ] Define Diligent input layout matching `ModernBMDVertex`
+- [x] Add first shared-HLSL production BMD VS/PS pipeline contract
+- [x] Create/update Frame/Instance/Material constant-buffer path
+- [x] Bind Skeleton Texture + diffuse texture/sampler resources through SRB
+- [x] Define depth/blend/cull PSO state
+- [x] Define Diligent input layout matching `ModernBMDVertex`
+- [ ] Bind explicit production render targets and viewport for the attached-no-swapchain path
 - [ ] Issue first indexed production draw through `CModernRendererCore::SubmitIndexed()`
 - [ ] Validate both raw-GL -> Diligent and Diligent -> legacy-GL state coexistence around the first production modern draw
 
@@ -94,10 +97,13 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [x] Implement persistent geometry upload/cache by asset generation
 - [x] Run portable CPU geometry regression tests (seams, bones, malformed data, uint32 expansion)
 - [ ] Validate actual geometry upload and reuse on the target GPU
-- [ ] Material bridge
-- [ ] Pose conversion / Skeleton Texture upload and addressing
-- [ ] Per-object transform/animation state
-- [ ] Two independent instances of the same BMD without state leakage
+- [ ] Material bridge beyond the first textured pipeline
+- [x] Implement pose conversion to quaternion + translation/BoneScale texels
+- [x] Implement Skeleton Texture atlas upload/addressing contract (2 float4 texels per bone)
+- [x] Validate independent CPU pose snapshots and reject non-finite/degenerate/reflected rotation data
+- [x] Guard against double `BodyScale/BodyOrigin` by rejecting `BodyTransformBaked` snapshots from the first modern pipeline
+- [ ] Route per-object transform/animation state into a production modern draw
+- [ ] Two independent live instances of the same BMD without state leakage
 - [ ] Local Hero parity
 - [ ] Remote player parity
 - [ ] BotBuffer parity
