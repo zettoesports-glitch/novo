@@ -110,7 +110,7 @@ inline void CModernGPUBuffer::Reset()
 
 inline bool CModernGPUBuffer::IsValid() const { return static_cast<bool>(m_buffer); }
 inline std::uint64_t CModernGPUBuffer::GetSize() const { return m_size; }
-inline Diligent::IBuffer* CModernGPUBuffer::Get() const { return m_buffer; }
+inline Diligent::IBuffer* CModernGPUBuffer::Get() const { return m_buffer.Get(); }
 
 inline bool CModernConstantBuffer::Create(Diligent::IRenderDevice* device,
                                           const char* name,
@@ -152,6 +152,10 @@ inline Diligent::IShader* CModernShaderManager::GetOrCreateHLSL(Diligent::IRende
 
     Diligent::ShaderCreateInfo createInfo;
     createInfo.SourceLanguage = Diligent::SHADER_SOURCE_LANGUAGE_HLSL;
+    // Main stores/multiplies transform contracts row-major. Diligent's OpenGL
+    // HLSL conversion also needs this explicit flag or uniform-block matrix
+    // packing can diverge from the CPU layout even when the HLSL is otherwise valid.
+    createInfo.CompileFlags = Diligent::SHADER_COMPILE_FLAG_PACK_MATRIX_ROW_MAJOR;
     createInfo.Desc.Name = name;
     createInfo.Desc.ShaderType = type;
     createInfo.Desc.UseCombinedTextureSamplers = useCombinedTextureSamplers;
@@ -290,7 +294,6 @@ inline void CModernPipelineResourceCache::Clear()
     m_resourceBindings.clear();
     m_pipelines.clear();
 }
-
 
 inline bool CModernBMDMeshCache::Upload(Diligent::IRenderDevice* device,
                                         const ModernBMDMeshKey& key,
