@@ -58,6 +58,17 @@ inline bool MatrixRotationToQuaternion(const float matrix[3][4], float quaternio
     const float m21 = matrix[2][1];
     const float m22 = matrix[2][2];
 
+    // The legacy bone matrix carries rotation + translation; scale is supplied
+    // separately through BoneScale. A singular/reflected 3x3 block therefore
+    // cannot represent a valid bone rotation and must not be normalized into an
+    // apparently valid quaternion (the all-zero matrix was previously doing so).
+    const float determinant =
+        m00 * (m11 * m22 - m12 * m21) -
+        m01 * (m10 * m22 - m12 * m20) +
+        m02 * (m10 * m21 - m11 * m20);
+    if (!(determinant > 1.0e-6f) || !std::isfinite(determinant))
+        return false;
+
     const float trace = m00 + m11 + m22;
     float x = 0.0f;
     float y = 0.0f;
