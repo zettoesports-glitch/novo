@@ -368,7 +368,8 @@ inline void CModernBMDMeshCache::Clear()
 inline ModernIndexedDrawSubmission::ModernIndexedDrawSubmission()
     : Pipeline(nullptr), Resources(nullptr), VertexBuffer(nullptr), IndexBuffer(nullptr),
       VertexBufferOffset(0), IndexBufferOffset(0), NumIndices(0), IndexType(Diligent::VT_UINT16),
-      FirstIndex(0), BaseVertex(0)
+      FirstIndex(0), BaseVertex(0), RenderTarget(nullptr), DepthStencil(nullptr),
+      TargetWidth(0), TargetHeight(0)
 {
 }
 
@@ -465,7 +466,8 @@ inline bool CModernRendererCore::SubmitIndexed(const ModernIndexedDrawSubmission
     if (!m_ready || m_adapter == nullptr || !m_adapter->IsReady() || m_graphics == nullptr)
         return false;
     if (submission.Pipeline == nullptr || submission.VertexBuffer == nullptr ||
-        submission.IndexBuffer == nullptr || submission.NumIndices == 0)
+        submission.IndexBuffer == nullptr || submission.NumIndices == 0 ||
+        submission.RenderTarget == nullptr || submission.TargetWidth == 0 || submission.TargetHeight == 0)
         return false;
 
     Diligent::IDeviceContext* context = m_adapter->GetImmediateContext();
@@ -473,8 +475,25 @@ inline bool CModernRendererCore::SubmitIndexed(const ModernIndexedDrawSubmission
         return false;
 
     // Raw OpenGL owns the rest of the current frame during coexistence.
-    // Invalidate Diligent's GL cache at the raw-GL -> Diligent boundary.
+    // Invalidate Diligent's GL cache at the raw-GL -> Diligent boundary before
+    // establishing every piece of modern pass state explicitly.
     m_graphics->BeginModernPass();
+
+    Diligent::ITextureView* renderTargets[] = { submission.RenderTarget };
+    context->SetRenderTargets(1,
+                              renderTargets,
+                              submission.DepthStencil,
+                              Diligent::RESOURCE_STATE_TRANSITION_MODE_NONE);
+
+    Diligent::Viewport viewport;
+    viewport.TopLeftX = 0.0f;
+    viewport.TopLeftY = 0.0f;
+    viewport.Width = static_cast<float>(submission.TargetWidth);
+    viewport.Height = static_cast<float>(submission.TargetHeight);
+    viewport.MinDepth = 0.0f;
+    viewport.MaxDepth = 1.0f;
+    context->SetViewports(1, &viewport, submission.TargetWidth, submission.TargetHeight);
+
     context->SetPipelineState(submission.Pipeline);
 
     Diligent::IBuffer* vertexBuffers[] = { submission.VertexBuffer };
