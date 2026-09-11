@@ -1,6 +1,8 @@
 # Implementation Checklist
 
-Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERER_MAPPING.md). Checked discovery items mean source inspection, not GPU runtime validation. Phase 2 runtime notes: [PHASE2_RUNTIME_DISCOVERY.md](PHASE2_RUNTIME_DISCOVERY.md). Corrective audit: [PHASE2_COMPLETENESS_AUDIT.md](PHASE2_COMPLETENESS_AUDIT.md).
+Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERER_MAPPING.md). Checked discovery items mean source inspection, not GPU runtime validation. Phase 2 runtime notes: [PHASE2_RUNTIME_DISCOVERY.md](PHASE2_RUNTIME_DISCOVERY.md). Corrective audit: [PHASE2_COMPLETENESS_AUDIT.md](PHASE2_COMPLETENESS_AUDIT.md). Phase 3 core: [PHASE3_RENDERER_CORE.md](PHASE3_RENDERER_CORE.md).
+
+> Runtime gate note: the real Phase 2 Windows/GPU test remains pending. The user explicitly authorized repository-side Phase 3 work to continue while that test is unavailable. Checked Phase 3 items therefore mean implemented source contracts, not target-GPU certification.
 
 ## Discovery
 - [x] Locate legacy BMD/model render entry points
@@ -14,7 +16,8 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [x] Initial producer/consumer map for geometry, pose, view, instance and material
 - [x] Snapshot ownership rules for shared BMD state and temporary inventory objects
 - [x] Diligent + shared HLSL architecture decision recorded
-- [ ] Implement and verify concrete CPU/GPU layouts and pose conversion
+- [x] Define concrete initial CPU/GPU vertex + constant-buffer layouts
+- [ ] Implement and verify pose conversion / Skeleton Texture contract in Main
 
 ## OpenGL 4.6 — Phase 2 bootstrap
 - [x] Define Win32/WGL ownership: Main owns `HWND/HDC/HGLRC`; Diligent attaches only
@@ -58,28 +61,35 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [ ] Pass the real Phase 2 Windows/GPU runtime gate: backend DLL/factory load, attach, GL >= 4.6 compatibility profile, debug routing, resize, clean teardown/lifetime and legacy visual regression check
 - [ ] After the real GPU gate, reassess/replace the temporary `WH_CALLWNDPROC` bridge with direct lifecycle calls if no compatibility reason requires retaining it
 
-## Renderer core — starts after the Phase 2 GPU gate
-- [ ] Renderer device adapter/factory around Diligent
-- [ ] Concrete CPU/GPU vertex layouts
-- [ ] Frame/Object/Material constant-buffer contracts
-- [ ] Buffer lifecycle
-- [ ] Texture/sampler lifecycle
-- [ ] Shared HLSL shader/program lifecycle
-- [ ] Pipeline/render-state cache
-- [ ] Resource binding and draw submission
+## Renderer core — Phase 3 repository implementation
+- [x] Define backend adapter interface around Diligent
+- [x] Keep backend selection explicit: OpenGL 4.6 active path; Vulkan/D3D11 reserved and unavailable for now
+- [x] Lock the initial 40-byte BMD CPU/GPU vertex contract with compile-time offset/size checks
+- [x] Define Frame/Instance/Material constant-buffer contracts with 16-byte alignment
+- [x] Implement generic vertex/index GPU-buffer lifecycle wrapper
+- [x] Implement constant-buffer lifecycle/update wrapper
+- [x] Implement shared HLSL shader cache/creation manager
+- [x] Implement texture SRV + sampler lifecycle/cache
+- [x] Implement PSO/SRB resource cache
+- [x] Implement indexed draw submission boundary
+- [x] Keep renderer-core code independent of raw OpenGL calls
+- [x] Compile the core through the existing Main build path without adding another project/presentation owner
+- [ ] Validate Phase 3 source changes in Windows/x86 Release and Debug CI/build
+- [ ] Activate the core from the first migrated production draw after a PSO/SRB exists
 
 ## First modern draw
-- [ ] Diligent buffer/texture transitions
-- [ ] HLSL shader compilation diagnostics
-- [ ] Constant-buffer upload/update path
-- [ ] Texture/sampler binding
-- [ ] Depth/blend/cull state handling
-- [ ] Indexed/non-indexed draw submission
+- [ ] Create Diligent vertex/index buffers from one BMD mesh
+- [ ] Add shared HLSL production shader compilation diagnostics
+- [ ] Create/update Frame/Instance/Material constant buffers
+- [ ] Bind texture/sampler resources through SRB
+- [ ] Define depth/blend/cull PSO state
+- [ ] Define Diligent input layout matching `ModernBMDVertex`
+- [ ] Issue first indexed production draw through `CModernRendererCore::SubmitIndexed()`
 - [ ] Validate both raw-GL -> Diligent and Diligent -> legacy-GL state coexistence around the first production modern draw
 
 ## BMD migration
 - [x] Map legacy mesh fields and initial conversion rules (static)
-- [ ] Define modern packed GPU vertex layout
+- [x] Define initial 40-byte modern BMD vertex layout
 - [ ] Persistent geometry upload
 - [ ] Material bridge
 - [ ] Pose conversion / Skeleton Texture upload and addressing
