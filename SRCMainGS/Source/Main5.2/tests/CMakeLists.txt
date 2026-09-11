@@ -15,3 +15,4 @@ endfunction()
 
 add_modern_test(ModernBMDGeometryTests ModernBMDGeometryTests.cpp)
 add_modern_test(ModernSkeletonPoseTests ModernSkeletonPoseTests.cpp)
+add_modern_test(ModernBMDRenderContextTests ModernBMDRenderContextTests.cpp)
