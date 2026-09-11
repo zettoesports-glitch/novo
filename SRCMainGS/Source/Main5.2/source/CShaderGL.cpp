@@ -100,7 +100,7 @@ GLuint CShaderGL::run_shader(const char* shader_text, GLenum type)
 	glShaderSource(shader, 1, &shader_text, NULL);
 	glCompileShader(shader);
 
-	// Verificar errores de compilación
+	// Verificar errores de compilação
 	int success;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 
@@ -152,7 +152,7 @@ void CShaderGL::SetPerspective(float Fov, float Aspect, float ZNear, float ZFar)
 	}
 }
 
-// Funciones para establecer uniforms
+// Funções para estabelecer uniforms
 void CShaderGL::setBool(const char* name, bool value) const
 {
 	glUniform1i(glGetUniformLocation(shader_id, name), (int)value);
@@ -287,13 +287,25 @@ LRESULT CALLBACK ModernGraphicsCallWndProc(int code, WPARAM wParam, LPARAM lPara
 		case WM_DESTROY:
 		case WM_NCDESTROY:
 		case WM_USER_MEMORYHACK:
-			if (GetModernGraphics().IsActive() && GetModernGraphics().IsAttachedToWindow(message->hwnd))
+		{
+			CModernGraphicsBootstrap& graphics = GetModernGraphics();
+
+			// Clear both successful attachments and failed-attempt tracking for
+			// the window being destroyed. Failed initialization must not leave a
+			// stale HWND/HGLRC identity that could block a later valid recreated
+			// context if Windows recycles the same numeric handle values.
+			if (graphics.IsAttachedToWindow(message->hwnd))
 			{
-				g_ModernGraphicsTeardownStarted = true;
-				ModernGraphicsLog("[ModernGraphics] Teardown barrier armed for the attached WGL context.\n");
-				GetModernGraphics().Shutdown();
+				if (graphics.IsActive())
+				{
+					g_ModernGraphicsTeardownStarted = true;
+					ModernGraphicsLog("[ModernGraphics] Teardown barrier armed for the attached WGL context.\n");
+				}
+
+				graphics.Shutdown();
 			}
 			break;
+		}
 
 		default:
 			TryAttachModernGraphics(message->hwnd);
