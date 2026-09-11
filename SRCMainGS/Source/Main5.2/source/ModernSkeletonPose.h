@@ -9,8 +9,6 @@
 // Main's final per-bone transform is a 3x4 affine matrix. The modern transport
 // keeps the same semantics but packs each bone into two float4 texels, matching
 // the reference renderer shape: quaternion rotation + position/uniform scale.
-// BodyScale and BodyOrigin remain per-instance data and are intentionally not
-// baked into this asset-independent pose snapshot.
 struct ModernSkeletonBoneTexels
 {
     float Rotation[4];      // quaternion xyzw
@@ -20,8 +18,23 @@ struct ModernSkeletonBoneTexels
 static_assert(sizeof(ModernSkeletonBoneTexels) == sizeof(float) * 8,
               "Modern skeleton bone transport must remain two float4 texels");
 
+// The legacy BMD path can produce two different pose spaces:
+// - BodyTransformSeparate: BoneMatrix does not contain BodyScale/BodyOrigin and
+//   the modern instance constants/shader must apply them after skinning.
+// - BodyTransformBaked: BoneMatrix already contains the body transform.
+//
+// The first production modern BMD shader is intentionally defined around the
+// first form. Baked poses are rejected until a dedicated normalization/path is
+// added, preventing BodyScale/BodyOrigin from being applied twice.
+enum class ModernSkeletonPoseSpace : std::uint8_t
+{
+    BodyTransformSeparate = 0,
+    BodyTransformBaked,
+};
+
 struct ModernSkeletonPose
 {
+    ModernSkeletonPoseSpace Space = ModernSkeletonPoseSpace::BodyTransformSeparate;
     std::vector<ModernSkeletonBoneTexels> Bones;
 };
 
@@ -30,6 +43,7 @@ enum class ModernSkeletonPoseError
     None,
     InvalidBoneCount,
     MissingMatrices,
+    UnsupportedPoseSpace,
     NonFiniteData,
     DegenerateRotation,
     AllocationFailed,
@@ -58,10 +72,14 @@ inline bool MatrixRotationToQuaternion(const float matrix[3][4], float quaternio
     const float m21 = matrix[2][1];
     const float m22 = matrix[2][2];
 
+    // Legacy VectorRotate performs Dot(input, matrix[row]), so these rows are
+    // already in the same row-major rotation convention used by the shared
+    // HLSL quaternion path. Do not transpose this 3x3 block.
+    //
     // The legacy bone matrix carries rotation + translation; scale is supplied
     // separately through BoneScale. A singular/reflected 3x3 block therefore
     // cannot represent a valid bone rotation and must not be normalized into an
-    // apparently valid quaternion (the all-zero matrix was previously doing so).
+    // apparently valid quaternion.
     const float determinant =
         m00 * (m11 * m22 - m12 * m21) -
         m01 * (m10 * m22 - m12 * m20) +
@@ -151,6 +169,7 @@ inline bool MatrixRotationToQuaternion(const float matrix[3][4], float quaternio
 inline bool BuildModernSkeletonPose(const float (*boneMatrices)[3][4],
                                     int boneCount,
                                     float boneScale,
+                                    ModernSkeletonPoseSpace poseSpace,
                                     ModernSkeletonPose& output,
                                     ModernSkeletonPoseError& error)
 {
@@ -165,6 +184,11 @@ inline bool BuildModernSkeletonPose(const float (*boneMatrices)[3][4],
         error = ModernSkeletonPoseError::MissingMatrices;
         return false;
     }
+    if (poseSpace != ModernSkeletonPoseSpace::BodyTransformSeparate)
+    {
+        error = ModernSkeletonPoseError::UnsupportedPoseSpace;
+        return false;
+    }
     if (!std::isfinite(boneScale))
     {
         error = ModernSkeletonPoseError::NonFiniteData;
@@ -174,6 +198,7 @@ inline bool BuildModernSkeletonPose(const float (*boneMatrices)[3][4],
     try
     {
         ModernSkeletonPose converted;
+        converted.Space = poseSpace;
         converted.Bones.resize(static_cast<std::size_t>(boneCount));
 
         for (int bone = 0; bone < boneCount; ++bone)
@@ -199,6 +224,7 @@ inline bool BuildModernSkeletonPose(const float (*boneMatrices)[3][4],
         }
 
         // Transactional: failed conversion never replaces a previously valid pose.
+        output.Space = converted.Space;
         output.Bones.swap(converted.Bones);
         return true;
     }
