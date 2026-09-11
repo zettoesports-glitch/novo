@@ -29,7 +29,7 @@ This document records the real Main 5.2 lifecycle points used by the Phase 2 Ope
 
 The context is externally created from Diligent's point of view. Phase 2 uses `AttachToActiveGLContext`; it does not create a second OpenGL context or swap chain.
 
-The current code still uses legacy `wglCreateContext()` rather than explicitly requesting a 4.6 context. The bootstrap validates the effective GL version and now also rejects core-only contexts before the Diligent attach. The real runtime gate requires OpenGL >= 4.6 with `profile=compatibility`, because the legacy coexistence path still depends on fixed-function/client-array behavior.
+The current code still uses legacy `wglCreateContext()` rather than explicitly requesting a 4.6 context. The bootstrap validates the effective GL version and rejects core-only contexts before the Diligent attach. The real runtime gate requires OpenGL >= 4.6 with `profile=compatibility`, because the legacy coexistence path still depends on fixed-function/client-array behavior.
 
 ### Present ownership
 
@@ -39,9 +39,9 @@ The audited legacy source contains the legacy `SwapBuffers(hDC)` presentation ca
 
 ### Resize
 
-`CWINHANDLE::WndProc` receives `WM_SIZE`. The temporary Phase 2 lifecycle bridge observes `WM_SIZE` on the same UI thread and calls `CModernGraphicsBootstrap::OnResize(width, height)` for the tracked window when the size is non-zero and not minimized.
+`CWINHANDLE::WndProc` receives `WM_SIZE`. The temporary Phase 2 lifecycle bridge observes `WM_SIZE` on the same UI thread and calls `CModernGraphicsBootstrap::OnResize(width, height)` only when the tracked window has a successfully active modern attachment, the size is non-zero and the window is not minimized.
 
-`OnResize()` records dimensions and a persistent runtime marker; it does not own a swap chain or recreate legacy framebuffer resources.
+`OnResize()` records dimensions and a persistent runtime marker; it does not own a swap chain or recreate legacy framebuffer resources. Failed/legacy-only initialization attempts do not enter this modern resize path.
 
 ### Shutdown and WGL teardown audit
 
@@ -50,10 +50,12 @@ The audited legacy source contains the legacy `SwapBuffers(hDC)` presentation ca
 The audit found all currently known `KillGLWindow()` call classes:
 
 - error exits inside `CreateOpenglWindow()`; these are initialization-failure cleanup paths before a successful modern attach can exist;
-- `WM_DESTROY` cleanup in `CWINHANDLE::WndProc`;
+- `WM_DESTROY` / `WM_CLOSE` cleanup in `CWINHANDLE::WndProc`;
 - the exceptional `WM_USER_MEMORYHACK` path, which also calls `KillGLWindow()` directly.
 
-The lifecycle bridge shuts Diligent down before `WM_CLOSE`, `WM_DESTROY`, `WM_NCDESTROY` and `WM_USER_MEMORYHACK`. Commit `cf20045e70c888a14b2b3197663e095e51b60768` added the exceptional `WM_USER_MEMORYHACK` coverage, so the bridge now releases the modern runtime before every currently known post-attach message path that can destroy the WGL context.
+The lifecycle bridge shuts Diligent down before `WM_CLOSE`, `WM_DESTROY`, `WM_NCDESTROY` and `WM_USER_MEMORYHACK`, but only when the modern attachment is actually active for that window. This prevents failed/fallback initialization attempts from being treated as attached runtime state.
+
+Commit `cf20045e70c888a14b2b3197663e095e51b60768` added the exceptional `WM_USER_MEMORYHACK` coverage. Commit `c564ef479b3727f1d50beb3760c1af047f138ad5` then added a teardown barrier keyed by the last attached `HWND/HGLRC`: after `Shutdown()` begins, later Win32 messages cannot reattach Diligent to the same WGL context while that context is being destroyed. A genuinely different window/context pair clears the barrier and can start a fresh attach attempt. Commit `ad6d6e213433fe5fdcb694d96ecd3745131e98c2` further gates teardown and resize forwarding on `IsActive()` so fallback-only attempts cannot arm the barrier or emit modern resize evidence.
 
 `Shutdown()` flushes/releases the Diligent immediate context/device while the external WGL context is still alive, then records the shutdown marker.
 
@@ -119,21 +121,9 @@ Earlier independent proof:
 - Debug/x86 run `34533868904`: Main linked with 0 errors after the Main-only C++17 normalization.
 - Combined baseline run `34538658227`: Release + Debug + output verification + synthetic runtime-evidence validation all passed.
 - Lifecycle/runtime-gate audit run `34540959623`: Release + Debug + compatibility-profile synthetic evidence all passed after teardown/runtime-gate hardening.
+- Compatibility-profile source gate `34542334616`: Release + Debug + output verification + synthetic runtime-evidence validation passed at `e6c0a678ecbb870262d62ed362902ce999adb06c`.
 
-### Latest audited Phase 2 source gate
-
-The latest source-affecting Phase 2 revision is commit `e6c0a678ecbb870262d62ed362902ce999adb06c`, which enforces the OpenGL compatibility profile before Diligent attach.
-
-Workflow run `34542334616` completed successfully. It passed:
-
-- checkout/toolchain setup;
-- PowerShell syntax preflight;
-- exact pinned Diligent OpenGL/x86 preparation;
-- Release/x86 Main build and output verification;
-- Debug/x86 Main build and output verification;
-- `run_phase2_runtime_test.ps1 -ValidateOnly` against compatibility-profile synthetic evidence.
-
-This gate includes the previous `WM_USER_MEMORYHACK` teardown fix, hardened runtime script and the core-only-context rejection in the bootstrap.
+The teardown reattach barrier and active-attachment lifecycle gating were added after that baseline. Their latest combined Windows/x86 gate is tracked in `STATUS.md` and `IMPLEMENTATION_CHECKLIST.md` once the workflow completes.
 
 ## Reproducible GPU runtime evidence
 
@@ -153,10 +143,11 @@ The real launch path verifies `Main.exe`, both Diligent backend DLLs, removes st
 - successful Diligent attach;
 - validation/OpenGL debug routing when requested;
 - resize marker when requested;
+- teardown barrier armed before legacy WGL destruction;
 - modern shutdown before legacy WGL teardown;
 - absence of a `Legacy renderer remains active` fallback marker.
 
-`-ValidateOnly` remains a parser/evidence-test mode for CI; it does not pretend to be a GPU run. The latest source-affecting gate `34542334616` passed this parser validation with compatibility-profile synthetic evidence.
+`-ValidateOnly` remains a parser/evidence-test mode for CI; it does not pretend to be a GPU run. Synthetic CI evidence now includes the teardown-barrier marker so the parser contract follows the hardened lifecycle.
 
 ## Remaining runtime gate
 
@@ -166,8 +157,9 @@ A real GPU-backed Main run must still prove:
 - effective OpenGL version is >= 4.6 and profile is compatibility;
 - `AttachToActiveGLContext` succeeds against the real Main WGL context;
 - Diligent validation/KHR_debug works without callback ownership conflict;
-- resize is stable;
+- resize is stable and only forwarded while the modern attachment is active;
 - legacy presentation remains the only presentation path;
+- teardown cannot reattach to the same dying `HWND/HGLRC`;
 - shutdown/lifetime ordering is clean, including normal close and no WGL lifetime regression;
 - legacy scenes render without regression.
 
