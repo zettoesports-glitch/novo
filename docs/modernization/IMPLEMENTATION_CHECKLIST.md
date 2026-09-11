@@ -43,14 +43,17 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [x] Preserve a single legacy `SwapBuffers` presentation owner; no modern swap chain/present added
 - [x] Cover all currently known post-attach WGL teardown messages (`WM_CLOSE`, `WM_DESTROY`, `WM_NCDESTROY`, `WM_USER_MEMORYHACK`) before `KillGLWindow()`
 - [x] Confirm `KillGLWindow()` calls inside `CreateOpenglWindow()` are pre-attach initialization-failure cleanup paths
+- [x] Prevent Diligent from reattaching to the same `HWND/HGLRC` after modern teardown has started (`c564ef479b3727f1d50beb3760c1af047f138ad5`)
+- [x] Forward resize/teardown lifecycle events only when the modern attachment is actually active; fallback-only attempts do not masquerade as attached state (`ad6d6e213433fe5fdcb694d96ecd3745131e98c2`)
 - [x] Add persistent `Client_2/ModernGraphics.log` evidence for attach/capability/resize/shutdown and bridge failures
 - [x] Route Diligent validation and OpenGL/KHR_debug through `IEngineFactory::SetMessageCallback()` when `MU_MODERN_GL_DEBUG=1`, without installing a competing raw GL callback in Main
 - [x] Add reproducible local GPU validation script (`run_phase2_runtime_test.ps1`)
 - [x] Require compatibility profile evidence and normal `Main.exe` exit in the real GPU validation path
+- [x] Require a teardown-barrier marker in real/synthetic runtime evidence before the shutdown marker
 - [x] Add CI `-ValidateOnly` coverage for the runtime-evidence parser using compatibility-profile synthetic evidence
 - [x] Re-audit lifecycle/runtime gate after `WM_USER_MEMORYHACK` hardening (run `34540959623`, source commit `d24e117270113918d877e17abd4609cad236d92e`)
-- [x] Pass the latest source-affecting combined Release+Debug x86 gate after enforcing compatibility profile in the bootstrap (run `34542334616`, source commit `e6c0a678ecbb870262d62ed362902ce999adb06c`)
-- [ ] Pass the real Phase 2 Windows/GPU runtime gate: DLL load/factory, attach, GL >= 4.6 compatibility profile, validation/debug routing, resize, single-present behavior, clean shutdown and legacy regression check
+- [x] Pass the compatibility-profile combined Release+Debug x86 gate (run `34542334616`, source commit `e6c0a678ecbb870262d62ed362902ce999adb06c`)
+- [ ] Pass the real Phase 2 Windows/GPU runtime gate: DLL load/factory, attach, GL >= 4.6 compatibility profile, validation/debug routing, resize, single-present behavior, teardown anti-reattach, clean shutdown and legacy regression check
 - [ ] After the real runtime gate, replace/reassess the temporary `WH_CALLWNDPROC` coexistence bridge with direct lifecycle calls if validation shows no need to retain the bridge
 
 ## First modern draw — starts only after the Phase 2 GPU gate
