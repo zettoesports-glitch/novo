@@ -262,3 +262,15 @@ jobs:
           if (-not $mixedProfileRejected) {
             throw 'Runtime evidence parser accepted a recreated lifecycle without compatibility-profile evidence.'
           }
+
+      - name: Publish Phase 2 GPU runtime bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-win32-gpu-runtime-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            Client_2/Main.exe
+            Client_2/GraphicsEngineOpenGL_32r.dll
+            Client_2/GraphicsEngineOpenGL_32d.dll
+            SRCMainGS/Source/Main5.2/run_phase2_runtime_test.ps1
