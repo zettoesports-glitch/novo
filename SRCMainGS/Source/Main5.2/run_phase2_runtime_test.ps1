@@ -107,6 +107,7 @@ $logText = Get-Content $logPath -Raw
 
 $attachAttemptMarker = '[ModernGraphics] Phase 2 OpenGL 4.6 attach attempt started.'
 $diagnosticsMarker = '[ModernGraphics] OpenGL vendor='
+$compatibilityMarker = 'profile=compatibility'
 $attachedMarker = '[ModernGraphics] Diligent attached to the existing OpenGL 4.6 context; legacy SwapBuffers remains authoritative.'
 $resizeMarker = '[ModernGraphics] Resize observed:'
 $debugMarker = '[ModernGraphics] Diligent validation/OpenGL debug routing enabled by MU_MODERN_GL_DEBUG.'
@@ -115,7 +116,7 @@ $shutdownMarker = '[ModernGraphics] Shutdown completed before legacy WGL teardow
 
 Assert-LogContains $logText $attachAttemptMarker 'bootstrap attach attempt reached'
 Assert-LogContains $logText $diagnosticsMarker 'OpenGL diagnostics captured'
-Assert-LogContains $logText 'profile=compatibility' 'OpenGL compatibility profile confirmed for legacy coexistence'
+Assert-LogContains $logText $compatibilityMarker 'OpenGL compatibility profile confirmed for legacy coexistence'
 Assert-LogContains $logText $attachedMarker 'Diligent attached to the existing WGL context'
 Assert-LogContains $logText $teardownMarker 'reattach barrier armed before WGL teardown'
 Assert-LogContains $logText $shutdownMarker 'Diligent shutdown completed before WGL teardown'
@@ -124,13 +125,14 @@ if ($logText -match 'Legacy renderer remains active') {
     throw 'Phase 2 runtime log contains a modern-backend fallback. Inspect ModernGraphics.log before continuing.'
 }
 
-$attempts = Get-LogIndices $logText $attachAttemptMarker
-$diagnostics = Get-LogIndices $logText $diagnosticsMarker
-$attachments = Get-LogIndices $logText $attachedMarker
-$teardowns = Get-LogIndices $logText $teardownMarker
-$shutdowns = Get-LogIndices $logText $shutdownMarker
-$debugEnables = Get-LogIndices $logText $debugMarker
-$resizes = Get-LogIndices $logText $resizeMarker
+$attempts = @(Get-LogIndices $logText $attachAttemptMarker)
+$diagnostics = @(Get-LogIndices $logText $diagnosticsMarker)
+$compatibilityProfiles = @(Get-LogIndices $logText $compatibilityMarker)
+$attachments = @(Get-LogIndices $logText $attachedMarker)
+$teardowns = @(Get-LogIndices $logText $teardownMarker)
+$shutdowns = @(Get-LogIndices $logText $shutdownMarker)
+$debugEnables = @(Get-LogIndices $logText $debugMarker)
+$resizes = @(Get-LogIndices $logText $resizeMarker)
 
 $lifecycleCount = $attachments.Count
 if ($lifecycleCount -lt 1) {
@@ -144,6 +146,7 @@ if ($lifecycleCount -lt 1) {
 $requiredCounts = @{
     'attach attempts' = $attempts.Count
     'OpenGL diagnostics' = $diagnostics.Count
+    'compatibility-profile diagnostics' = $compatibilityProfiles.Count
     'attachments' = $attachments.Count
     'teardown barriers' = $teardowns.Count
     'shutdowns' = $shutdowns.Count
@@ -162,13 +165,14 @@ if ($EnableGLDebug -and $debugEnables.Count -ne $lifecycleCount) {
 for ($i = 0; $i -lt $lifecycleCount; ++$i) {
     $number = $i + 1
     Assert-LogBefore $attempts[$i] "lifecycle $number attach attempt" $diagnostics[$i] "lifecycle $number OpenGL diagnostics"
+    Assert-LogBefore $diagnostics[$i] "lifecycle $number OpenGL diagnostics" $compatibilityProfiles[$i] "lifecycle $number compatibility profile"
 
     if ($EnableGLDebug) {
-        Assert-LogBefore $diagnostics[$i] "lifecycle $number OpenGL diagnostics" $debugEnables[$i] "lifecycle $number debug routing enablement"
+        Assert-LogBefore $compatibilityProfiles[$i] "lifecycle $number compatibility profile" $debugEnables[$i] "lifecycle $number debug routing enablement"
         Assert-LogBefore $debugEnables[$i] "lifecycle $number debug routing enablement" $attachments[$i] "lifecycle $number Diligent attachment"
     }
     else {
-        Assert-LogBefore $diagnostics[$i] "lifecycle $number OpenGL diagnostics" $attachments[$i] "lifecycle $number Diligent attachment"
+        Assert-LogBefore $compatibilityProfiles[$i] "lifecycle $number compatibility profile" $attachments[$i] "lifecycle $number Diligent attachment"
     }
 
     Assert-LogBefore $attachments[$i] "lifecycle $number Diligent attachment" $teardowns[$i] "lifecycle $number teardown barrier"
@@ -202,6 +206,7 @@ if ($RequireResize) {
 }
 
 Write-Host "[Phase2 Runtime] PASS: $lifecycleCount complete modern lifecycle(s) recorded in valid order"
+Write-Host '[Phase2 Runtime] PASS: every successful lifecycle recorded an OpenGL compatibility profile before attachment'
 Write-Host '[Phase2 Runtime] PASS: no attach attempt occurred between a teardown barrier and its matching shutdown'
 Write-Host '[Phase2 Runtime] NOTE: source-level HWND/HGLRC identity guards prevent same-context reattach; a later complete lifecycle is allowed for a genuinely recreated window/context pair.'
 Write-Host '[Phase2 Runtime] NOTE: presentation ownership is proven by source architecture (no Diligent swap chain/present); this log parser does not count SwapBuffers calls per frame.'
