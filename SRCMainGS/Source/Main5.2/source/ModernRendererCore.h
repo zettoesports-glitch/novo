@@ -169,6 +169,15 @@ struct ModernIndexedDrawSubmission
     Diligent::VALUE_TYPE IndexType;
     std::uint32_t FirstIndex;
     std::uint32_t BaseVertex;
+
+    // Explicit pass target. Attached OpenGL has no Diligent-created swap chain,
+    // so every production draw must supply the target views and viewport rather
+    // than relying on implicit/default context state.
+    Diligent::ITextureView* RenderTarget;
+    Diligent::ITextureView* DepthStencil;
+    std::uint32_t TargetWidth;
+    std::uint32_t TargetHeight;
+
     ModernIndexedDrawSubmission();
 };
 #endif
