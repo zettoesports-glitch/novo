@@ -100,7 +100,7 @@ GLuint CShaderGL::run_shader(const char* shader_text, GLenum type)
 	glShaderSource(shader, 1, &shader_text, NULL);
 	glCompileShader(shader);
 
-	// Verificar errores de compilação
+	// Verificar errores de compilación
 	int success;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 
@@ -273,7 +273,7 @@ LRESULT CALLBACK ModernGraphicsCallWndProc(int code, WPARAM wParam, LPARAM lPara
 		case WM_DESTROY:
 		case WM_NCDESTROY:
 		case WM_USER_MEMORYHACK:
-			if (GetModernGraphics().IsAttachedToWindow(message->hwnd))
+			if (GetModernGraphics().IsActive() && GetModernGraphics().IsAttachedToWindow(message->hwnd))
 			{
 				g_ModernGraphicsTeardownStarted = true;
 				ModernGraphicsLog("[ModernGraphics] Teardown barrier armed for the attached WGL context.\n");
@@ -287,7 +287,7 @@ LRESULT CALLBACK ModernGraphicsCallWndProc(int code, WPARAM wParam, LPARAM lPara
 			if (message->message == WM_SIZE && message->wParam != SIZE_MINIMIZED)
 			{
 				CModernGraphicsBootstrap& graphics = GetModernGraphics();
-				if (graphics.IsAttachedToWindow(message->hwnd))
+				if (graphics.IsActive() && graphics.IsAttachedToWindow(message->hwnd))
 				{
 					const unsigned int width = static_cast<unsigned int>(LOWORD(message->lParam));
 					const unsigned int height = static_cast<unsigned int>(HIWORD(message->lParam));
