@@ -40,7 +40,7 @@ The legacy renderer therefore remains authoritative until the first deliberately
 
 ## Pending validation
 
-- Windows/x86 Release and Debug compile against the pinned Diligent `v2.5.6` commit after these Phase 3 source changes.
+- Windows/x86 Release and Debug compile: passed for code commit `925bbb5956ac05eece159c1a7b0652b2d41dfbda`; see the validation evidence below.
 - Real GPU runtime certification of Phase 2.
 - First production HLSL PSO/SRB and constant-buffer binding.
 - First persistent BMD vertex/index upload.
@@ -78,4 +78,6 @@ This change implements the asset conversion/upload building block. It does **not
 
 Portable CPU regression tests in `tests/ModernBMDGeometryTests.cpp` cover shared corners, normal/UV seams, bone indices, invalid data, transactional rejection, triangle order and a 72,000-corner mesh with uint32 output. Local GCC C++17 build and CTest passed; AddressSanitizer/UndefinedBehaviorSanitizer passed with leak detection disabled because this environment's tracing prevents LeakSanitizer from running.
 
-The existing Windows workflow now also builds/runs the CPU tests in x86. Main Release/Debug and Diligent GPU-resource creation still require their Windows/GPU gates. No local Windows or GPU success is implied by the CPU tests.
+Windows CI passed for code commit `925bbb5956ac05eece159c1a7b0652b2d41dfbda`: geometry tests in x86, pinned Diligent OpenGL Release/Debug backend builds, Main Release/Debug x86 builds, and the synthetic lifecycle parser checks. [CI evidence](https://github.com/zettoesports-glitch/novo/actions/runs/34615937928).
+
+The backend artifacts were built, not executed on a target GPU. Actual geometry upload, draw behavior and visual coexistence remain pending.

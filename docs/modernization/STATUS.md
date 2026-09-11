@@ -51,8 +51,6 @@ Runtime activation remains intentionally gated: Phase 3 does not yet redirect a 
 
 ## Phase 3 validation still pending
 
-- Windows/x86 Release compile after the new Phase 3 source changes.
-- Windows/x86 Debug compile after the new Phase 3 source changes.
 - First production HLSL PSO/SRB/input-layout creation.
 - First persistent BMD vertex/index upload.
 - First production indexed modern draw and raw-GL/Diligent coexistence check.
@@ -63,11 +61,11 @@ Runtime activation remains intentionally gated: Phase 3 does not yet redirect a 
 
 The source now has a validated CPU BMD converter, a real `BMD::BuildModernMesh` entry point and an immutable vertex/index cache keyed by asset revision. The bootstrap releases the core caches before the attached Diligent context/device. Portable geometry tests passed locally and were added to the Windows x86 workflow. Details and the caller contract are in [PHASE3_RENDERER_CORE.md](PHASE3_RENDERER_CORE.md).
 
-This is an asset-preparation building block. No production BMD draw has been redirected, and PSO/SRB, explicit render-target/view binding, pose upload and target-GPU parity remain pending. Windows compilation of this continuation must be checked separately.
+This is an asset-preparation building block. No production BMD draw has been redirected, and PSO/SRB, explicit render-target/view binding, pose upload and target-GPU parity remain pending. Windows CI passed on code commit `925bbb5956ac05eece159c1a7b0652b2d41dfbda`: Main Release/Debug x86, pinned Diligent backend builds, geometry tests and the synthetic lifecycle parser. [Build evidence](https://github.com/zettoesports-glitch/novo/actions/runs/34615937928). This does not certify target-GPU execution.
 
 ## Next action
 
-1. Run/inspect the Windows/x86 compile gate for the Phase 3 source changes.
+1. Preserve the passing Windows/x86 Release/Debug and CPU geometry gates as the next pipeline changes are introduced.
 2. Build the first BMD model pipeline on the new core: persistent vertex/index buffers, HLSL VS/PS, input layout, PSO/SRB, Frame/Instance/Material constant buffers and texture/sampler binding.
 3. Keep the legacy draw as fallback and do not expand to remote players/BotBuffer/NPC/monster until the two-independent-instance proof is stable.
 4. When access to the target GPU is available, execute the deferred Phase 2 runtime certification before calling the OpenGL coexistence boundary runtime-complete.

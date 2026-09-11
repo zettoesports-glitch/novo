@@ -74,7 +74,7 @@ Static discovery evidence: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERE
 - [x] Implement indexed draw submission boundary
 - [x] Keep renderer-core code independent of raw OpenGL calls
 - [x] Compile the core through the existing Main build path without adding another project/presentation owner
-- [ ] Validate Phase 3 source changes in Windows/x86 Release and Debug CI/build
+- [x] Validate Phase 3 core + geometry changes in Windows/x86 Release and Debug CI/build ([925bbb5 evidence](https://github.com/zettoesports-glitch/novo/actions/runs/34615937928))
 - [ ] Activate the core from the first migrated production draw after a PSO/SRB exists
 
 ## First modern draw
