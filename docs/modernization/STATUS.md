@@ -34,6 +34,7 @@ Diligent integration for Main 5.2, using shared HLSL shaders and OpenGL 4.6 firs
 - Lifecycle/runtime-gate audit run `34540959623` passed after covering `WM_USER_MEMORYHACK` and hardening the real GPU evidence checks.
 - Compatibility-profile source gate `34542334616` passed after enforcing the OpenGL compatibility profile in the bootstrap.
 - Latest source-affecting Phase 2 gate `34549868789`, at commit `69e0fe800cd6d5e787165673f611bb9018a8917e`, passed PowerShell preflight, pinned Diligent OpenGL backend preparation, Release/x86 build/output verification, Debug/x86 build/output verification and runtime-evidence parser validation after the teardown-generation and failed-bootstrap-state hardening.
+- Runtime-bundle gate `34586762262`, at commit `3bc4c7208567a5042534637ef7a65e9c4203d1b7`, passed the same Release/Debug/parser checks and successfully published `phase2-win32-gpu-runtime-3bc4c7208567a5042534637ef7a65e9c4203d1b7` for the target-GPU certification step.
 
 Evidence and scope: [PHASE1_MAIN_RENDERER_MAPPING.md](PHASE1_MAIN_RENDERER_MAPPING.md).
 Phase 2 contract: [PHASE2_OPENGL46_BOOTSTRAP.md](PHASE2_OPENGL46_BOOTSTRAP.md).
@@ -46,6 +47,8 @@ The Phase 2 bootstrap is represented in source and build infrastructure. The rep
 
 The latest source-affecting Release+Debug x86 gate passed in workflow run `34549868789` at commit `69e0fe800cd6d5e787165673f611bb9018a8917e`. The job passed the PowerShell preflight, pinned Diligent backend preparation, Release and Debug x86 builds, output verification and runtime-evidence parser validation. Repository-side source/build/synthetic-evidence work for the Phase 2 bootstrap is therefore closed.
 
+A subsequent packaging-only gate, workflow run `34586762262`, also passed and publishes the runtime artifact `phase2-win32-gpu-runtime-3bc4c7208567a5042534637ef7a65e9c4203d1b7` containing `Main.exe`, both x86 Diligent OpenGL backend DLLs and the validation script. This removes the need for a fresh local compile before the target-GPU gate.
+
 The final teardown audit also confirmed that the `KillGLWindow()` calls inside `CreateOpenglWindow()` are initialization-failure paths that occur before a successful modern attach can exist. The currently known post-attach teardown paths remain covered by the lifecycle bridge.
 
 ## Phase 2 still in progress — GPU runtime boundary
@@ -54,11 +57,12 @@ Phase 2 is **not runtime-certified**. GitHub Actions proves compilation, generat
 
 Build validation state:
 
-- Release/x86: **passed**, including latest source gate `34549868789`.
-- Debug/x86: **passed**, including latest source gate `34549868789`.
-- Pinned Diligent OpenGL backend preparation/output verification: **passed** in `34549868789`.
-- PowerShell syntax preflight: **passed** in `34549868789`.
-- Synthetic compatibility-profile runtime-evidence parser validation: **passed** in `34549868789`.
+- Release/x86: **passed**, including source gate `34549868789` and packaging gate `34586762262`.
+- Debug/x86: **passed**, including source gate `34549868789` and packaging gate `34586762262`.
+- Pinned Diligent OpenGL backend preparation/output verification: **passed**.
+- PowerShell syntax preflight: **passed**.
+- Synthetic compatibility-profile runtime-evidence parser validation: **passed**.
+- Runtime GPU bundle publication: **passed** in `34586762262`.
 
 Remaining GPU runtime work:
 
@@ -97,6 +101,7 @@ The following work is downstream of the Phase 2 bootstrap/runtime gate and must 
 
 ## Next action
 
-1. Execute the local GPU runtime gate with `run_phase2_runtime_test.ps1 -EnableGLDebug -RequireResize` on the target Windows/OpenGL 4.6 compatibility-profile machine and retain `Client_2/ModernGraphics.log` as evidence.
-2. If the GPU gate passes, replace/reassess the temporary `WH_CALLWNDPROC` bridge using the already-mapped direct lifecycle owners.
-3. Only after that GPU gate should Phase 2 be called runtime-complete and work move into concrete CPU/GPU contracts, pose conversion, Skeleton Texture and the first two-instance modern BMD proof.
+1. Download/use the latest successful `phase2-win32-gpu-runtime-<sha>` artifact, place its runtime binaries over the matching `Client_2` checkout, and execute the target Windows/OpenGL 4.6 compatibility-profile gate with `run_phase2_runtime_test.ps1 -EnableGLDebug -RequireResize`.
+2. Retain `Client_2/ModernGraphics.log` as evidence and confirm the scene visually during resize/normal shutdown.
+3. If the GPU gate passes, replace/reassess the temporary `WH_CALLWNDPROC` bridge using the already-mapped direct lifecycle owners.
+4. Only after that GPU gate should Phase 2 be called runtime-complete and work move into concrete CPU/GPU contracts, pose conversion, Skeleton Texture and the first two-instance modern BMD proof.
