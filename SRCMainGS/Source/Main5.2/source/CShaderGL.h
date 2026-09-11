@@ -23,7 +23,7 @@ public:
 	void run_projection();
 	void SetPerspective(float Fov, float Aspect, float ZNear, float ZFar);
 
-	// Funciones para establecer uniforms
+	// Funciones para estabelecer uniforms
 	void setBool(const char* name, bool value) const;
 	void setInt(const char* name, int value) const;
 	void setFloat(const char* name, float value) const;
@@ -50,3 +50,4 @@ private:
 #include "ModernBMDPipeline.h"
 #include "ModernOpenGLDefaultFramebuffer.h"
 #include "ModernLegacyGLState.h"
+#include "ModernLegacyTextureBridge.h"
