@@ -230,3 +230,35 @@ jobs:
           if (-not $partialCycleRejected) {
             throw 'Runtime evidence parser accepted an incomplete recreated lifecycle.'
           }
+
+          # Negative lifecycle: every recreated lifecycle must independently
+          # report the compatibility profile. A compatibility first cycle cannot
+          # make a later core-profile cycle look valid.
+          @(
+            '[ModernGraphics] Phase 2 OpenGL 4.6 attach attempt started.'
+            '[ModernGraphics] OpenGL vendor=CI | renderer=CI | version=4.6 | GLSL=4.60 | parsed=4.6 | profile=compatibility.'
+            '[ModernGraphics] Diligent validation/OpenGL debug routing enabled by MU_MODERN_GL_DEBUG.'
+            '[ModernGraphics] Diligent attached to the existing OpenGL 4.6 context; legacy SwapBuffers remains authoritative.'
+            '[ModernGraphics] Resize observed: 1280x720. Presentation remains legacy-owned.'
+            '[ModernGraphics] Teardown barrier armed for the attached WGL context.'
+            '[ModernGraphics] Shutdown completed before legacy WGL teardown.'
+            '[ModernGraphics] Phase 2 OpenGL 4.6 attach attempt started.'
+            '[ModernGraphics] OpenGL vendor=CI2 | renderer=CI2 | version=4.6 | GLSL=4.60 | parsed=4.6 | profile=core.'
+            '[ModernGraphics] Diligent validation/OpenGL debug routing enabled by MU_MODERN_GL_DEBUG.'
+            '[ModernGraphics] Diligent attached to the existing OpenGL 4.6 context; legacy SwapBuffers remains authoritative.'
+            '[ModernGraphics] Resize observed: 1600x900. Presentation remains legacy-owned.'
+            '[ModernGraphics] Teardown barrier armed for the attached WGL context.'
+            '[ModernGraphics] Shutdown completed before legacy WGL teardown.'
+          ) | Set-Content -Path $logPath -Encoding ASCII
+
+          $mixedProfileRejected = $false
+          try {
+            .\run_phase2_runtime_test.ps1 -ValidateOnly -EnableGLDebug -RequireResize
+          }
+          catch {
+            $mixedProfileRejected = $true
+            Write-Host "[Phase2 CI] PASS: mixed compatibility/core lifecycle evidence was rejected: $($_.Exception.Message)"
+          }
+          if (-not $mixedProfileRejected) {
+            throw 'Runtime evidence parser accepted a recreated lifecycle without compatibility-profile evidence.'
+          }
