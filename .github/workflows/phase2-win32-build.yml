@@ -117,11 +117,14 @@ jobs:
             Write-Host "[Phase2 CI][Debug] Found $path"
           }
 
-      - name: Validate runtime evidence script
+      - name: Validate runtime evidence parser
         shell: powershell
         working-directory: SRCMainGS/Source/Main5.2
         run: |
           $logPath = Join-Path $env:GITHUB_WORKSPACE 'Client_2\ModernGraphics.log'
+
+          # Positive lifecycle: attach -> diagnostics -> debug -> attached -> resize
+          # -> teardown barrier -> shutdown.
           @(
             '[ModernGraphics] Phase 2 OpenGL 4.6 attach attempt started.'
             '[ModernGraphics] OpenGL vendor=CI | renderer=CI | version=4.6 | GLSL=4.60 | parsed=4.6 | profile=compatibility.'
@@ -133,3 +136,51 @@ jobs:
           ) | Set-Content -Path $logPath -Encoding ASCII
 
           .\run_phase2_runtime_test.ps1 -ValidateOnly -EnableGLDebug -RequireResize
+
+          # Negative lifecycle: shutdown before teardown must be rejected.
+          @(
+            '[ModernGraphics] Phase 2 OpenGL 4.6 attach attempt started.'
+            '[ModernGraphics] OpenGL vendor=CI | renderer=CI | version=4.6 | GLSL=4.60 | parsed=4.6 | profile=compatibility.'
+            '[ModernGraphics] Diligent validation/OpenGL debug routing enabled by MU_MODERN_GL_DEBUG.'
+            '[ModernGraphics] Diligent attached to the existing OpenGL 4.6 context; legacy SwapBuffers remains authoritative.'
+            '[ModernGraphics] Resize observed: 1280x720. Presentation remains legacy-owned.'
+            '[ModernGraphics] Shutdown completed before legacy WGL teardown.'
+            '[ModernGraphics] Teardown barrier armed for the attached WGL context.'
+          ) | Set-Content -Path $logPath -Encoding ASCII
+
+          $reorderedRejected = $false
+          try {
+            .\run_phase2_runtime_test.ps1 -ValidateOnly -EnableGLDebug -RequireResize
+          }
+          catch {
+            $reorderedRejected = $true
+            Write-Host "[Phase2 CI] PASS: reordered teardown/shutdown evidence was rejected: $($_.Exception.Message)"
+          }
+          if (-not $reorderedRejected) {
+            throw 'Runtime evidence parser accepted shutdown-before-teardown evidence.'
+          }
+
+          # Negative lifecycle: a new attach attempt after the teardown barrier
+          # must be rejected even if the first attach/shutdown sequence looked valid.
+          @(
+            '[ModernGraphics] Phase 2 OpenGL 4.6 attach attempt started.'
+            '[ModernGraphics] OpenGL vendor=CI | renderer=CI | version=4.6 | GLSL=4.60 | parsed=4.6 | profile=compatibility.'
+            '[ModernGraphics] Diligent validation/OpenGL debug routing enabled by MU_MODERN_GL_DEBUG.'
+            '[ModernGraphics] Diligent attached to the existing OpenGL 4.6 context; legacy SwapBuffers remains authoritative.'
+            '[ModernGraphics] Resize observed: 1280x720. Presentation remains legacy-owned.'
+            '[ModernGraphics] Teardown barrier armed for the attached WGL context.'
+            '[ModernGraphics] Shutdown completed before legacy WGL teardown.'
+            '[ModernGraphics] Phase 2 OpenGL 4.6 attach attempt started.'
+          ) | Set-Content -Path $logPath -Encoding ASCII
+
+          $reattachRejected = $false
+          try {
+            .\run_phase2_runtime_test.ps1 -ValidateOnly -EnableGLDebug -RequireResize
+          }
+          catch {
+            $reattachRejected = $true
+            Write-Host "[Phase2 CI] PASS: post-teardown reattach evidence was rejected: $($_.Exception.Message)"
+          }
+          if (-not $reattachRejected) {
+            throw 'Runtime evidence parser accepted a post-teardown reattach attempt.'
+          }
